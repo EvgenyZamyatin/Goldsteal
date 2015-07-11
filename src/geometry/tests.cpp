@@ -1,6 +1,8 @@
 #include "Geometry.h"
+#include "Boosting.h"
 #include <cassert>
 #include <algorithm>
+
 using namespace Geo;
 void orientation_test() {
     assert(orientation(Vector(1, 6), Vector(3, 1), Vector(6, 6)) == LEFT);
@@ -67,18 +69,18 @@ void intersect_test() {
         assert(check(l, false, std::vector<Vector>({Vector(3, 2), Vector(3, 5)})));
 
         l = Line(Vector(7, 5), Vector(1, 2));
-        assert(check(l, true, std::vector<Vector>({Vector(5, 1), Vector(6, 3)}))); 
+        assert(check(l, true, std::vector<Vector>({Vector(5, 1), Vector(6, 3)})));
         assert(check(l, false, std::vector<Vector>()));
 
         l = Line(Vector(7,0),Vector(-1,3));
-        assert(check(l, true, std::vector<Vector>({Vector(6, 3)}))); 
-        assert(check(l, false, std::vector<Vector>())); 
+        assert(check(l, true, std::vector<Vector>({Vector(6, 3)})));
+        assert(check(l, false, std::vector<Vector>()));
 
         l = Line(Vector(0, 1.5), Vector(1, 0));
-        assert(check(l, true, std::vector<Vector>({Vector(1.75, 1.5), Vector(2.5, 1.5), Vector(4, 1.5), Vector(5.25, 1.5)}))); 
-        assert(check(l, false, std::vector<Vector>({Vector(1.75, 1.5), Vector(2.5, 1.5), Vector(4, 1.5), Vector(5.25, 1.5)}))); 
+        assert(check(l, true, std::vector<Vector>({Vector(1.75, 1.5), Vector(2.5, 1.5), Vector(4, 1.5), Vector(5.25, 1.5)})));
+        assert(check(l, false, std::vector<Vector>({Vector(1.75, 1.5), Vector(2.5, 1.5), Vector(4, 1.5), Vector(5.25, 1.5)})));
 
-        l = Line(Vector(0, 1), Vector(1, 0)); 
+        l = Line(Vector(0, 1), Vector(1, 0));
         assert(check(l, true, std::vector<Vector>({Vector(2, 1), Vector(5, 1)})));
         assert(check(l, false, std::vector<Vector>()));
     }
@@ -99,7 +101,7 @@ void visibilityPolygon_test() {
         }
         return false;
     };
-    
+
     Polygon poly(std::vector<Vector>({Vector(1,1),Vector(2,1), Vector(2,2),Vector(1,2)}));
     Vector o(3,3);
     Polygon myPoly = visibilityPolygon(o, std::vector<Polygon>({poly}), 5, 5);
@@ -149,6 +151,7 @@ int main() {
     onLine_test();
     intersect_test();
     visibilityPolygon_test();
+    
     std::cout << "All tests had been passed!" << "\n";
     return 0;
 }
