@@ -4,6 +4,8 @@
 #include <boost\geometry.hpp>
 #include "Geometry.h"
 
+
+//Point
 namespace boost {
     namespace geometry {
         namespace traits {
@@ -45,5 +47,42 @@ namespace boost {
     }
 }
 
+//Segment
+/*
+namespace boost {
+	namespace geometry {
+		namespace traits {
+			template<>
+            struct tag<Geo::Segment> { typedef segment_tag type; };
+            
+            template<>
+            struct point_type<Geo::Segment>{ typedef Geo::Vector type; };
+
+            template<>
+            struct indexed_access<Geo::Segment, 0> {
+                static Geo::Vector get(Geo::Segment const& s) {
+                    return s.a;
+                }
+
+                static Geo::Vector set(Geo::Segment& s, Geo::Vector const& value) {
+                    s.a = value;
+                }
+            };
+
+            template<>
+            struct indexed_access<Geo::Segment, 1> {
+                static Geo::Vector get(Geo::Segment const& s) {
+                    return s.b;
+                }
+
+                static Geo::Vector set(Geo::Segment& s, Geo::Vector const& value) {
+                    s.b = value;
+                }
+            };
+
+		}
+	}
+}
+*/
 
 #endif
