@@ -4,10 +4,13 @@
 #include <algorithm>
 
 using namespace Geo;
+
 void orientation_test() {
+    assert(orientation(Vector(9,6), Vector(2000, 3000), Vector(0,0)) != COLLINEAR);
     assert(orientation(Vector(1, 6), Vector(3, 1), Vector(6, 6)) == LEFT);
     assert(orientation(Vector(6, 6), Vector(3, 1), Vector(1, 6)) == RIGHT);
     assert(orientation(Vector(4, 1), Vector(5, 3), Vector(6, 5)) == COLLINEAR);
+
 }
 
 void collinear_test() {
@@ -143,6 +146,46 @@ void visibilityPolygon_test() {
             Vector(2,2)
         }));
     assert(check(myPoly, truePoly));
+    polys = (std::vector<Polygon>({
+			Polygon(std::vector<Vector>({Vector(7,5), Vector(5,8), Vector(9,6)})),			
+			Polygon(std::vector<Vector>({Vector(6,1), Vector(7,3), Vector(8,4), Vector(10,3)}))
+		}));
+	Vector o2(2,3);
+	myPoly = visibilityPolygon(o2, polys, 15, 10);
+	truePoly = Polygon(std::vector<Vector>({
+    	Vector(0,0),
+        Vector(8,0),
+        Vector(6,1),
+        Vector(7,3),
+        Vector(8,4),
+        Vector(15,5+1.0/6),
+        Vector(15,8+1.0/5),
+        Vector(7,5),
+        Vector(5,8),
+        Vector(6+1.0/5,10),
+        Vector(0,10)
+    }));
+	assert(check(myPoly, truePoly));
+	polys = (std::vector<Polygon>({
+			Polygon(std::vector<Vector>({Vector(7,5)*1000, Vector(5,8)*1000, Vector(9,6)*1000})),			
+			Polygon(std::vector<Vector>({Vector(6,1)*1000, Vector(7,3)*1000, Vector(8,4)*1000, Vector(10,3)*1000}))
+		}));
+	Vector o3(2,3); o3*=1000;
+	myPoly = visibilityPolygon(o3, polys, 15*1000, 10*1000);
+	truePoly = Polygon(std::vector<Vector>({
+        Vector(0,0)*1000,
+        Vector(8,0)*1000,
+        Vector(6,1)*1000,
+        Vector(7,3)*1000,
+        Vector(8,4)*1000,
+        Vector(15,5+1.0/6)*1000,
+        Vector(15,8+1.0/5)*1000,
+        Vector(7,5)*1000,
+        Vector(5,8)*1000,
+        Vector(6+1.0/5,10)*1000,
+        Vector(0,10)*1000
+    }));
+	assert(check(myPoly, truePoly));
 }
 
 int main() {

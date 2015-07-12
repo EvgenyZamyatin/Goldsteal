@@ -17,7 +17,7 @@ bool Geo::less(double a, double b) {
 }
 
 double Geo::Vector::len() const {
-    return len2();
+    return std::sqrt(len2());
 }
 
 double Geo::Vector::len2() const {

@@ -7,7 +7,7 @@ FLAGS= -std=c++11 -I$(BOOST_PATH) -L$(BOOST_PATH) -I$(HGE_PATH) -L$(HGE_LIB) -lh
 all: main
                      
 main: Geometry.o
-	$(CC) -o main.exe main.cpp Geometry.o $(FLAGS)
+	$(CC) -o out/main.exe src/main.cpp Geometry.o $(FLAGS)
 
 tests: Geometry.o tests.o
 	$(CC) -o out/tests.exe tests.o Geometry.o $(FLAGS)
@@ -20,5 +20,4 @@ Geometry.o:
 
 clean:
 	cmd //C del *.exe
-	cmd //C del out\*.exe
 	cmd //C del *.o
