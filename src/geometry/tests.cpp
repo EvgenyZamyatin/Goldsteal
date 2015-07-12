@@ -102,14 +102,22 @@ void visibilityPolygon_test() {
             if (ok)
                 return true;
         }
+        std::reverse(a.points.begin(), a.points.end());
+        for (int i = 0; i < a.points.size(); ++i) {
+            bool ok = true;
+            for (int j = 0; j < b.points.size(); ++j) {
+                ok &= a[(i+j)%a.size()] == b[j];
+            }
+            if (ok)
+                return true;
+        }        
         return false;
     };
-
     Polygon poly(std::vector<Vector>({Vector(1,1),Vector(2,1), Vector(2,2),Vector(1,2)}));
     Vector o(3,3);
     Polygon myPoly = visibilityPolygon(o, std::vector<Polygon>({poly}), 5, 5);
     Polygon truePoly = Polygon(std::vector<Vector>({Vector(1.5,0), Vector(5,0), Vector(5, 5), Vector(0, 5), Vector(0, 1.5), Vector(1, 2), Vector(2,2), Vector(2, 1)}));
-    assert(check(myPoly, truePoly));
+    assert(check(myPoly, truePoly));    
     std::vector<Polygon> polys(std::vector<Polygon>({
             Polygon(std::vector<Vector>({Vector(1,2), Vector(1,4), Vector(2,4), Vector(2,2)})),
             Polygon(std::vector<Vector>({Vector(3,5), Vector(3,6), Vector(4,6), Vector(4,5)})),
@@ -145,6 +153,7 @@ void visibilityPolygon_test() {
             Vector(2,4),
             Vector(2,2)
         }));
+    std::cerr << myPoly << "\n";
     assert(check(myPoly, truePoly));
     polys = (std::vector<Polygon>({
 			Polygon(std::vector<Vector>({Vector(7,5), Vector(5,8), Vector(9,6)})),			
@@ -186,6 +195,28 @@ void visibilityPolygon_test() {
         Vector(0,10)*1000
     }));
 	assert(check(myPoly, truePoly));
+	
+	//std::cerr << visibilityPolygon(Vector(400,300), std::vector<Polygon>({std::vector<Vector>({Vector(92.000000 , 276.000000), Vector(94.000000 , 385.000000), Vector(196.000000 , 330.000000)})}), 800,600) << "\n";
+	//std::cerr << "===\n";
+	//std::cerr << visibilityPolygon(Vector(3,1.5), std::vector<Polygon>({std::vector<Vector>({Vector(1 , 1), Vector(1 , 2), Vector(2 , 2), Vector(2, 1)})}), 800,600) << "\n";
+	/*polys = (std::vector<Polygon>({
+			Polygon(std::vector<Vector>({Vector(148, 156), Vector(126, 236), Vector(225, 201)}))			
+		}));
+	Vector o4(400, 160);
+	myPoly = visibilityPolygon(o4, polys, 800, 600);
+	truePoly = Polygon(std::vector<Vector>({
+    	Vector(800,600),
+    	Vector(0,600),
+    	Vector(0,160+41*400/175),
+    	Vector(225,201),
+    	Vector(148,156),
+    	Vector(0,160-1600/252),
+    	Vector(0,0),    
+    	Vector(800,0)
+    }));
+    std::cerr << myPoly << "\n";
+	assert(check(myPoly, truePoly));*/
+
 }
 
 int main() {

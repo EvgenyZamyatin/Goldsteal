@@ -3,16 +3,18 @@
 #include "geometry/Geometry.h"
 #include "geometry/Boosting.h"
 #include <iostream>
+#include <fstream>
 
 #define WIDTH 800
 #define HIGHT 600
+
+const double dx = 5;
+const double dy = 5;
 
 HGE *hge = 0;
 hgeTriple quad;
 hgeQuad backQuad;
 hgeFont* fnt;
-
-
 
 std::vector<Geo::Polygon> polygons;
 Geo::Vector viewPoint(WIDTH*1.0/2, HIGHT*1.0/2);
@@ -25,26 +27,43 @@ bool FrameFunc() {
 	while (hge->Input_GetEvent(&evt)) {
   		switch (evt.type ) {
       		case INPUT_MBUTTONDOWN:
-        		float a, b;
-				hge->Input_GetMousePos(&a,&b);
-				buffer.addPoint(Geo::Vector(a,b));	
+        		if (createPolyClicked) {
+        			float a, b;
+					hge->Input_GetMousePos(&a,&b);
+					buffer.addPoint(Geo::Vector(a,b));	
+				}
         		break;
         	case INPUT_KEYDOWN:
         		if (evt.key==HGEK_SPACE) {
         			if (createPolyClicked) {
 						if (buffer.size() > 1) {
 							polygons.push_back(buffer);
-							std::cerr << buffer << "\n";
-							std::cerr << "VP" << Geo::visibilityPolygon(viewPoint, polygons, WIDTH, HIGHT) << "\n";
 						}
 						buffer.points.clear();
 						createPolyClicked=false;
 					} else {
 						createPolyClicked=true;
 					}	
+        		} else if (evt.key==HGEK_UP) {
+        			viewPoint.y -= dx;
+        		} else if (evt.key==HGEK_DOWN) {
+        			viewPoint.y += dx;
+        		} else if (evt.key==HGEK_RIGHT) {
+        			viewPoint.x += dy;
+        		} else if (evt.key==HGEK_LEFT) {
+        			viewPoint.x -= dy;
+        		} else if (evt.key==HGEK_CTRL) {
+        			std::ofstream file;
+        			file.open("wrong.txt");
+        			file << "viewPoint: " << viewPoint << "\n";
+        			file << "Polygons:\n";
+        			for (Geo::Polygon p : polygons)
+        				file << p << "\n";
+        			file << "VisibilityPolygon:\n" << Geo::visibilityPolygon(viewPoint, polygons, WIDTH, HIGHT) << "\n";
+        			file.close();        				 	
         		}
-        		break;
 
+        		break;
    		}
 	}
 	
@@ -112,7 +131,9 @@ bool RenderFunc() {
 	Draw_Circle(viewPoint.x, viewPoint.y, 10, 50, ARGB(255, 0, 150, 0));
 	fnt->printf(5, 5, HGETEXT_LEFT, "dt:%.3f\nFPS:%d (constant)", hge->Timer_GetDelta(), hge->Timer_GetFPS());
 	if (createPolyClicked)
-		fnt->printf(5, 70, HGETEXT_LEFT, "ENTER POLYGON", hge->Timer_GetDelta(), hge->Timer_GetFPS());	
+		fnt->printf(5, 70, HGETEXT_LEFT, "ENTER POLYGON");	
+	fnt->printf(5, HIGHT-50, HGETEXT_LEFT, "x:%.2f y:%.2f", viewPoint.x, viewPoint.y);	
+	
 	Geo::Polygon p = Geo::visibilityPolygon(viewPoint, polygons, WIDTH, HIGHT);
 	drawPolygon(viewPoint,p,ARGB(100,0,100,0));
 	
