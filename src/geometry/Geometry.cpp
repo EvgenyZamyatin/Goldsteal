@@ -1,6 +1,7 @@
 #include "Geometry.h"
 #include <cmath>
 #include <algorithm>
+#include <cassert>
 
 using namespace Geo;
 
@@ -225,58 +226,86 @@ Polygon Geo::visibilityPolygon (Vector o, std::vector<Polygon> polygons) {
 }
 */
 
+void Geo::Polygon::makeCW() {
+	for (int i = 0; i < points.size(); ++i) {
+    	if (orientation(points[i], points[(i+1)%points.size()], points[(i+2)%points.size()]) == LEFT) {
+    		std::reverse(points.begin(), points.end());
+    		break;
+    	}    	
+    }
+}
+
+void Geo::Polygon::makeNCW() {
+	for (int i = 0; i < points.size(); ++i) {
+    	if (orientation(points[i], points[(i+1)%points.size()], points[(i+2)%points.size()]) == RIGHT) {
+    		std::reverse(points.begin(), points.end());
+    		break;
+    	}    	
+    }
+}
+
+
+
+
 Polygon Geo::visibilityPolygon (Vector o, std::vector<Polygon> polygons) {
-	std::vector<Vector> vertices; 
-    for (Polygon p : polygons)
-    	vertices.insert(vertices.end(), p.points.begin(), p.points.end());    
+	for (Polygon& p : polygons) {
+    	assert(p.size() > 2);
+    	p.makeNCW();    
+	}                      
+	std::vector<Segment> vertices; 
+    for (Polygon& p : polygons) {
+    	for (int i = 0; i < p.size(); ++i) {
+    	    vertices.push_back(Segment(p[i], p[(i+1)%p.size()]));
+    		//vertices.insert(vertices.end(), p.points.begin(), p.points.end());
+    	}
+    }    
     int cnt = 0;
     for (int i = 0; i < vertices.size(); ++i) { 
-        if (less(vertices[i].y, o.y))
+        if (less(vertices[i].a.y, o.y))
             std::swap(vertices[i], vertices[cnt++]);
     }
     std::sort(vertices.begin(), vertices.begin() + cnt, 
-            [o](const Vector& a, const Vector& b) {
-                return orientation(a, o, b) == LEFT || 
-                    (orientation(a, o, b) == COLLINEAR && (a-o).len2() < (b-o).len2());    
+            [o](const Segment& a, const Segment& b) {
+                return orientation(a.a, o, b.a) == LEFT || 
+                    (orientation(a.a, o, b.a) == COLLINEAR && (a.a-o).len2() < (b.a-o).len2());    
             });
     std::sort(vertices.begin() + cnt, vertices.end(), 
-            [o](const Vector& a, const Vector& b) {
-                return orientation(a, o, b) == LEFT || 
-                    (orientation(a, o, b) == COLLINEAR && (a-o).len2() < (b-o).len2());
+            [o](const Segment& a, const Segment& b) {
+                return orientation(a.a, o, b.a) == LEFT || 
+                    (orientation(a.a, o, b.a) == COLLINEAR && (a.a-o).len2() < (b.a-o).len2());
             });
     //std::cerr << vertices << "\n";
     std::vector<Vector> candidates;
     std::vector<Vector> tmp;
     for (int i = 0; i < (int)vertices.size(); ++i) {
-    	Vector& v = vertices[i];
+    	Segment& v = vertices[i];
     	if (i > 0) {
-    		if (orientation(vertices[i-1], o, vertices[i]) == COLLINEAR)
+    		if (orientation(vertices[i-1].a, o, vertices[i].a) == COLLINEAR)
     			continue;
     	}
    		tmp.clear();
-   		Line l(o, v-o);
+   		Line l(o, v.a-o);
    		for (Polygon p : polygons)
    			intersect(l, p, tmp, false);
    		Vector nearest;
    		bool was = false;
    		for (Vector i : tmp) {
-   			if (greater((v-o)^(i-o), 0) && (!was || less((i-o).len2(), (nearest-o).len2())))
+   			if (greater((v.a-o)^(i-o), 0) && (!was || less((i-o).len2(), (nearest-o).len2())))
    				nearest = i, was = true;
    	 	}
-   	 	if (less((nearest-o).len2(), (v-o).len2()))
+   	 	if (less((nearest-o).len2(), (v.a-o).len2()))
    	 		continue;
-   	 	if (nearest == v) {
+   	 	if (nearest == v.a) {
    	 		candidates.push_back(nearest);
    	 		continue;
    		}	
-   		//Решить вопрос с первой вершиной.
-   		assert(orientation(candidates[i-1], nearest, v) != COLLINEAR)
-   		if (orientation(candidates[i-1], nearest, v) == LEFT) {
-    		candidates.push_back(v); 
+   		//assert(orientation(nearest, candidates[i-1], v) != COLLINEAR)
+   		if (orientation(nearest, v.a, v.b) == LEFT) {
     		candidates.push_back(nearest); 
+    		candidates.push_back(v.a); 
     	} else {
+    		candidates.push_back(v.a); 
     		candidates.push_back(nearest); 
-    		candidates.push_back(v); 
     	}    	
     }
     return Polygon(candidates);        

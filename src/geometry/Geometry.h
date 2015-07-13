@@ -69,6 +69,8 @@ namespace Geo {
         Vector& operator[] (int i) {return points[i];}
         Vector operator[] (int i) const {return points[i];}
         std::string to_string() const;
+        void makeCW();
+        void makeNCW();
     };
     
     std::ostream& operator<<(std::ostream&, Polygon);

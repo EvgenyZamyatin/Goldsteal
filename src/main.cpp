@@ -36,7 +36,7 @@ bool FrameFunc() {
         	case INPUT_KEYDOWN:
         		if (evt.key==HGEK_SPACE) {
         			if (createPolyClicked) {
-						if (buffer.size() > 1) {
+						if (buffer.size() > 2) {
 							polygons.push_back(buffer);
 						}
 						buffer.points.clear();
