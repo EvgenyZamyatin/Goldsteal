@@ -10,10 +10,12 @@
 #define WIDTH 800
 #define HIGHT 600
 
-const double dx = 1;
-const double dy = 1;
+const double INF = 1000000000;
+const int dx = 1;
+const int dy = 1;
 const double viewAngle = M_PI/4;
 const Geo::Polygon boundsPolygon(std::vector<Geo::Vector>({{0,0}, {0,HIGHT}, {WIDTH,HIGHT}, {WIDTH,0}}));
+const Geo::Polygon mainPoly(std::vector<Geo::Vector>({{-5,-5}, {-5, 5}, {5, 5}, {5, -5}}));
 
 HGE *hge = 0;
 hgeTriple quad;
@@ -85,6 +87,67 @@ Geo::Polygon makeDirPolygon() {
 	return Geo::Polygon(ans);			 
 }
 
+double findNearest() {
+	Geo::Polygon poly = mainPoly;
+	for (Geo::Vector& v : poly.points)
+		v += viewPoint;
+	double ans = INF;
+	for (Geo::Polygon p : polygons) {
+		ans = std::min(ans, Geo::distance(poly, p));
+	}
+	for (int i = 0; i < boundsPolygon.size(); ++i) {
+		Geo::Vector a = boundsPolygon[i]; 
+		Geo::Vector b = boundsPolygon[(i+1)%boundsPolygon.size()];
+		ans = std::min(ans, Geo::distance(Geo::Segment(a,b), poly));
+	}
+	return ans;
+}
+
+void moveUp() {
+	if (Geo::greater(findNearest(), dy))
+		viewPoint.y -= dy; 
+	for (int t = 1; t <= dy; t++) {
+		viewPoint.y -= 1;
+		if (Geo::less(findNearest(), 0) || Geo::equals(findNearest(), 0))
+			break; 		
+	}
+	if (Geo::less(findNearest(), 0) || Geo::equals(findNearest(), 0))
+		viewPoint.y += 1;
+}
+void moveDown() {
+	if (Geo::greater(findNearest(), dy))
+		viewPoint.y += dy; 
+	for (int t = 1; t <= dy; t++) {
+		viewPoint.y += 1;
+		if (Geo::less(findNearest(), 0) || Geo::equals(findNearest(), 0))
+			break; 		
+	}
+	if (Geo::less(findNearest(), 0) || Geo::equals(findNearest(), 0))
+		viewPoint.y -= 1;
+}
+void moveRight() {
+	if (Geo::greater(findNearest(), dx))
+		viewPoint.x += dx; 
+	for (int t = 1; t <= dx; t++) {
+		viewPoint.x += 1;
+		if (Geo::less(findNearest(), 0) || Geo::equals(findNearest(), 0))
+			break; 		
+	}
+	if (Geo::less(findNearest(), 0) || Geo::equals(findNearest(), 0))
+		viewPoint.x -= 1;
+}
+void moveLeft() {
+	if (Geo::greater(findNearest(), dx))
+		viewPoint.x -= dx; 
+	for (int t = 1; t <= dx; t++) {
+		viewPoint.x -= 1;
+		if (Geo::less(findNearest(), 0) || Geo::equals(findNearest(), 0))
+			break; 		
+	}
+	if (Geo::less(findNearest(), 0) || Geo::equals(findNearest(), 0))
+		viewPoint.x += 1;
+}
+
 bool FrameFunc() {
 	if (hge->Input_GetKeyState(HGEK_ESCAPE)) return true;
 	hgeInputEvent evt;
@@ -102,7 +165,7 @@ bool FrameFunc() {
         	case INPUT_KEYDOWN:
         		if (evt.key==HGEK_SPACE) {
         			if (createPolyClicked) {
-						if (buffer.size() > 2) {
+						if (buffer.size() > 1) {
 							polygons.push_back(buffer);
 						}
 						buffer.points.clear();
@@ -115,20 +178,20 @@ bool FrameFunc() {
    		}
 	}
 	if (hge->Input_GetKeyState(HGEK_W)) 
-        viewPoint.y -= dy;
+        moveUp();
     if (hge->Input_GetKeyState(HGEK_S)) 
-       	viewPoint.y += dy;
+       	moveDown();
     if (hge->Input_GetKeyState(HGEK_D)) 
-        viewPoint.x += dx;
+        moveRight();
     if (hge->Input_GetKeyState(HGEK_A)) 
-        viewPoint.x -= dx;        	
-    
+        moveLeft();
+    /*
     viewPoint.x = std::min((double)WIDTH-10, viewPoint.x);
 	viewPoint.x = std::max(10.0, viewPoint.x);
 
 	viewPoint.y = std::min((double)HIGHT-10, viewPoint.y);
 	viewPoint.y = std::max(10.0, viewPoint.y);
-
+	*/
 	Geo::Polygon dirPolygon = makeDirPolygon();
 	std::vector<Geo::Polygon> out;
 	Geo::intersect(Geo::visibilityPolygon(viewPoint, polygons, WIDTH, HIGHT), 
@@ -225,6 +288,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	hge->System_SetState(HGE_HIDEMOUSE, false);
 	hge->System_SetState(HGE_FPS, 100);
 	
+
 	if (hge->System_Initiate()) {
 		fnt=new hgeFont("font1.fnt");
  		fnt->SetColor(ARGB(255,0,0,0));

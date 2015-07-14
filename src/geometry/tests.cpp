@@ -194,28 +194,6 @@ void visibilityPolygon_test() {
         Vector(0,10)*1000
     }));
 	assert(check(myPoly, truePoly));
-	
-	//std::cerr << visibilityPolygon(Vector(400,300), std::vector<Polygon>({std::vector<Vector>({Vector(92.000000 , 276.000000), Vector(94.000000 , 385.000000), Vector(196.000000 , 330.000000)})}), 800,600) << "\n";
-	//std::cerr << "===\n";
-	//std::cerr << visibilityPolygon(Vector(3,1.5), std::vector<Polygon>({std::vector<Vector>({Vector(1 , 1), Vector(1 , 2), Vector(2 , 2), Vector(2, 1)})}), 800,600) << "\n";
-	/*polys = (std::vector<Polygon>({
-			Polygon(std::vector<Vector>({Vector(148, 156), Vector(126, 236), Vector(225, 201)}))			
-		}));
-	Vector o4(400, 160);
-	myPoly = visibilityPolygon(o4, polys, 800, 600);
-	truePoly = Polygon(std::vector<Vector>({
-    	Vector(800,600),
-    	Vector(0,600),
-    	Vector(0,160+41*400/175),
-    	Vector(225,201),
-    	Vector(148,156),
-    	Vector(0,160-1600/252),
-    	Vector(0,0),    
-    	Vector(800,0)
-    }));
-    std::cerr << myPoly << "\n";
-	assert(check(myPoly, truePoly));*/
-
 }
 
 int main() {
@@ -225,11 +203,16 @@ int main() {
     intersect_test();
     visibilityPolygon_test();
     Polygon a(std::vector<Vector>({{0,0}, {0,2}, {2,2}, {2,0}}));
-    Polygon b(std::vector<Vector>({{1,1}, {1,3}, {3,3}, {3,1}}));
-	std::vector<Polygon> res;
-	intersect(a, b, res);
-	for (Polygon& p : res)
-		std::cout << p << "\n";
+    Polygon b(std::vector<Vector>({{2,0}, {2,2}, {4,2}, {4,0}}));
+	std::cerr << distance(a, b) << "\n";
+	a = Polygon(std::vector<Vector>({{0,0}, {0,2}, {2,2}, {2,0}}));
+    b = Polygon(std::vector<Vector>({{12,0}, {12,2}, {14,2}, {14,0}}));
+	std::cerr << distance(a, b) << "\n";
+	
+	a = Polygon(std::vector<Vector>({{0,0}, {0,10}, {10,10}, {10,0}}));
+    b = Polygon(std::vector<Vector>({{3,0}, {3,6}, {6,6}, {6,3}}));
+	std::cerr << distance(a, b) << "\n";
+	
 	std::cout << "All tests had been passed!" << "\n";
     return 0;
 }

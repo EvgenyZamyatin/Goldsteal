@@ -1,14 +1,16 @@
 #ifndef BOOSTING_H
 #define BOOSTING_H
 
-#include <boost/geometry.hpp>
+#include <boost/geometry.hpp>                                 
 #include <boost/geometry/geometries/register/point.hpp>
+#include <boost/geometry/geometries/register/segment.hpp>
 #include <boost/geometry/geometries/register/ring.hpp>
 #include "Geometry.h"
 
 
 BOOST_GEOMETRY_REGISTER_POINT_2D(Geo::Vector, double, boost::geometry::cs::cartesian, x, y)
 BOOST_GEOMETRY_REGISTER_RING(std::vector<Geo::Vector>)
+BOOST_GEOMETRY_REGISTER_SEGMENT(Geo::Segment, Geo::Vector, a, b);
 
 
 

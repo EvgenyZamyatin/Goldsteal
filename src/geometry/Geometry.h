@@ -94,8 +94,10 @@ namespace Geo {
     Polygon visibilityPolygon(Vector o, std::vector<Polygon> polygons, int w, int h);
     Polygon visibilityPolygon(Vector o, std::vector<Polygon> polygons);
     
+    double distance(Polygon a, Polygon b);
+	double distance(Segment a, Polygon b);
 
-    void split(Polygon p, Line l, std::vector<Polygon>& out1, std::vector<Polygon>& out2);
+    
 }
 
 #endif

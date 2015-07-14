@@ -170,8 +170,13 @@ void Geo::Polygon::makeNCW() {
 
 Polygon Geo::visibilityPolygon (Vector o, std::vector<Polygon> polygons) {
 	for (Polygon& p : polygons) {
-    	assert(p.size() > 2);
-    	p.makeNCW();    
+    	assert(p.size() > 1);
+    	if (p.size() > 2)
+    		p.makeNCW();
+    	else {
+    		if (orientation(p.points[0], o, p.points[1]) == RIGHT)
+    			std::swap(p.points[0], p.points[1]);    
+    	}
 	}                      
 	std::vector<Segment> vertices; 
     for (Polygon& p : polygons) {
@@ -240,13 +245,6 @@ Polygon Geo::visibilityPolygon (Vector o, std::vector<Polygon> polygons, int w, 
 }
 
 
-//out1: above line.
-//out2: under line.
-void Geo::split(Polygon p, Line l, std::vector<Polygon>& out1, std::vector<Polygon>& out2) {
-		
-
-}
-
 bool Geo::intersect(Polygon p1, Polygon p2, std::vector<Polygon>& out) {
 	boost::geometry::correct(p1.points);
 	boost::geometry::correct(p2.points);
@@ -259,6 +257,15 @@ bool Geo::intersect(Polygon p1, Polygon p2, std::vector<Polygon>& out) {
    	return tmp.size() > 0;
 }
 
+double Geo::distance(Polygon a, Polygon b) {
+	boost::geometry::correct(a.points);
+	boost::geometry::correct(b.points);
+	return boost::geometry::distance(a.points, b.points);
+}
 
-
+double Geo::distance(Segment a, Polygon b) {
+	boost::geometry::correct(a);
+	boost::geometry::correct(b.points);
+	return boost::geometry::distance(a, b.points);
+}
 
