@@ -2,6 +2,7 @@
 #include <cmath>
 #include <algorithm>
 #include <cassert>
+#include "Boosting.h"
 
 using namespace Geo;
 
@@ -131,100 +132,20 @@ bool Geo::intersect (const Line& l, const Polygon& p, std::vector<Vector>& res,
     return res.size() > 0;
 }
 
-
-/*
-Polygon Geo::visibilityPolygon (Vector o, std::vector<Polygon> polygons) {
-    std::vector<Vector> candidates;
-    std::vector<std::pair<Vector, int>> vertices; 
-    for (int i = 0; (int)i < polygons.size(); ++i) {
-        Polygon p = polygons[i];
-        for (Vector v : p.points)
-            vertices.push_back(std::make_pair(v, i));
-    }
-
-    int cnt = 0;
-    for (int i = 0; i < vertices.size(); ++i) { 
-        if (less(vertices[i].first.y, o.y))
-            std::swap(vertices[i], vertices[cnt++]);
-    }
-    //for (std::pair<Vector,int> i : vertices)
-    //	std::cerr << i.first << "\n";
-    //std::cerr << "===\n";
-    std::sort(vertices.begin(), vertices.begin() + cnt, 
-            [o](const std::pair<Vector, int>& a, const std::pair<Vector, int>& b) {
-                return orientation(a.first, o, b.first) == LEFT || 
-                    (orientation(a.first, o, b.first) == COLLINEAR && (a.first-o).len2() < (b.first-o).len2());    
-            });
-    std::sort(vertices.begin() + cnt, vertices.end(), 
-            [o](const std::pair<Vector, int>& a, const std::pair<Vector, int>& b) {
-                return orientation(a.first, o, b.first) == LEFT || 
-                    (orientation(a.first, o, b.first) == COLLINEAR && (a.first-o).len2() < (b.first-o).len2());
-            });
-    //for (std::pair<Vector,int> i : vertices)
-    //	std::cerr << i.first << "\n";
-    Vector last;
-    bool vl = false;
-    std::vector<std::pair<Vector, int>> tmp;
-    std::vector<Vector> tmp1;
-    int lastPolygon = -1;
-    //int firstPolygon = -1;  
-    for (std::pair<Vector, int> pr : vertices) {
-        tmp.clear();
-        Vector& v = pr.first;
-        if (vl && orientation(v, o, last) == COLLINEAR)
-            continue;
-        last = v;
-        vl = true;
-        Line l(o, v-o);
-        //std::cerr << v << " : ";
-        for (int i = 0; i < (int)polygons.size(); ++i) {
-            Polygon p = polygons[i];
-            tmp1.clear();
-            intersect(l, p, tmp1, false);
-            for (Vector j : tmp1)
-                tmp.push_back(std::make_pair(j, i));
-        }
-        if (tmp.size() == 0) {
-            candidates.push_back(v);
-            lastPolygon = pr.second;
-            //if (firstPolygon==-1)
-            //	firstPolygon=lastPolygon;
-            continue;
-        }
-        std::pair<Vector, int> u;
-        bool was = false;
-        for (std::pair<Vector, int> t : tmp) {
-            if (greater((t.first-o)^l.v, 0) && (!was || less((t.first-o).len2(), (u.first-o).len2()))) {
-                u = t;
-                was = true;
-            }
-        }
-        //std::cerr << u.first << "\n";
-        if (u.first == v) {
-            candidates.push_back(v);
-            lastPolygon = u.second;
-            //if (firstPolygon==-1)
-            //	firstPolygon=lastPolygon;
-            continue;
-        }
-        if (greater((u.first-o).len2(), (v-o).len2())) {
-            if (lastPolygon == pr.second)
-                candidates.push_back(v), candidates.push_back(u.first), lastPolygon = u.second;
-            else
-                candidates.push_back(u.first), candidates.push_back(v), lastPolygon = pr.second; 
-            //if (firstPolygon==-1)
-            //	firstPolygon=lastPolygon;
-            continue;
-        } else {
-            continue;
-        }
-    }
-    //if (firstPolygon != lastPolygon)
-    //	std::swap(candidates[0], candidates[1]);
-    Polygon ans(candidates);
-    return ans;
+void Geo::Vector::rotate(double angle) {
+	double nx = std::cos(angle)*x-std::sin(angle)*y;
+	double ny = std::sin(angle)*x+std::cos(angle)*y;
+	x = nx;
+	y = ny;
 }
-*/
+
+int Geo::Polygon::order() {
+	for (int i = 0; i < points.size(); ++i) {
+    	if (orientation(points[i], points[(i+1)%points.size()], points[(i+2)%points.size()]) == LEFT)
+    		return Geo::COUNTERCLOCKWISE;    	
+    }
+    return Geo::CLOCKWISE;
+}
 
 void Geo::Polygon::makeCW() {
 	for (int i = 0; i < points.size(); ++i) {
@@ -256,7 +177,6 @@ Polygon Geo::visibilityPolygon (Vector o, std::vector<Polygon> polygons) {
     for (Polygon& p : polygons) {
     	for (int i = 0; i < p.size(); ++i) {
     	    vertices.push_back(Segment(p[i], p[(i+1)%p.size()]));
-    		//vertices.insert(vertices.end(), p.points.begin(), p.points.end());
     	}
     }    
     int cnt = 0;
@@ -274,7 +194,6 @@ Polygon Geo::visibilityPolygon (Vector o, std::vector<Polygon> polygons) {
                 return orientation(a.a, o, b.a) == LEFT || 
                     (orientation(a.a, o, b.a) == COLLINEAR && (a.a-o).len2() < (b.a-o).len2());
             });
-    //std::cerr << vertices << "\n";
     std::vector<Vector> candidates;
     std::vector<Vector> tmp;
     for (int i = 0; i < (int)vertices.size(); ++i) {
@@ -299,7 +218,6 @@ Polygon Geo::visibilityPolygon (Vector o, std::vector<Polygon> polygons) {
    	 		candidates.push_back(nearest);
    	 		continue;
    		}	
-   		//assert(orientation(nearest, candidates[i-1], v) != COLLINEAR)
    		if (orientation(nearest, v.a, v.b) == LEFT) {
     		candidates.push_back(nearest); 
     		candidates.push_back(v.a); 
@@ -310,8 +228,6 @@ Polygon Geo::visibilityPolygon (Vector o, std::vector<Polygon> polygons) {
     }
     return Polygon(candidates);        
 }
-
-
 
 Polygon Geo::visibilityPolygon (Vector o, std::vector<Polygon> polygons, int w, int h) {
     Polygon p;
@@ -324,6 +240,24 @@ Polygon Geo::visibilityPolygon (Vector o, std::vector<Polygon> polygons, int w, 
 }
 
 
+//out1: above line.
+//out2: under line.
+void Geo::split(Polygon p, Line l, std::vector<Polygon>& out1, std::vector<Polygon>& out2) {
+		
+
+}
+
+bool Geo::intersect(Polygon p1, Polygon p2, std::vector<Polygon>& out) {
+	boost::geometry::correct(p1.points);
+	boost::geometry::correct(p2.points);
+	std::vector<std::vector<Geo::Vector>> tmp;
+	boost::geometry::intersection(p1.points, p2.points, tmp);
+	for (int i = 0; i < (int)tmp.size(); ++i) {
+		tmp[i].pop_back();
+		out.push_back(Polygon(tmp[i]));
+   	}	
+   	return tmp.size() > 0;
+}
 
 
 

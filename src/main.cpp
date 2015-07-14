@@ -4,12 +4,16 @@
 #include "geometry/Boosting.h"
 #include <iostream>
 #include <fstream>
+#include <vector>
+#include <algorithm>
 
 #define WIDTH 800
 #define HIGHT 600
 
-const double dx = 10;
-const double dy = 10;
+const double dx = 1;
+const double dy = 1;
+const double viewAngle = M_PI/4;
+const Geo::Polygon boundsPolygon(std::vector<Geo::Vector>({{0,0}, {0,HIGHT}, {WIDTH,HIGHT}, {WIDTH,0}}));
 
 HGE *hge = 0;
 hgeTriple quad;
@@ -18,19 +22,81 @@ hgeFont* fnt;
 
 std::vector<Geo::Polygon> polygons;
 Geo::Vector viewPoint(WIDTH*1.0/2, HIGHT*1.0/2);
+Geo::Vector direction(0, -1);
 bool createPolyClicked=false;
 Geo::Polygon buffer;
+Geo::Polygon visiblePolygon;
+
+
+void stress() {
+    buffer.addPoint({10.0,10.0});
+    for (int k = 10; k < 50; k+=10) {
+    	if ((k/10)%2 == 0) {
+    		for (int i = 20; i < 800; i += 10) {
+    			buffer.addPoint({i*1.0,k*1.0});
+    		}
+    	} else {
+    		for (int i = 780; i >= 20; i -= 10) {
+    			buffer.addPoint({i*1.0,k*1.0});
+    		}
+    	}
+    }
+    buffer.addPoint({10.0,590.0});
+	polygons.push_back(buffer);
+	buffer.points.clear();			
+}
+
+Geo::Polygon makeDirPolygon() {
+	std::vector<Geo::Vector> ans;
+	ans.push_back(viewPoint);
+	Geo::Vector dirA(direction);
+	dirA.rotate(viewAngle);
+	Geo::Line l(viewPoint, dirA);
+	std::vector<Geo::Vector> res;
+	Geo::intersect(l, boundsPolygon, res);
+	for (Geo::Vector v : res) {
+		if (Geo::greater((v-viewPoint)^dirA, 0)) {
+			ans.push_back(v);
+			break;
+		}
+	}
+
+	Geo::Vector dirB(direction);
+
+	dirB.rotate(-viewAngle);
+	l = Geo::Line(viewPoint, dirB);
+	res.clear();
+	Geo::intersect(l, boundsPolygon, res);
+	for (Geo::Vector v : res) {
+		if (Geo::greater((v-viewPoint)^dirB, 0)) {
+			ans.push_back(v);
+			break;
+		}
+	}
+	for (Geo::Vector v : boundsPolygon.points) {
+	    if (Geo::less(direction^(v-viewPoint), 0))
+	    	continue;
+	    if (orientation(ans[1], viewPoint, v) * orientation(ans[2], viewPoint, v) == -1)
+	    	ans.push_back(v);		
+	}
+	std::sort(ans.begin() + 1, ans.end(), [](const Geo::Vector& a, const Geo::Vector& b) {
+	        	                                    	return Geo::orientation(a, viewPoint, b) == Geo::LEFT;
+													});
+	return Geo::Polygon(ans);			 
+}
 
 bool FrameFunc() {
 	if (hge->Input_GetKeyState(HGEK_ESCAPE)) return true;
 	hgeInputEvent evt;
+	float a, b;
+	hge->Input_GetMousePos(&a,&b);
+	if (!createPolyClicked)
+		direction = Geo::Vector(a,b)-viewPoint;				
 	while (hge->Input_GetEvent(&evt)) {
   		switch (evt.type ) {
       		case INPUT_MBUTTONDOWN:
         		if (createPolyClicked) {
-        			float a, b;
-					hge->Input_GetMousePos(&a,&b);
-					buffer.addPoint(Geo::Vector(a,b));	
+        			buffer.addPoint(Geo::Vector(a,b));	
 				}
         		break;
         	case INPUT_KEYDOWN:
@@ -44,29 +110,31 @@ bool FrameFunc() {
 					} else {
 						createPolyClicked=true;
 					}	
-        		} else if (evt.key==HGEK_UP) {
-        			viewPoint.y -= dx;
-        		} else if (evt.key==HGEK_DOWN) {
-        			viewPoint.y += dx;
-        		} else if (evt.key==HGEK_RIGHT) {
-        			viewPoint.x += dy;
-        		} else if (evt.key==HGEK_LEFT) {
-        			viewPoint.x -= dy;
-        		} else if (evt.key==HGEK_CTRL) {
-        			std::ofstream file;
-        			file.open("wrong.txt");
-        			file << "viewPoint: " << viewPoint << "\n";
-        			file << "Polygons:\n";
-        			for (Geo::Polygon p : polygons)
-        				file << p << "\n";
-        			file << "VisibilityPolygon:\n" << Geo::visibilityPolygon(viewPoint, polygons, WIDTH, HIGHT) << "\n";
-        			file.close();        				 	
         		}
-
         		break;
    		}
 	}
-	
+	if (hge->Input_GetKeyState(HGEK_W)) 
+        viewPoint.y -= dy;
+    if (hge->Input_GetKeyState(HGEK_S)) 
+       	viewPoint.y += dy;
+    if (hge->Input_GetKeyState(HGEK_D)) 
+        viewPoint.x += dx;
+    if (hge->Input_GetKeyState(HGEK_A)) 
+        viewPoint.x -= dx;        	
+    
+    viewPoint.x = std::min((double)WIDTH-10, viewPoint.x);
+	viewPoint.x = std::max(10.0, viewPoint.x);
+
+	viewPoint.y = std::min((double)HIGHT-10, viewPoint.y);
+	viewPoint.y = std::max(10.0, viewPoint.y);
+
+	Geo::Polygon dirPolygon = makeDirPolygon();
+	std::vector<Geo::Polygon> out;
+	Geo::intersect(Geo::visibilityPolygon(viewPoint, polygons, WIDTH, HIGHT), 
+					dirPolygon, out);
+	//out.push_back(Geo::visibilityPolygon(viewPoint, polygons, WIDTH, HIGHT));
+	visiblePolygon = out[0];
 	return false;
 }
 
@@ -79,7 +147,7 @@ void drawPolygon(Geo::Vector o, Geo::Polygon poly, DWORD color, bool fill = true
 		}		
 		return;
 	}
-	for (int i = 0; i < 4; ++i)
+	for (int i = 0; i < 3; ++i)
 		quad.v[i].col = color, quad.v[i].z=0;
 	quad.v[0].x = o.x, quad.v[0].y = o.y;
 	for (int i = 0, c = poly.points.size(); c > 0; i++, c--) {
@@ -88,7 +156,8 @@ void drawPolygon(Geo::Vector o, Geo::Polygon poly, DWORD color, bool fill = true
 		quad.v[1].x = a.x, quad.v[1].y = a.y;
 		quad.v[2].x = b.x, quad.v[2].y = b.y;
 		hge->Gfx_RenderTriple(&quad);		
-	}
+	}	
+	
 }
 
 void Draw_Circle(float cx, float cy, float Radius, int Segments, DWORD color) {
@@ -134,8 +203,7 @@ bool RenderFunc() {
 		fnt->printf(5, 70, HGETEXT_LEFT, "ENTER POLYGON");	
 	fnt->printf(5, HIGHT-50, HGETEXT_LEFT, "x:%.2f y:%.2f", viewPoint.x, viewPoint.y);	
 	
-	Geo::Polygon p = Geo::visibilityPolygon(viewPoint, polygons, WIDTH, HIGHT);
-	drawPolygon(viewPoint,p,ARGB(100,0,100,0));
+	drawPolygon(viewPoint, visiblePolygon, ARGB(100,0,100,0));
 	
 	hge->Gfx_EndScene();
 	return false;
@@ -155,13 +223,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	hge->System_SetState(HGE_SCREENBPP, 32);
 	hge->System_SetState(HGE_ZBUFFER, true);
 	hge->System_SetState(HGE_HIDEMOUSE, false);
+	hge->System_SetState(HGE_FPS, 100);
 	
-	//hge->System_SetState( HGE_ZBUFFER, true);
 	if (hge->System_Initiate()) {
- 		fnt=new hgeFont("font1.fnt");
+		fnt=new hgeFont("font1.fnt");
  		fnt->SetColor(ARGB(255,0,0,0));
- 		//quad.tex = backQuad.tex = 0;
- 		
  		quad.blend=BLEND_DEFAULT_Z;
  		backQuad.blend=BLEND_DEFAULT_Z;
  		

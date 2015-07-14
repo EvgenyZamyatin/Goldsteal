@@ -10,6 +10,8 @@ namespace Geo {
     static const int LEFT = -1;
     static const int RIGHT = 1;
     static const int COLLINEAR = 0;
+    static const int CLOCKWISE = -1;
+    static const int COUNTERCLOCKWISE = 1;
     
     bool equals(double a, double b);
     bool greater(double a, double b);
@@ -29,6 +31,7 @@ namespace Geo {
         Vector& operator/= (double c) {x/=c, y/=c;return *this;}
         double len () const;
         double len2 () const;
+        void rotate(double angle);
         void norm() {*this/=len();}
         double operator* (const Vector& other) const {return x*other.y-y*other.x;}
         double operator^ (const Vector& other) const {return x*other.x+y*other.y;}
@@ -71,6 +74,7 @@ namespace Geo {
         std::string to_string() const;
         void makeCW();
         void makeNCW();
+        int order();
     };
     
     std::ostream& operator<<(std::ostream&, Polygon);
@@ -85,9 +89,13 @@ namespace Geo {
     bool intersect (const Line& a, const Segment& s, Vector& res, bool consider_touch=true);
     bool intersect (const Segment& a, const Segment& b, Vector& res, bool consider_touch=true);
     bool intersect (const Line& line, const Polygon& p, std::vector<Vector>& res, bool consider_touch=true);
+    bool intersect (Polygon p1, Polygon p2, std::vector<Polygon>& out);
 
     Polygon visibilityPolygon(Vector o, std::vector<Polygon> polygons, int w, int h);
     Polygon visibilityPolygon(Vector o, std::vector<Polygon> polygons);
+    
+
+    void split(Polygon p, Line l, std::vector<Polygon>& out1, std::vector<Polygon>& out2);
 }
 
 #endif

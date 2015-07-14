@@ -224,7 +224,12 @@ int main() {
     onLine_test();
     intersect_test();
     visibilityPolygon_test();
-    
-    std::cout << "All tests had been passed!" << "\n";
+    Polygon a(std::vector<Vector>({{0,0}, {0,2}, {2,2}, {2,0}}));
+    Polygon b(std::vector<Vector>({{1,1}, {1,3}, {3,3}, {3,1}}));
+	std::vector<Polygon> res;
+	intersect(a, b, res);
+	for (Polygon& p : res)
+		std::cout << p << "\n";
+	std::cout << "All tests had been passed!" << "\n";
     return 0;
 }
