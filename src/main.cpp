@@ -8,8 +8,8 @@
 #define WIDTH 800
 #define HIGHT 600
 
-const double dx = 5;
-const double dy = 5;
+const double dx = 10;
+const double dy = 10;
 
 HGE *hge = 0;
 hgeTriple quad;
