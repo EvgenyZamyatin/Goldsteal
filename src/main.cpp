@@ -13,7 +13,7 @@
 const double INF = 1000000000;
 const int dx = 1;
 const int dy = 1;
-const double viewAngle = M_PI/4;
+const double viewAngle = M_PI*7/18;
 const Geo::Polygon boundsPolygon(std::vector<Geo::Vector>({{0,0}, {0,HIGHT}, {WIDTH,HIGHT}, {WIDTH,0}}));
 const Geo::Polygon mainPoly(std::vector<Geo::Vector>({{-5,-5}, {-5, 5}, {5, 5}, {5, -5}}));
 
