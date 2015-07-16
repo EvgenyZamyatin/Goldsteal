@@ -2,7 +2,7 @@
 #define IBODY_H
 #include "IReal.h"
 
-struct IBody : IReal {
+struct IBody : IObject {
 
 public:
 	virtual ~IBody(){};                      

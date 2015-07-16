@@ -5,7 +5,7 @@
 #include <string>
 #include <vector>
 #include "../model/GameState.h"
-#include "Resources.h"
+#include "Resources.h"        
 
 struct LevelLoader {
 	LevelLoader(HGE* hge) : hge(hge) {};
@@ -13,7 +13,8 @@ struct LevelLoader {
 	
 private:
 	ITileSet* parseTileSet(TiXmlNode* v);
-	Environment* parseEnvironment(TiXmlNode* v, const Resources& tsets);
+	Environment* parseEnvironment(TiXmlNode* v, const Resources& res);
+	IObject* parseObject(TiXmlNode* v, const Resources& res);
 	HGE* hge;
 	std::vector<ITileSet*> tileSets;
 };

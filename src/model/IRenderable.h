@@ -5,6 +5,7 @@
 struct IRenderable {
 	virtual ~IRenderable() {};
 	virtual void render(HGE* hge) = 0;
+	bool clean=false;                	
 };
 
 

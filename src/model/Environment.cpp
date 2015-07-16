@@ -1,7 +1,5 @@
 #include "Environment.h"
 
-void Environment::free(HGE* hge)  {hge->Target_Free(compiled);}
-
 void Environment::render(HGE* hge) {
 	
 	for (int i = 0; i < width; ++i) {
@@ -23,7 +21,7 @@ void Environment::render(HGE* hge) {
 			quad.v[3].y=(j)*tileHight+tileHight;
 			quad.v[3].z=0.5;
 			
-			quad.blend=BLEND_ALPHAADD | BLEND_COLORMUL | BLEND_ZWRITE;
+			quad.blend=BLEND_DEFAULT_Z;
 
 			for(int i=0;i<4;i++) {
 				quad.v[i].z=0.5f;
@@ -36,7 +34,7 @@ void Environment::render(HGE* hge) {
 
 HTARGET Environment::compile(HGE* hge) {
 	bool ok = (compiled != 0);
-	for (IStaticObject* o : objs)
+	for (IObject* o : objs)
 		ok &= o->clean;
 	if (ok) {
 		hge->Gfx_BeginScene(compiled);
@@ -48,7 +46,9 @@ HTARGET Environment::compile(HGE* hge) {
 	hge->Gfx_BeginScene(compiled);
 	hge->Gfx_Clear(0);
 	render(hge);
-	for (IStaticObject* o : objs)
+	for (IObject* o : objs) {
 		((IRenderable*)o)->render(hge);
+		o->clean = true;
+	}
 	return compiled;	
 }

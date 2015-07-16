@@ -4,13 +4,13 @@ HGE_PATH=C:\hge181\include
 HGE_LIB=C:\hge181\lib\gcc
 FLAGS= -std=c++11 -O2 -I$(BOOST_PATH) -L$(BOOST_PATH) -I$(HGE_PATH) -L$(HGE_LIB) -Ilib/ -Llib/ -lhgehelp -lhge -ltinyxml 
 
-all: main1
+all: main
                                           
-main: Geometry.o
+main1: Geometry.o
 	$(CC) -o out/main.exe src/main.cpp Geometry.o $(FLAGS)
 
-main1: 
-	$(CC) -o out/main.exe src/main1.cpp src/utils/LevelLoader.cpp src/model/Environment.cpp  $(FLAGS)
+main: Geometry.o
+	$(CC) -o out/main.exe src/main.cpp src/utils/LevelLoader.cpp src/model/Environment.cpp Geometry.o $(FLAGS)
 
 tests: Geometry.o tests.o
 	$(CC) -o out/tests.exe tests.o Geometry.o $(FLAGS)

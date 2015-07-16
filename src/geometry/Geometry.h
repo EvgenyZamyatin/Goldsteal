@@ -75,6 +75,9 @@ namespace Geo {
         void makeCW();
         void makeNCW();
         int order();
+        void rotate(const Vector&, double angle);
+        //around first point.
+        void rotate(double angle);
     };
     
     std::ostream& operator<<(std::ostream&, Polygon);

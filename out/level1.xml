@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="10" height="8" tilewidth="64" tileheight="64" nextobjectid="37">
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="10" height="8" tilewidth="64" tileheight="64" nextobjectid="47">
  <tileset firstgid="1" name="gr" tilewidth="64" tileheight="64">
   <tile id="0">
    <image width="64" height="64" source="../resources/textures/ground/Stones.png"/>
@@ -109,27 +109,9 @@
    <tile gid="1"/>
   </data>
  </layer>
-
  <objectgroup name="object_layer_1">
-  <object id="28" name="box1" type="stuff" gid="6" x="422.486" y="280.34" width="104" height="93" rotation="37.0017">
-   <properties>
-    <property name="static" value="true"/>
-   </properties>
-  </object>
-  <object id="29" name="box2" type="stuff" gid="6" x="111.078" y="231.952" width="100.971" height="112.303" rotation="41.0919">
-   <properties>
-    <property name="static" value="true"/>
-   </properties>
-  </object>
-  <object id="31" name="box3" type="stuff" gid="6" x="356.182" y="509.735" width="128" height="128" rotation="-37.4975">
-   <properties>
-    <property name="static" value="true"/>
-   </properties>
-  </object>
-  <object id="34" name="box4" type="stuff" gid="7" x="453.017" y="128.328" width="78" height="74" rotation="-29.2119">
-   <properties>
-    <property name="static" value="true"/>
-   </properties>
-  </object>
+  <object id="46" name="box5" type="Stuff" gid="6" x="428" y="246" width="50" height="46" rotation="30"/>
+  <object id="47" gid="7" x="172" y="280" width="179.272" height="192.041" rotation="-34.9947"/>
+  <object id="48" gid="6" x="423.118" y="449.431" width="82" height="87" rotation="32.2302"/>
  </objectgroup>
 </map>

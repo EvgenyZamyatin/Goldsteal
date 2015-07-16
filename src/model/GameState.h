@@ -2,7 +2,6 @@
 #define GAMESTATE_H
 #include "Environment.h"                   
 struct GameState {
-	Environment* env;                                        
-
+	Environment* env;
 };
 #endif

@@ -1,7 +1,7 @@
 #ifndef ENVIRONMENT_H
 #define ENVIRONMENT_H
 
-#include "IStaticObject.h"
+#include "IObject.h"
 #include "IRenderable.h"
 #include "../utils/ITileSet.h"
 #include <vector>
@@ -20,7 +20,6 @@ struct Environment : IRenderable {
 		this->gridIndxs=grids;
 		this->tiles=tiles;			
 	}              
-	void free(HGE* hge);
 	
 	//Gfx_BeginScene must be called on tar.	
 	virtual void render(HGE* h);
@@ -28,11 +27,11 @@ struct Environment : IRenderable {
 	//Begins scene.
 	HTARGET compile(HGE* hge);	
 	
-	std::vector<IStaticObject*>* getObjects() {return &objs;}
-	void addObject(IStaticObject* obj) {objs.push_back(obj);}
+	std::vector<IObject*> getObjects() const {return objs;}
+	void addObject(IObject* obj) {objs.push_back(obj);}
 
 private:
-	std::vector<IStaticObject*> objs;	
+	std::vector<IObject*> objs;	
 	int width;
 	int hight;
 	int tileWidth;

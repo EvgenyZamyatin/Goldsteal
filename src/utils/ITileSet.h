@@ -35,8 +35,6 @@ struct TileSet : ITileSet {
 		for (int i = 0; i < 4; ++i)
 			ans.v[i].col=ARGB(255,255,255,255);
 		ans.blend=BLEND_ALPHAADD | BLEND_COLORMUL | BLEND_ZWRITE;
-
-
 		return ans;
 	}
 
@@ -44,7 +42,6 @@ struct TileSet : ITileSet {
 		return textures.size();
 	}
 	
-
 private:
 	std::vector<HTEXTURE> textures;
 };
@@ -66,17 +63,17 @@ struct TileSetFromImage : ITileSet {
     	index %= columns(); 	
     	hgeQuad ans;
     	ans.tex=tex;
-    	ans.v[0].tx=(margin+(index-1)*(spacing+tileWidth))*1.0/width;
-		ans.v[0].ty=(margin+(row-1)*(spacing+tileHight))*1.0/hight;
+    	ans.v[0].tx=(margin+(index)*(spacing+tileWidth))*1.0/width;
+		ans.v[0].ty=(margin+(row)*(spacing+tileHight))*1.0/hight;
 
-		ans.v[1].tx=(margin+(index-1)*(spacing+tileWidth) + tileWidth)*1.0/width;
-		ans.v[1].ty=(margin+(row-1)*(spacing+tileHight))*1.0/hight;
+		ans.v[1].tx=(margin+(index)*(spacing+tileWidth) + tileWidth)*1.0/width;
+		ans.v[1].ty=(margin+(row)*(spacing+tileHight))*1.0/hight;
 
-		ans.v[2].tx=(margin+(index-1)*(spacing+tileWidth) + tileWidth)*1.0/width;
-		ans.v[2].ty=(margin+(row-1)*(spacing+tileHight) + tileHight)*1.0/hight;
+		ans.v[2].tx=(margin+(index)*(spacing+tileWidth) + tileWidth)*1.0/width;
+		ans.v[2].ty=(margin+(row)*(spacing+tileHight) + tileHight)*1.0/hight;
 
-    	ans.v[3].tx=(margin+(index-1)*(spacing+tileWidth))*1.0/width;
-		ans.v[3].ty=(margin+(row-1)*(spacing+tileHight) + tileHight)*1.0/hight;
+    	ans.v[3].tx=(margin+(index)*(spacing+tileWidth))*1.0/width;
+		ans.v[3].ty=(margin+(row)*(spacing+tileHight) + tileHight)*1.0/hight;
 		ans.blend=BLEND_ALPHAADD | BLEND_COLORMUL | BLEND_ZWRITE;
 		for (int i = 0; i < 4; ++i)
 			ans.v[i].col=ARGB(255,255,255,255);

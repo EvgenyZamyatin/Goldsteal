@@ -166,7 +166,22 @@ void Geo::Polygon::makeNCW() {
 }
 
 
+void Geo::Polygon::rotate(const Vector& o, double angle) {
+	for (Vector& v : points) {
+		v -= o;
+		v.rotate(angle);
+		v += o;
+	}
+}
 
+void Geo::Polygon::rotate(double angle) {
+	Vector& o = points[0];
+	for (int i = 1; i < size(); ++i) {
+		points[i] -= o;
+		points[i].rotate(angle);
+		points[i] += o;
+	}
+}
 
 Polygon Geo::visibilityPolygon (Vector o, std::vector<Polygon> polygons) {
 	for (Polygon& p : polygons) {
@@ -268,4 +283,6 @@ double Geo::distance(Segment a, Polygon b) {
 	boost::geometry::correct(b.points);
 	return boost::geometry::distance(a, b.points);
 }
+
+
 

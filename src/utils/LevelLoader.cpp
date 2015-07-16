@@ -1,6 +1,9 @@
-#include "LevelLoader.h"
 #include "../model/GameState.h"
 #include "../model/Environment.h"
+#include "../model/Stuff.h"
+#include "../geometry/Geometry.h"
+#include "LevelLoader.h"
+#include "ITileSet.h"
 #include <tinyxml.h>
 #include <iostream>
 #include <stdlib.h>
@@ -69,7 +72,7 @@ ITileSet* LevelLoader::parseTileSet(TiXmlNode* v) {
 	return new TileSet(texs, tw, th);
 }
 
-Environment* LevelLoader::parseEnvironment(TiXmlNode* v, const Resources& tsets) {
+Environment* LevelLoader::parseEnvironment(TiXmlNode* v, const Resources& res) {
 	assert(std::string(v->Value()) == "layer");
 	int width, hight;
 	for (TiXmlAttribute* attr = v->ToElement()->FirstAttribute(); attr != 0; attr=attr->Next()) {
@@ -86,20 +89,42 @@ Environment* LevelLoader::parseEnvironment(TiXmlNode* v, const Resources& tsets)
 	for (TiXmlNode *node = v; node != 0; node = node->NextSibling()) {
 		indxs.push_back(atoi(node->ToElement()->FirstAttribute()->Value())-1);
 	}
-	int tmp=indxs[0];
-	int nd;
-	int sm=0;
-
-	for (nd = 0; tmp >= tsets.tileSets[nd]->size(); nd++) {
-		sm += tsets.tileSets[nd]->size();
-		tmp -= tsets.tileSets[nd]->size();
-	}
-
+	ITileSet* st;
 	for (int& i : indxs)
-		i -= sm;
+	res.find(i, i, st);
 	Environment* env = new Environment(width, hight, 
-									tsets.tileSets[nd]->tileWidth, tsets.tileSets[nd]->tileHight, indxs, tsets.tileSets[nd]);
+									st->tileWidth, st->tileHight, indxs, st);
 	return env;
+}
+
+IObject* LevelLoader::parseObject(TiXmlNode* v, const Resources& res) {
+	int gid;
+	double x, y, rotation=0;
+	double width, hight;
+	bool sstatic;
+	std::string type;
+   	for (TiXmlAttribute* attr = v->ToElement()->FirstAttribute(); attr != 0; attr=attr->Next()) {
+   		if (std::string(attr->Name()) == "gid") {
+   			gid = atoi(attr->Value())-1;
+   		} else if (std::string(attr->Name()) == "x") {
+   			x = attr->DoubleValue();
+   		} else if (std::string(attr->Name()) == "y") {
+   			y = attr->DoubleValue();
+   		} else if (std::string(attr->Name()) == "rotation") {
+   			rotation = attr->DoubleValue();
+   		} else if (std::string(attr->Name()) == "width") {
+   			width = attr->DoubleValue();
+   		} else if (std::string(attr->Name()) == "height") {
+   			hight = attr->DoubleValue();
+   		} else if (std::string(attr->Name()) == "type") {
+   			type = attr->Value();
+   		}
+   	}
+	ITileSet* ts;
+	res.find(gid, gid, ts);
+	Geo::Polygon poly({{x,y},{x+width,y},{x+width,y-hight},{x, y-hight}});
+	poly.rotate(rotation*M_PI/180.0);
+	return new Stuff(poly, ts, gid, type);
 }
 
 GameState* LevelLoader::load(std::string file, Resources &res) {
@@ -112,7 +137,6 @@ GameState* LevelLoader::load(std::string file, Resources &res) {
 	TiXmlNode *v = &doc;
 	TiXmlNode* pChild;
 	TiXmlText* pText;
-	//assert(v->Type() == TiXmlNode::TINYXML_DOCUMENT);	
 	v = v->FirstChild()->NextSibling()->FirstChild();
 	while (v->Type() == TiXmlNode::TINYXML_ELEMENT && 
 			std::string(v->Value()) == "tileset") {
@@ -121,5 +145,15 @@ GameState* LevelLoader::load(std::string file, Resources &res) {
 	}
 	GameState* state = new GameState();
 	state->env=parseEnvironment(v, res);	                           
+	v=v->NextSibling();                                
+	assert(std::string(v->Value()) == "objectgroup");
+	TiXmlNode *node = v->FirstChild();
+	while (node) {
+		state->env->addObject(parseObject(node, res));
+		node=node->NextSibling();
+	}
 	return state;
 }
+
+
+

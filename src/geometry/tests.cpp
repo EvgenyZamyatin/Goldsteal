@@ -202,7 +202,7 @@ int main() {
     onLine_test();
     intersect_test();
     visibilityPolygon_test();
-    Polygon a(std::vector<Vector>({{0,0}, {0,2}, {2,2}, {2,0}}));
+    /*Polygon a(std::vector<Vector>({{0,0}, {0,2}, {2,2}, {2,0}}));
     Polygon b(std::vector<Vector>({{2,0}, {2,2}, {4,2}, {4,0}}));
 	std::cerr << distance(a, b) << "\n";
 	a = Polygon(std::vector<Vector>({{0,0}, {0,2}, {2,2}, {2,0}}));
@@ -212,7 +212,8 @@ int main() {
 	a = Polygon(std::vector<Vector>({{0,0}, {0,10}, {10,10}, {10,0}}));
     b = Polygon(std::vector<Vector>({{3,0}, {3,6}, {6,6}, {6,3}}));
 	std::cerr << distance(a, b) << "\n";
-	
+	*/
+	//Polygon a(std::vector<Vector>({{0,0}, {0,2}, {2,2}, {2,0}});
 	std::cout << "All tests had been passed!" << "\n";
     return 0;
 }
