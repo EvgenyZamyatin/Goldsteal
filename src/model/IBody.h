@@ -1,12 +1,13 @@
 #ifndef IBODY_H
 #define IBODY_H
-#include "IReal.h"
+#include "IObject.h"
+#include "Environment.h"
 
 struct IBody : IObject {
-
-public:
 	virtual ~IBody(){};                      
 	virtual double getViewAngle() = 0;
+private:
+	Environment* env;	
 };
 
 #endif

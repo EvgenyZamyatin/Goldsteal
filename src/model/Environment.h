@@ -21,23 +21,26 @@ struct Environment : IRenderable {
 		this->tiles=tiles;			
 	}              
 	
-	//Gfx_BeginScene must be called on tar.	
 	virtual void render(HGE* h);
 
-	//Begins scene.
-	HTARGET compile(HGE* hge);	
+	HTEXTURE compile(HGE* hge);	
 	
 	std::vector<IObject*> getObjects() const {return objs;}
 	void addObject(IObject* obj) {objs.push_back(obj);}
+	double getWidth() {return width*tileWidth;}
+	double getHight() {return hight*tileHight;}
 
 private:
 	std::vector<IObject*> objs;	
+	
 	int width;
 	int hight;
 	int tileWidth;
 	int tileHight;
 	std::vector<int> gridIndxs;
 	ITileSet* tiles;
-	HTARGET compiled=0;
+
+	HTARGET target=0;
+	HTEXTURE texture=0; 
 };
 #endif

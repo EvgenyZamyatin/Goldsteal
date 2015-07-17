@@ -4,6 +4,11 @@
 #include <iostream>
 #include <string>
 
+#include <boost/geometry.hpp>                                 
+#include <boost/geometry/geometries/register/point.hpp>
+#include <boost/geometry/geometries/register/segment.hpp>
+#include <boost/geometry/geometries/register/ring.hpp>
+
 namespace Geo {
     
     static double EPSILON = 1e-5;
@@ -93,6 +98,8 @@ namespace Geo {
     bool intersect (const Segment& a, const Segment& b, Vector& res, bool consider_touch=true);
     bool intersect (const Line& line, const Polygon& p, std::vector<Vector>& res, bool consider_touch=true);
     bool intersect (Polygon p1, Polygon p2, std::vector<Polygon>& out);
+	bool intersect (Polygon p1, Polygon p2, Polygon& out);
+
 
     Polygon visibilityPolygon(Vector o, std::vector<Polygon> polygons, int w, int h);
     Polygon visibilityPolygon(Vector o, std::vector<Polygon> polygons);
@@ -102,5 +109,10 @@ namespace Geo {
 
     
 }
+
+BOOST_GEOMETRY_REGISTER_POINT_2D(Geo::Vector, double, boost::geometry::cs::cartesian, x, y)
+BOOST_GEOMETRY_REGISTER_RING(std::vector<Geo::Vector>)
+BOOST_GEOMETRY_REGISTER_SEGMENT(Geo::Segment, Geo::Vector, a, b);
+
 
 #endif

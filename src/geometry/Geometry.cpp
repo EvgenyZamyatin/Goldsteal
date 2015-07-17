@@ -272,6 +272,17 @@ bool Geo::intersect(Polygon p1, Polygon p2, std::vector<Polygon>& out) {
    	return tmp.size() > 0;
 }
 
+bool Geo::intersect(Polygon p1, Polygon p2, Polygon& out) {
+	boost::geometry::correct(p1.points);
+	boost::geometry::correct(p2.points);
+	std::vector<std::vector<Geo::Vector>> tmp;
+	boost::geometry::intersection(p1.points, p2.points, tmp);
+	if (tmp.size() == 0)
+		return false;
+	out = Polygon(tmp[0]);	
+	return true;
+}
+
 double Geo::distance(Polygon a, Polygon b) {
 	boost::geometry::correct(a.points);
 	boost::geometry::correct(b.points);

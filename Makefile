@@ -2,7 +2,7 @@ CC=C:\mingw32\bin\g++.exe
 BOOST_PATH=C:\boost_1_58_0
 HGE_PATH=C:\hge181\include
 HGE_LIB=C:\hge181\lib\gcc
-FLAGS= -std=c++11 -O2 -I$(BOOST_PATH) -L$(BOOST_PATH) -I$(HGE_PATH) -L$(HGE_LIB) -Ilib/ -Llib/ -lhgehelp -lhge -ltinyxml 
+FLAGS= -std=c++11 -I$(BOOST_PATH) -L$(BOOST_PATH) -I$(HGE_PATH) -L$(HGE_LIB) -Ilib/ -Llib/ -lhgehelp -lhge -ltinyxml 
 
 all: main
                                           
@@ -10,7 +10,7 @@ main1: Geometry.o
 	$(CC) -o out/main.exe src/main.cpp Geometry.o $(FLAGS)
 
 main: Geometry.o
-	$(CC) -o out/main.exe src/main.cpp src/utils/LevelLoader.cpp src/model/Environment.cpp Geometry.o $(FLAGS)
+	$(CC) -o out/main.exe src/main.cpp src/utils/LevelLoader.cpp src/model/Environment.cpp src/model/Camera.cpp Geometry.o $(FLAGS)
 
 tests: Geometry.o tests.o
 	$(CC) -o out/tests.exe tests.o Geometry.o $(FLAGS)

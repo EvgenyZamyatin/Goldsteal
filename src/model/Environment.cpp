@@ -1,7 +1,6 @@
 #include "Environment.h"
 
-void Environment::render(HGE* hge) {
-	
+void Environment::render(HGE* hge) {	
 	for (int i = 0; i < width; ++i) {
 		for (int j = 0; j < hight; ++j) {
 			hgeQuad quad = tiles->get(gridIndxs[j*width+i]);
@@ -32,23 +31,25 @@ void Environment::render(HGE* hge) {
 	}
 }
 
-HTARGET Environment::compile(HGE* hge) {
-	bool ok = (compiled != 0);
+HTEXTURE Environment::compile(HGE* hge) {
+	bool ok = (texture != 0);
 	for (IObject* o : objs)
 		ok &= o->clean;
-	if (ok) {
-		hge->Gfx_BeginScene(compiled);
-		return compiled;
-	}	
-	if (compiled != 0)
-		hge->Target_Free(compiled);
-	compiled=hge->Target_Create(tileWidth*width, tileHight*hight, true);
-	hge->Gfx_BeginScene(compiled);
+	//if (ok) 
+	//	return texture;
+	if (target == 0)
+		target = hge->Target_Create(tileWidth*width, tileHight*hight, true);
+	//Strange???
+	//if (texture != 0)
+	//	hge->Texture_Free(texture);
+	hge->Gfx_BeginScene(target);
 	hge->Gfx_Clear(0);
 	render(hge);
 	for (IObject* o : objs) {
-		((IRenderable*)o)->render(hge);
+		o->render(hge);
 		o->clean = true;
 	}
-	return compiled;	
+	hge->Gfx_EndScene();
+	texture=hge->Target_GetTexture(target);
+	return texture;	
 }
