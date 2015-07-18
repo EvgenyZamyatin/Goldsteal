@@ -112,12 +112,16 @@ void Camera::view(HGE* hge) {
     	
     	Geo::Vector bpos = body->getPosition().center();
     	Geo::Vector cpos = getPos();
-    	Geo::Polygon out({{0,0}, {state->env->getWidth(), 0}, {state->env->getWidth(), state->env->getHight()}, {0, state->env->getHight()} });
+    	std::vector<Geo::Polygon> polys;
+    	for (IObject* o : state->env->getObjects())
+    		polys.push_back(o->getPosition());
+    	Geo::Polygon out = Geo::visibilityPolygon(bpos, polys, state->env->getWidth(), state->env->getHight());
     	
     	double kx = screenWidth/cameraWidth;
 		double ky = screenHight/cameraHight;
 		double ew = state->env->getWidth();
 		double eh = state->env->getHight();
+    	
     	Geo::Vector v(cpos.x-cameraWidth/2, cpos.y-cameraHight/2);
 		
 		for (int i = 0; i < out.size(); ++i) {

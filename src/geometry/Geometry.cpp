@@ -252,16 +252,11 @@ Polygon Geo::visibilityPolygon (Vector o, std::vector<Polygon> polygons) {
     		candidates.push_back(nearest); 
     	}    	
     }
-    std::cerr << candidates << "\n";
     return Polygon(candidates);        
 }
 
 Polygon Geo::visibilityPolygon (Vector o, std::vector<Polygon> polygons, double w, double h) {
-	std::cerr << o << "\n";
-	for (Polygon p : polygons)
-		std::cerr << p << "\n";
-	std::cerr << w << "\n" << h << "\n";
-    Polygon p;
+	Polygon p;
     p.addPoint(Vector(0, 0));
     p.addPoint(Vector(w, 0));
     p.addPoint(Vector(w, h));

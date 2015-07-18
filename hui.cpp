@@ -66,15 +66,16 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	hge->System_SetState(HGE_FPS, 100);
 	hge->System_SetState(HGE_ZBUFFER, true);
 	
-	//Geo::Vector o(405.000000 , 305.000000);
-	//std::vector<Geo::Polygon> polys({ Geo::Polygon({Geo::Vector(428.000000 , 246.000000), Geo::Vector(471.301270 , 271.000000), Geo::Vector(494.301270 , 231.162827), Geo::Vector(451.000000 , 206.162827)})});
-	//Geo::visibilityPolygon(o, polys, 640, 512);
-
+	Geo::Vector o(405.000000 , 305.000000);
+	std::vector<Geo::Polygon> polys({ Geo::Polygon({Geo::Vector(428.000000 , 246.000000), Geo::Vector(471.301270 , 271.000000), Geo::Vector(494.301270 , 231.162827), Geo::Vector(451.000000 , 206.162827)})});
+	Geo::visibilityPolygon(o, polys, 640, 512);
+	std::cerr << "===\n";
 	
 	if (hge->System_Initiate()) {
 		Geo::Vector o(405.000000 , 305.000000);
 		std::vector<Geo::Polygon> polys({ Geo::Polygon({Geo::Vector(428.000000 , 246.000000), Geo::Vector(471.301270 , 271.000000), Geo::Vector(494.301270 , 231.162827), Geo::Vector(451.000000 , 206.162827)})});
 		Geo::visibilityPolygon(o, polys, 640, 512);
+		std::cerr << sizeof(double);
 		exit(0);		
 		hge->System_Start();
 		

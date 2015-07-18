@@ -110,6 +110,5 @@
   </data>
  </layer>
  <objectgroup name="object_layer_1">
-  <object id="46" name="box5" type="Stuff" gid="6" x="428" y="246" width="50" height="46" rotation="30"/>
  </objectgroup>
 </map>
