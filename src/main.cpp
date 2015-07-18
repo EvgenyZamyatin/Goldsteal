@@ -9,6 +9,7 @@
 #include "utils/LevelLoader.h"
 #include "utils/Resources.h"
 #include "model/Camera.h"
+#include "model/IBody.h"
 
 #define WIDTH 800
 
@@ -20,6 +21,18 @@ Resources res;
 hgeFont* fnt;
 Camera* cam;
 
+struct Dot : IBody {
+    virtual double getViewAngle() {return 0;}
+    Dot() {
+    	pos = Geo::Polygon({{400, 300},{410,300},{410,310},{400,310}});
+    }
+    virtual void render(HGE* hge) {
+    	for (int i = 0; i < (int)pos.size(); ++i) {    		
+    		hge->Gfx_RenderLine(pos[i].x, pos[i].y, pos[(i+1)%pos.size()].x, pos[(i+1)%pos.size()].y, 0xFFFF0000, 0.4); 
+    	}
+    }
+};
+
 bool FrameFunc() {
 	if (hge->Input_GetKeyState(HGEK_ESCAPE)) return true;
 	cam->frame(hge);
@@ -29,6 +42,7 @@ bool FrameFunc() {
 bool RenderFunc() {
 	cam->view(hge);
 	//fnt->printf(5, 5, HGETEXT_LEFT, "dt:%.3f\nFPS:%d (constant)", hge->Timer_GetDelta(), hge->Timer_GetFPS());
+	//std::cerr << hge->Timer_GetFPS() << "\n";
 	return false;
 }
 
@@ -47,15 +61,15 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	hge->System_SetState(HGE_FPS, 100);
 	hge->System_SetState(HGE_ZBUFFER, true);
 
-
+	
 	if (hge->System_Initiate()) {
 		fnt=new hgeFont("font1.fnt");
  		fnt->SetColor(ARGB(255,0,0,0));
 		LevelLoader loader(hge);
 		state = loader.load("level1.xml", res);
-		state->screenWidth = WIDTH;
-		state->screenHight = HIGHT;
-		cam = new Camera(state, NULL, Geo::Vector(400,300), 80*5, 60*5);
+		IBody* bd = new Dot();
+		state->addBody(bd);
+		cam = new Camera(state, bd, Geo::Vector(400,300), 80*5, 60*5, WIDTH, HIGHT);
 		hge->System_Start();
   	}	
 

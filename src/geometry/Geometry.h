@@ -81,6 +81,7 @@ namespace Geo {
         void makeNCW();
         int order();
         void rotate(const Vector&, double angle);
+        Vector center();
         //around first point.
         void rotate(double angle);
     };
@@ -101,7 +102,7 @@ namespace Geo {
 	bool intersect (Polygon p1, Polygon p2, Polygon& out);
 
 
-    Polygon visibilityPolygon(Vector o, std::vector<Polygon> polygons, int w, int h);
+    Polygon visibilityPolygon(Vector o, std::vector<Polygon> polygons, double w, double h);
     Polygon visibilityPolygon(Vector o, std::vector<Polygon> polygons);
     
     double distance(Polygon a, Polygon b);

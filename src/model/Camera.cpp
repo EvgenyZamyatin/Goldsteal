@@ -3,12 +3,14 @@
 #include <hge.h>
 
 Camera::Camera(GameState* state, IBody* body,
-				const Geo::Vector& pos, double width, double hight) {
+				const Geo::Vector& pos, double width, double hight, double screenWidth, double screenHight) {
 	this->state = state;
 	this->pos = pos;
 	this->cameraWidth = width;
 	this->cameraHight = hight;
-	this->body=body;
+	this->body=body;                
+	this->screenWidth = screenWidth;
+	this->screenHight = screenHight;
 }
 
 Geo::Vector Camera::getPos() {
@@ -18,15 +20,22 @@ Geo::Vector Camera::getPos() {
 	for (Geo::Vector v : body->getPosition().points)
 		ans += v;
 	ans /= body->getPosition().size();
+	
+	ans.x = std::max(ans.x, cameraWidth/2);
+    ans.x = std::min(ans.x, state->env->getWidth() - cameraWidth/2);
+
+	ans.y = std::max(ans.y, cameraHight/2);
+    ans.y = std::min(ans.y, state->env->getHight() - cameraHight/2);
+
 	return pos = ans;
 }
 
 void Camera::make(hgeQuad& quad, Geo::Vector c, double width, double hight,
 			double col, double z) {
 	quad.v[0].x=0, quad.v[0].y=0;
-	quad.v[1].x=0+state->screenWidth, quad.v[1].y=0;
-	quad.v[2].x=0+state->screenWidth, quad.v[2].y=0+state->screenHight;
-	quad.v[3].x=0, quad.v[3].y=0+state->screenHight;
+	quad.v[1].x=screenWidth, quad.v[1].y=0;
+	quad.v[2].x=screenWidth, quad.v[2].y=screenHight;
+	quad.v[3].x=0, quad.v[3].y=screenHight;
 
 	quad.v[0].tx=(c.x-width/2)/state->env->getWidth(), quad.v[0].ty=(c.y-hight/2)/state->env->getHight();
 	quad.v[1].tx=(c.x+width/2)/state->env->getWidth(), quad.v[1].ty=(c.y-hight/2)/state->env->getHight();
@@ -39,38 +48,98 @@ void Camera::make(hgeQuad& quad, Geo::Vector c, double width, double hight,
 	quad.blend=BLEND_DEFAULT_Z;	
 }
 
+void Camera::fill(hgeQuad& quad, Geo::Vector a, Geo::Vector b, Geo::Vector c, Geo::Vector d) {
+	quad.v[0].x=a.x, quad.v[0].y=a.y;
+	quad.v[1].x=b.x, quad.v[1].y=b.y;	
+	quad.v[2].x=c.x, quad.v[2].y=c.y;
+	quad.v[3].x=d.x, quad.v[3].y=d.y;
+}
+
+void Camera::fill(hgeTriple& trip, Geo::Vector a, Geo::Vector b, Geo::Vector c) {
+	trip.v[0].x=a.x, trip.v[0].y=a.y;
+	trip.v[1].x=b.x, trip.v[1].y=b.y;	
+	trip.v[2].x=c.x, trip.v[2].y=c.y;
+}
+
 void Camera::view(HGE* hge) {
 	hgeQuad quad;
 	hgeTriple trip;
 	HTEXTURE stat = state->env->compile(hge);
+	
+	if (target == 0)
+		target = hge->Target_Create(state->env->getWidth(), state->env->getHight(), true);			    	
+    hge->Gfx_BeginScene(target);
+	hge->Gfx_Clear(0);
 	quad.tex=stat;
-	make(quad, pos, cameraWidth, cameraHight, ARGB(200, 255, 255, 255), 0.5);
+	quad.v[0].x=0, quad.v[0].y=0, quad.v[0].tx = 0, quad.v[0].ty = 0, quad.v[0].col = ARGB(255,255,255,255), quad.v[0].z=0.5;
+	quad.v[1].x=state->env->getWidth(), quad.v[1].y=0, quad.v[1].tx = 1, quad.v[1].ty = 0, quad.v[1].col = ARGB(255,255,255,255), quad.v[1].z=0.5;
+	quad.v[2].x=state->env->getWidth(), quad.v[2].y=state->env->getHight(), quad.v[2].tx = 1, quad.v[2].ty = 1, quad.v[2].col = ARGB(255,255,255,255), quad.v[2].z=0.5;
+	quad.v[3].x=0, quad.v[3].y=state->env->getHight(), quad.v[3].tx = 0, quad.v[3].ty = 1, quad.v[3].col = ARGB(255,255,255,255), quad.v[3].z=0.5;
+	quad.blend=BLEND_DEFAULT_Z;
+	hge->Gfx_RenderQuad(&quad);
+	for (IBody* body : state->getBodies())
+		body->render(hge);
+	hge->Gfx_EndScene();
+	HTEXTURE full = hge->Target_GetTexture(target);		
+
+	quad.tex=stat;
+	make(quad, pos, cameraWidth, cameraHight, ARGB(150, 255, 255, 255), 0.5);
 	hge->Gfx_BeginScene();
 	hge->Gfx_Clear(0);
 	hge->Gfx_RenderQuad(&quad);
+	
 	if (body != NULL) {
-    	/*Geo::Vector pos = getPos();
-    	Geo::Polygon visibile = Geo::visibilityPolygon(pos, state->env->getObjects(), state->width(), state->hight());
-    	Geo::Vector orientation = body->getOrientation();
-    	Geo::Vector dirA = orientation;	
-    	Geo::Vector dirB = orientation;     
-    	dirA.rotate(body->getViewAngle()/2);
-    	dirB.rotate(-body->getViewAngle()/2);
-    	dirA *= 100000;
-    	ditB *= 100000
-    	Geo::Polygon vp({pos, dirA, dirB});
-    	Geo::Polygon out;
-    	Geo::intersect(visible, vp, out);
-    	for (int i = 0; i < (int)out.points.size(); ++i) {
-    		Geo::Vector& a = out[i];
-    		Geo::Vector& b = out[(i+1)%out.size()];
-			trip.v[0].x=pos.x, trip.v[0].y=pos.y, trip.v[0].col=ARGB(255,255,255,255), trip.v[0].z=0.5;
-           	trip.v[1].x=a.x, trip.v[1].y=a.y, trip.v[1].col=ARGB(255,255,255,255), trip.v[1].z=0.5;
-			trip.v[2].x=b.x, trip.v[2].y=b.y, trip.v[2].col=ARGB(255,255,255,255), trip.v[2].z=0.5;
-			trip.tex			
-    	}*/
-    }
-    hge->Gfx_EndScene();	
+		/*Geo::Vector pos = getPos();
+		Geo::Vector v(pos.x-cameraWidth/2, pos.y-cameraHight/2);
+		double kx = screenWidth/cameraWidth;
+		double ky = screenHight/cameraHight;
+   		double ew = state->env->getWidth();
+   		double eh = state->env->getHight();
+    	quad.tex = full;
+    	quad.blend=BLEND_DEFAULT_Z;  
+    	quad.v[0].tx=0, quad.v[0].ty=0;
+    	quad.v[1].tx=1, quad.v[1].ty=0;
+    	quad.v[2].tx=1, quad.v[2].ty=1;
+    	quad.v[3].tx=0, quad.v[3].ty=1;
+    	for (int i = 0; i < 4; i++)
+    		quad.v[i].z = 0.4, quad.v[i].col=ARGB(255,255,255,255);
+    	quad.v[0].x=(0-v.x)*kx, quad.v[0].y=(0-v.y)*ky;
+    	quad.v[1].x=(ew-v.x)*kx, quad.v[1].y=(0-v.y)*ky;
+    	quad.v[2].x=(ew-v.x)*kx, quad.v[2].y=(eh-v.y)*ky;
+    	quad.v[3].x=(0-v.x)*kx, quad.v[3].y=(eh-v.y)*ky;
+    	hge->Gfx_RenderQuad(&quad);*/
+    	
+    	
+    	Geo::Vector bpos = body->getPosition().center();
+    	Geo::Vector cpos = getPos();
+    	Geo::Polygon out({{0,0}, {state->env->getWidth(), 0}, {state->env->getWidth(), state->env->getHight()}, {0, state->env->getHight()} });
+    	
+    	double kx = screenWidth/cameraWidth;
+		double ky = screenHight/cameraHight;
+		double ew = state->env->getWidth();
+		double eh = state->env->getHight();
+    	Geo::Vector v(cpos.x-cameraWidth/2, cpos.y-cameraHight/2);
+		
+		for (int i = 0; i < out.size(); ++i) {
+    		Geo::Vector a = out[i];
+    		Geo::Vector b = out[(i+1)%out.size()];
+    		trip.tex=full;
+    		for (int j = 0; j < 3; ++j)
+    			trip.v[i].z = 0.4, trip.v[i].col=ARGB(255,255,255,255);	
+    		trip.v[0].tx=bpos.x/ew, trip.v[0].ty=bpos.y/eh;
+    		trip.v[1].tx=a.x/ew, trip.v[1].ty=a.y/eh;
+    		trip.v[2].tx=b.x/ew, trip.v[2].ty=b.y/eh;
+    		trip.blend=BLEND_DEFAULT_Z;
+    		
+    		trip.v[0].x=(bpos.x-v.x)*kx, trip.v[0].y=(bpos.y-v.y)*ky;
+    		trip.v[1].x=(a.x-v.x)*kx, trip.v[1].y=(a.y-v.y)*ky;
+    		trip.v[2].x=(b.x-v.x)*kx, trip.v[2].y=(b.y-v.y)*ky;
+    		
+    		hge->Gfx_RenderTriple(&trip);
+    	}
+    	
+    } 
+	hge->Gfx_EndScene();	
 }
 
 void Camera::setFreeMode(bool freeMode) {

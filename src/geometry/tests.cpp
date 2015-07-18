@@ -1,5 +1,4 @@
 #include "Geometry.h"
-#include "Boosting.h"
 #include <cassert>
 #include <algorithm>
 
@@ -212,8 +211,13 @@ int main() {
 	a = Polygon(std::vector<Vector>({{0,0}, {0,10}, {10,10}, {10,0}}));
     b = Polygon(std::vector<Vector>({{3,0}, {3,6}, {6,6}, {6,3}}));
 	std::cerr << distance(a, b) << "\n";
+	Polygon a(std::vector<Vector>({{0,0}, {0,2}, {2,2}, {2,0}});
 	*/
-	//Polygon a(std::vector<Vector>({{0,0}, {0,2}, {2,2}, {2,0}});
+	//Vector o(405.000000 , 305.000000);
+	//std::vector<Polygon> polys({ Polygon({Vector(428.000000 , 246.000000), Vector(471.301270 , 271.000000), Vector(494.301270 , 231.162827), Vector(451.000000 , 206.162827)})});
+	//visibilityPolygon(o, polys, 640, 512);
+	//(640.000000 , 184.489487) (471.301270 , 271.000000) (0.000000 , 0.000000) (0.000000 , 512.000000) (640.000000 , 512.000000)
+	
 	std::cout << "All tests had been passed!" << "\n";
     return 0;
 }

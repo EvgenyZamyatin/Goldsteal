@@ -2,8 +2,6 @@
 #include <cmath>
 #include <algorithm>
 #include <cassert>
-#include "Boosting.h"
-
 using namespace Geo;
 
 bool Geo::equals(double a, double b) {
@@ -183,6 +181,14 @@ void Geo::Polygon::rotate(double angle) {
 	}
 }
 
+Vector Geo::Polygon::center() {
+	Vector ans(0,0);
+	for (Vector v : points)
+		ans += v;
+	ans /= points.size();
+	return ans;
+}
+
 Polygon Geo::visibilityPolygon (Vector o, std::vector<Polygon> polygons) {
 	for (Polygon& p : polygons) {
     	assert(p.size() > 1);
@@ -246,10 +252,15 @@ Polygon Geo::visibilityPolygon (Vector o, std::vector<Polygon> polygons) {
     		candidates.push_back(nearest); 
     	}    	
     }
+    std::cerr << candidates << "\n";
     return Polygon(candidates);        
 }
 
-Polygon Geo::visibilityPolygon (Vector o, std::vector<Polygon> polygons, int w, int h) {
+Polygon Geo::visibilityPolygon (Vector o, std::vector<Polygon> polygons, double w, double h) {
+	std::cerr << o << "\n";
+	for (Polygon p : polygons)
+		std::cerr << p << "\n";
+	std::cerr << w << "\n" << h << "\n";
     Polygon p;
     p.addPoint(Vector(0, 0));
     p.addPoint(Vector(w, 0));

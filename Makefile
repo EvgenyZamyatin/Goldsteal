@@ -5,6 +5,9 @@ HGE_LIB=C:\hge181\lib\gcc
 FLAGS= -std=c++11 -I$(BOOST_PATH) -L$(BOOST_PATH) -I$(HGE_PATH) -L$(HGE_LIB) -Ilib/ -Llib/ -lhgehelp -lhge -ltinyxml 
 
 all: main
+
+hui: Geometry.o
+	$(CC) -o out/hui.exe hui.cpp Geometry.o $(FLAGS)
                                           
 main1: Geometry.o
 	$(CC) -o out/main.exe src/main.cpp Geometry.o $(FLAGS)
