@@ -91,10 +91,14 @@ void Camera::view(HGE* hge) {
 	if (body != NULL) {
 		Geo::Vector bpos = body->getPosition().center();
     	Geo::Vector cpos = getPos();
+    	
+    	//should be in body class.
     	std::vector<Geo::Polygon> polys;
     	for (IObject* o : state->env->getObjects())
     		polys.push_back(o->getPosition());
     	Geo::Polygon out = Geo::visibilityPolygon(bpos, polys, state->env->getWidth(), state->env->getHight());
+    	std::cerr << out << "\n";
+    	
     	double kx = screenWidth/cameraWidth;
 		double ky = screenHight/cameraHight;
 		double ew = state->env->getWidth();
@@ -129,7 +133,19 @@ void Camera::setFreeMode(bool freeMode) {
 }                       
 
 
-void Camera::frame(HGE* hge) {	
+void Camera::frame(HGE* hge) {
+	hgeInputEvent evt;
+	while (hge->Input_GetEvent(&evt)) {
+  		switch (evt.type) {
+      		case INPUT_KEYDOWN:
+        		if (evt.key==HGEK_SPACE) {
+        			freeMode ^= true;	
+        		}
+        		break;
+   		}
+	}
+	if (!freeMode)
+		return;
 	if (hge->Input_GetKeyState(HGEK_W)) 
         pos.y -= 5;
     if (hge->Input_GetKeyState(HGEK_S)) 

@@ -20,6 +20,7 @@ GameState* state;
 Resources res;
 hgeFont* fnt;
 Camera* cam;
+IBody* bd;
 
 struct Dot : IBody {
     virtual double getViewAngle() {return 0;}
@@ -31,11 +32,24 @@ struct Dot : IBody {
     		hge->Gfx_RenderLine(pos[i].x, pos[i].y, pos[(i+1)%pos.size()].x, pos[(i+1)%pos.size()].y, 0xFFFF0000, 0.4); 
     	}
     }
+    virtual void frame(HGE* hge) {
+    	for (Geo::Vector& v : pos.points) {
+        	if (hge->Input_GetKeyState(HGEK_UP)) 
+        	    v.y -= 5;
+        	if (hge->Input_GetKeyState(HGEK_DOWN)) 
+           		v.y += 5;
+        	if (hge->Input_GetKeyState(HGEK_RIGHT)) 
+            	v.x += 5;
+        	if (hge->Input_GetKeyState(HGEK_LEFT)) 
+            	v.x -= 5;
+        }     
+    }
 };
 
 bool FrameFunc() {
 	if (hge->Input_GetKeyState(HGEK_ESCAPE)) return true;
 	cam->frame(hge);
+	bd->frame(hge);
 	return false;
 }          
 		
@@ -67,7 +81,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
  		fnt->SetColor(ARGB(255,0,0,0));
 		LevelLoader loader(hge);
 		state = loader.load("level1.xml", res);
-		IBody* bd = new Dot();
+		bd = new Dot();
 		state->addBody(bd);
 		cam = new Camera(state, bd, Geo::Vector(400,300), 80*5, 60*5, WIDTH, HIGHT);
 		hge->System_Start();

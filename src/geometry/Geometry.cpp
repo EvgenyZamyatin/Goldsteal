@@ -2,6 +2,7 @@
 #include <cmath>
 #include <algorithm>
 #include <cassert>
+
 using namespace Geo;
 
 bool Geo::equals(double a, double b) {

@@ -14,12 +14,13 @@ struct Camera {
 	void move(const Geo::Vector& v);
 	void setFreeMode(bool freeMode);
 	void frame(HGE* hge);
+	bool isFree() {return freeMode;}
 private:
 	void fill(hgeQuad& quad, Geo::Vector a, Geo::Vector b, Geo::Vector c, Geo::Vector d);
 	void fill(hgeTriple& trip, Geo::Vector a, Geo::Vector b, Geo::Vector c);
 
 	void make(hgeQuad& quad, Geo::Vector c, double width, double hight, double col, double z);
-	bool freeMode=true;
+	bool freeMode=false;
 	Geo::Vector getPos();
 	IBody* body=NULL;
 	Geo::Vector pos;

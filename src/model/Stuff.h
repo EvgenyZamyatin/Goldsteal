@@ -23,7 +23,7 @@ struct Stuff : IObject {
 		for (int i = 0; i < 4; ++i) {   
 			quad.v[i].x=pos.points[i].x;
 			quad.v[i].y=pos.points[i].y;
-			quad.v[i].z=0.5;			
+			quad.v[i].z=0.5;
 		}
 		quad.blend=BLEND_DEFAULT_Z;
 		hge->Gfx_RenderQuad(&quad);

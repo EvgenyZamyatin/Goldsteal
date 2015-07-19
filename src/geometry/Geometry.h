@@ -11,7 +11,7 @@
 
 namespace Geo {
     
-    static double EPSILON = 1e-3;
+    static double EPSILON = 1e-5;
     static const int LEFT = -1;
     static const int RIGHT = 1;
     static const int COLLINEAR = 0;

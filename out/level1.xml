@@ -111,7 +111,5 @@
  </layer>
  <objectgroup name="object_layer_1">
   <object id="46" name="box5" type="Stuff" gid="6" x="428" y="246" width="50" height="46" rotation="30"/>
-  <object id="47" gid="7" x="172" y="280" width="179.272" height="192.041" rotation="-34.9947"/>
-  <object id="48" gid="6" x="423.118" y="449.431" width="82" height="87" rotation="32.2302"/>
  </objectgroup>
 </map>
