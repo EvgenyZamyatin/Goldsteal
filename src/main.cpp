@@ -42,7 +42,7 @@ bool FrameFunc() {
 bool RenderFunc() {
 	cam->view(hge);
 	//fnt->printf(5, 5, HGETEXT_LEFT, "dt:%.3f\nFPS:%d (constant)", hge->Timer_GetDelta(), hge->Timer_GetFPS());
-	std::cerr << hge->Timer_GetFPS() << "\n";
+	//std::cerr << hge->Timer_GetFPS() << "\n";
 	return false;
 }
 

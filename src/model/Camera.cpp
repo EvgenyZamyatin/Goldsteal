@@ -1,6 +1,6 @@
 #include "Camera.h"
 #include <vector>
-#include <hge.h>
+#include <hge.h>    
 
 Camera::Camera(GameState* state, IBody* body,
 				const Geo::Vector& pos, double width, double hight, double screenWidth, double screenHight) {
@@ -89,34 +89,12 @@ void Camera::view(HGE* hge) {
 	hge->Gfx_RenderQuad(&quad);
 	
 	if (body != NULL) {
-		/*Geo::Vector pos = getPos();
-		Geo::Vector v(pos.x-cameraWidth/2, pos.y-cameraHight/2);
-		double kx = screenWidth/cameraWidth;
-		double ky = screenHight/cameraHight;
-   		double ew = state->env->getWidth();
-   		double eh = state->env->getHight();
-    	quad.tex = full;
-    	quad.blend=BLEND_DEFAULT_Z;  
-    	quad.v[0].tx=0, quad.v[0].ty=0;
-    	quad.v[1].tx=1, quad.v[1].ty=0;
-    	quad.v[2].tx=1, quad.v[2].ty=1;
-    	quad.v[3].tx=0, quad.v[3].ty=1;
-    	for (int i = 0; i < 4; i++)
-    		quad.v[i].z = 0.4, quad.v[i].col=ARGB(255,255,255,255);
-    	quad.v[0].x=(0-v.x)*kx, quad.v[0].y=(0-v.y)*ky;
-    	quad.v[1].x=(ew-v.x)*kx, quad.v[1].y=(0-v.y)*ky;
-    	quad.v[2].x=(ew-v.x)*kx, quad.v[2].y=(eh-v.y)*ky;
-    	quad.v[3].x=(0-v.x)*kx, quad.v[3].y=(eh-v.y)*ky;
-    	hge->Gfx_RenderQuad(&quad);*/
-    	
-    	
-    	Geo::Vector bpos = body->getPosition().center();
+		Geo::Vector bpos = body->getPosition().center();
     	Geo::Vector cpos = getPos();
     	std::vector<Geo::Polygon> polys;
     	for (IObject* o : state->env->getObjects())
     		polys.push_back(o->getPosition());
     	Geo::Polygon out = Geo::visibilityPolygon(bpos, polys, state->env->getWidth(), state->env->getHight());
-    	
     	double kx = screenWidth/cameraWidth;
 		double ky = screenHight/cameraHight;
 		double ew = state->env->getWidth();
@@ -129,7 +107,7 @@ void Camera::view(HGE* hge) {
     		Geo::Vector b = out[(i+1)%out.size()];
     		trip.tex=full;
     		for (int j = 0; j < 3; ++j)
-    			trip.v[i].z = 0.4, trip.v[i].col=ARGB(255,255,255,255);	
+    			trip.v[j].z = 0.4, trip.v[j].col=ARGB(255,255,255,255);	
     		trip.v[0].tx=bpos.x/ew, trip.v[0].ty=bpos.y/eh;
     		trip.v[1].tx=a.x/ew, trip.v[1].ty=a.y/eh;
     		trip.v[2].tx=b.x/ew, trip.v[2].ty=b.y/eh;
@@ -148,7 +126,7 @@ void Camera::view(HGE* hge) {
 
 void Camera::setFreeMode(bool freeMode) {
 	this->freeMode=freeMode;
-}
+}                       
 
 
 void Camera::frame(HGE* hge) {	
@@ -170,3 +148,26 @@ void Camera::frame(HGE* hge) {
 
 
 
+
+/*Geo::Vector pos = getPos();
+		Geo::Vector v(pos.x-cameraWidth/2, pos.y-cameraHight/2);
+		double kx = screenWidth/cameraWidth;
+		double ky = screenHight/cameraHight;
+   		double ew = state->env->getWidth();
+   		double eh = state->env->getHight();
+    	quad.tex = full;
+    	quad.blend=BLEND_DEFAULT_Z;  
+    	quad.v[0].tx=0, quad.v[0].ty=0;
+    	quad.v[1].tx=1, quad.v[1].ty=0;
+    	quad.v[2].tx=1, quad.v[2].ty=1;
+    	quad.v[3].tx=0, quad.v[3].ty=1;
+    	for (int i = 0; i < 4; i++)
+    		quad.v[i].z = 0.4, quad.v[i].col=ARGB(255,255,255,255);
+    	quad.v[0].x=(0-v.x)*kx, quad.v[0].y=(0-v.y)*ky;
+    	quad.v[1].x=(ew-v.x)*kx, quad.v[1].y=(0-v.y)*ky;
+    	quad.v[2].x=(ew-v.x)*kx, quad.v[2].y=(eh-v.y)*ky;
+    	quad.v[3].x=(0-v.x)*kx, quad.v[3].y=(eh-v.y)*ky;
+    	hge->Gfx_RenderQuad(&quad);*/
+    	
+    	
+    	
