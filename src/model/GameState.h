@@ -1,21 +1,23 @@
 #ifndef GAMESTATE_H
 #define GAMESTATE_H
-#include "Environment.h"                   
-#include "../utils/Resources.h"
+
 #include <hge.h>
 #include <vector>
+#include "Environment.h"                   
 #include "IBody.h"
+#include "Camera.h"
 
 struct GameState {
-	Environment* env;
-	Resources* res;
-	std::vector<IBody*> getBodies() {return bodies;}
-	void addBody(IBody* body) {bodies.push_back(body);}
-	//HTEXTURE getCurrenConfiguration(HGE* hge);
-
+    GameState(Environment* env) : env(env) {}
+	std::vector<IBody*> getBodies();
+	std::vector<IBody*>& getBodies() const;
+	void addBody(IBody* body);
+	void frame(int event);
+	Environment* getEnvironment();
+	friend class Camera;
 private:
-	//HTARGET target;
 	std::vector<IBody*> bodies;
-
+	Environment* env;
+	IBody* hero;
 };
 #endif

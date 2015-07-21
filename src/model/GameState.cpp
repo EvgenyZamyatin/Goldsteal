@@ -1,13 +1,13 @@
 #include "GameState.h"
 
+std::vector<IBody*> GameState::getBodies() {return bodies;}
+std::vector<IBody*>& GameState::getBodies() const {return bodies;}
 
-/*HTEXTURE GameState::getCurrentConfiguration(HGE* hge) {
-	if (target == 0)
-		target = hge->Target_Create(env->getWidth(), env->getHight(), true);
-	hge->Gfx_BeginScene(target);
-	hge->Gfx_Clear(0);
-	for (IBody* body : bodies) 
-		body->render(hge);
-	hge->Gfx_EndScene();
-	return hge->Target_GetTexture(target);
-}*/
+void GameState::addBody(IBody* body) {
+	bodies.push_back(body);
+	body->setGameState(this);		
+}
+
+void GameState::frame(int event) {}
+
+Environment* getEnvironment() {return env;}

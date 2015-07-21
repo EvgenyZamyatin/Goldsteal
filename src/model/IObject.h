@@ -1,22 +1,22 @@
 #ifndef IStaticObject_H
 #define IStaticObject_H
-#include "IRenderable.h"
 #include "../geometry/Geometry.h"
 
-struct IObject : IRenderable {
+struct IObject : IRenderable{
 	virtual ~IObject(){}
 	virtual void activate() {}
-	virtual Geo::Polygon getPosition() {return pos;}
-	virtual Geo::Vector getOrientation() {return orientation;}
-	bool isStatic() const {return sstatic;}
-	std::string getType() const {return type;}
-	static IObject* construct(){}
+	virtual Geo::Vector getPosition() const {return pos;}
+	virtual Geo::Polygon getBounds() const {return bounds;}
+	virtual Geo::Vector getOrientation() const {return dir;}
+	bool isObstruct() const {return obstruct;}
+	int getType() const {return type;}
 
-protected:
-	Geo::Polygon pos;
-	Geo::Vector orientation;
-	std::string type;
-	bool sstatic=false;
+private:
+	int type;
+	bool obstuct;
+	Geo::Polygon bounds;
+	Geo::Vector pos;
+	Geo::Vector dir;
 };
 
 #endif

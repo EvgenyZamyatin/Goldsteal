@@ -5,30 +5,31 @@
 #include "GameState.h"
 #include "IBody.h"
 #include <hge.h>
+#include <hgeresource.h>
 #include <vector>
 
 struct Camera {
-	Camera(GameState* state, IBody* body, const Geo::Vector& pos, double width, double hight, double screenWidth, double screenHight);
-	void view(HGE* hge);
-	void bind(IObject* obj);
-	void move(const Geo::Vector& v);
-	void setFreeMode(bool freeMode);
-	void frame(HGE* hge);
-	bool isFree() {return freeMode;}
-private:
-	void fill(hgeQuad& quad, Geo::Vector a, Geo::Vector b, Geo::Vector c, Geo::Vector d);
-	void fill(hgeTriple& trip, Geo::Vector a, Geo::Vector b, Geo::Vector c);
+	Camera(GameState const* state, Geo::Vector const& pos, 
+			double cameraWidth, double cameraHight, double screenWidth, double screenHight,
+			double radius);
 
-	void make(hgeQuad& quad, Geo::Vector c, double width, double hight, double col, double z);
-	bool freeMode=false;
-	Geo::Vector getPos();
-	IBody* body=NULL;
+	//calls after gamestate frame;
+	void view(HGE* hge, hgeResourceManager* res);
+	void frame(Geo::Vector const& mousePos, bool freeMode);
+	
+	void setGameState(GameState const* state) {this->state=state;}
+	void bind(IBody* body) {this->body=body;}
+	void move(Geo::Vector const& v) {pos += v};
+
+private:
+	IBody* body;
 	Geo::Vector pos;
 	GameState* state;
+	double radius;
+
 	double cameraWidth;
 	double cameraHight;
 	double screenWidth;
 	double screenHight;
-	HTARGET target=0;	
 };
 #endif

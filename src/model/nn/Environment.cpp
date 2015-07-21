@@ -1,5 +1,12 @@
 #include "Environment.h"
 
+Environment::Environment(double width, double hight, RenderFuction const& render) {
+	this->width = width;
+	this->hight = hight;
+	this->render = render;
+}
+
+/*
 void Environment::render(HGE* hge) {	
 	for (int i = 0; i < width; ++i) {
 		for (int j = 0; j < hight; ++j) {
@@ -53,3 +60,4 @@ HTEXTURE Environment::compile(HGE* hge) {
 	texture=hge->Target_GetTexture(target);
 	return texture;	
 }
+*/
