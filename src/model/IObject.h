@@ -1,8 +1,11 @@
 #ifndef IStaticObject_H
 #define IStaticObject_H
-#include "../geometry/Geometry.h"
 
-struct IObject : IRenderable{
+#include "Forward.h"
+#include "../geometry/Geometry.h"
+#include "IRenderable.h"
+
+struct IObject : IRenderable {
 	virtual ~IObject(){}
 	virtual void activate() {}
 	virtual Geo::Vector getPosition() const {return pos;}
@@ -11,9 +14,9 @@ struct IObject : IRenderable{
 	bool isObstruct() const {return obstruct;}
 	int getType() const {return type;}
 
-private:
+protected:
 	int type;
-	bool obstuct;
+	bool obstruct;
 	Geo::Polygon bounds;
 	Geo::Vector pos;
 	Geo::Vector dir;

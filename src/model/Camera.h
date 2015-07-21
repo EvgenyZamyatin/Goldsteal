@@ -1,5 +1,6 @@
 #ifndef CAMERA_H
 #define CAMERA_H
+#include "Forward.h"
 #include "IObject.h"
 #include "../geometry/Geometry.h"
 #include "GameState.h"
@@ -9,7 +10,7 @@
 #include <vector>
 
 struct Camera {
-	Camera(GameState const* state, Geo::Vector const& pos, 
+	Camera(GameState* state, Geo::Vector pos, 
 			double cameraWidth, double cameraHight, double screenWidth, double screenHight,
 			double radius);
 
@@ -17,9 +18,9 @@ struct Camera {
 	void view(HGE* hge, hgeResourceManager* res);
 	void frame(Geo::Vector const& mousePos, bool freeMode);
 	
-	void setGameState(GameState const* state) {this->state=state;}
+	void setGameState(GameState* state) {this->state=state;}
 	void bind(IBody* body) {this->body=body;}
-	void move(Geo::Vector const& v) {pos += v};
+	void move(Geo::Vector const& v) {pos += v;}
 
 private:
 	IBody* body;

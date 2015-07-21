@@ -1,9 +1,9 @@
 #ifndef GAMESTATE_H
 #define GAMESTATE_H
 
+#include "Forward.h"
 #include <vector>
 #include "Environment.h"                   
-#include "IBody.h"
 #include "Camera.h"
 
 struct GameState {

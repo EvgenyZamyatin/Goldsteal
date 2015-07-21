@@ -7,17 +7,17 @@
 #include <algorithm>
 #include "model/GameState.h"
 #include "utils/LevelLoader.h"
-#include "utils/Resources.h"
 #include "model/Camera.h"
 #include "model/IBody.h"
+#include <hgeresource.h>
 
 #define WIDTH 800
 
 #define HIGHT 600
              
 HGE *hge = 0;
-GameState* state;
-Resources res;
+
+/*GameState* state;
 hgeFont* fnt;
 Camera* cam;
 IBody* bd;
@@ -45,16 +45,16 @@ struct Dot : IBody {
         }     
     }
 };
-
+*/
 bool FrameFunc() {
 	if (hge->Input_GetKeyState(HGEK_ESCAPE)) return true;
-	cam->frame(hge);
-	bd->frame(hge);
+	//cam->frame(hge);
+	//bd->frame(hge);
 	return false;
 }          
 		
 bool RenderFunc() {
-	cam->view(hge);
+	//cam->view(hge);
 	//fnt->printf(5, 5, HGETEXT_LEFT, "dt:%.3f\nFPS:%d (constant)", hge->Timer_GetDelta(), hge->Timer_GetFPS());
 	//std::cerr << hge->Timer_GetFPS() << "\n";
 	return false;
@@ -62,7 +62,11 @@ bool RenderFunc() {
 
 
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
-	hge = hgeCreate(HGE_VERSION);
+	LevelLoader loader;
+	GameState* state;
+	hgeResourceManager* res;
+	loader.load("level1.tmx", "", state, res);
+	/*hge = hgeCreate(HGE_VERSION);
 
 	hge->System_SetState(HGE_FRAMEFUNC, FrameFunc);
 	hge->System_SetState(HGE_RENDERFUNC, RenderFunc);
@@ -77,18 +81,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	
 	if (hge->System_Initiate()) {
-		fnt=new hgeFont("font1.fnt");
- 		fnt->SetColor(ARGB(255,0,0,0));
-		LevelLoader loader(hge);
-		state = loader.load("level1.xml", res);
-		bd = new Dot();
-		state->addBody(bd);
-		cam = new Camera(state, bd, Geo::Vector(400,300), 80*5, 60*5, WIDTH, HIGHT);
+		hgeResourceManager* res = new hgeResourceManager();
+		HTEXTURE tex = hge->Texture_Load("crate1.png");
+		std::cerr << res->GetTexture("crate1.png") << "\n" << tex;
 		hge->System_Start();
   	}	
 
   	hge->System_Shutdown();
 	hge->Release();
-
-	return 0;
+	*/
+	return 0; 
 }

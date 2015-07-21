@@ -2,7 +2,7 @@
 #include <vector>
 #include <hge.h>    
 
-Camera::Camera(GameState const* state, Geo::Vector const& pos, 
+Camera::Camera(GameState* state, Geo::Vector pos, 
 				double cameraWidth, double cameraHight, double screenWidth, double screenHight,
 				double radius) {
 	body = NULL;
@@ -29,7 +29,7 @@ inline void fillTriple(hgeTriple& trip, std::vector<hgeVertex> v) {
 void Camera::view(HGE* hge, hgeResourceManager* res) {
 	//===onEnvTarget
 	
-	HTARGET envTarget = res->getTarget("envTarget");
+	HTARGET envTarget = res->GetTarget("envTarget");
 	HTEXTURE envTexture = 0;
 	bool ok = state->env->clear;
 	for (IObject* obj : state->env->objs)
@@ -45,7 +45,7 @@ void Camera::view(HGE* hge, hgeResourceManager* res) {
 	envTexture = hge->Target_GetTexture(envTarget);
 	//===onDynamicTarget
 
-	HTARGET dynTarget = res->getTarget("dynamicTarget");
+	HTARGET dynTarget = res->GetTarget("dynamicTarget");
 	HTEXTURE dynTexture = 0;
 	hge->Gfx_BeginScene(dynTarget);
 	hge->Gfx_Clear(0);
@@ -58,8 +58,8 @@ void Camera::view(HGE* hge, hgeResourceManager* res) {
 	hge->Gfx_BeginScene();
 	hge->Gfx_Clear(0);
 	Geo::Vector crnr = pos - Geo::Vector(cameraWidth/2, cameraHight/2);
-	double ew = state->env->widht;
-	double eh = state->env->widht;
+	double ew = state->env->width;
+	double eh = state->env->hight;
 	
 	static hgeQuad quad;	
 	static hgeTriple trip;
@@ -68,10 +68,10 @@ void Camera::view(HGE* hge, hgeResourceManager* res) {
 	quad.blend = BLEND_DEFAULT_Z;
 	quad.tex = envTexture;
 	fillQuad(quad, {
-					{0,0,0.5,col, pos.x/ew, pos.y/eh},
-					{screenWidth, 0, 0.5, col, (pos.x+cameraWidth)/ew, pos.y/eh},
-					{screenWidth, screenHight, 0.5, col, (pos.x+cameraWidth)/ew, (pos.y+cameraHight)/eh},
-					{0, screenHight, 0.5, col, pos.x/ew, (pos.y+cameraHight)/eh},		
+					{0.f,0.f,0.5f,col, (float)(pos.x/ew), (float)(pos.y/eh)},
+					{(float)screenWidth, 0.f, 0.5f, col, (float)((pos.x+cameraWidth)/ew), (float)(pos.y/eh)},
+					{(float)screenWidth, (float)screenHight, 0.5f, col, (float)((pos.x+cameraWidth)/ew), (float)((pos.y+cameraHight)/eh)},
+					{0.f, (float)screenHight, 0.5f, col, (float)(pos.x/ew), (float)((pos.y+cameraHight)/eh)},		
 				   });
 	hge->Gfx_RenderQuad(&quad);
 	
@@ -82,14 +82,14 @@ void Camera::view(HGE* hge, hgeResourceManager* res) {
 
 	for (int i = 0; i < vis.size(); ++i) {
     	Geo::Vector const& a = vis[i];
-    	Geo::Vector const& b = vis[(i+1)%out.size()];
+    	Geo::Vector const& b = vis[(i+1)%vis.size()];
     	hgeU32 col = ARGB(255,255,255,255);
-    	trip.blend = BLEND_DEFAUT_Z;
+    	trip.blend = BLEND_DEFAULT_Z;
     	trip.tex=dynTexture;
     	fillTriple(trip, {
-    					  {(heroPos.x-crnr.x)*kx, (heroPos.y-crnr.y)*ky, 0.5, col, heroPos.x/ew, heroPos.y/eh},
-    					  {(a.x-crnr.x)*kx, (a.y-crnr.y)*ky, 0.5, col, a.x/ew, a.y/eh},
-    					  {(b.x-crnr.x)*kx, (b.y-crnr.y)*ky, 0.5, col, b.x/ew, b.y/eh} 
+    					  {(float)((heroPos.x-crnr.x)*kx), (float)((heroPos.y-crnr.y)*ky), 0.5f, col, (float)(heroPos.x/ew), (float)(heroPos.y/eh)},
+    					  {(float)((a.x-crnr.x)*kx), (float)((a.y-crnr.y)*ky), 0.5f, col, (float)(a.x/ew, a.y/eh)},
+    					  {(float)((b.x-crnr.x)*kx), (float)((b.y-crnr.y)*ky), 0.5f, col, (float)(b.x/ew, b.y/eh)} 
     					 });
     	hge->Gfx_RenderTriple(&trip);
     }
@@ -103,7 +103,7 @@ void Camera::frame(Geo::Vector const& mouse, bool freeMode) {
 	} else {
 		tmp = (mouse - state->hero->pos);
 	}
-	if (greater(tmp.len(), radius)) 
+	if (Geo::greater(tmp.len(), radius)) 
 		move(tmp/radius);
 }
 	

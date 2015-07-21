@@ -1,14 +1,16 @@
+#include "LevelLoader.h"
 #include "../model/GameState.h"
 #include "../model/Environment.h"
-#include "../model/Stuff.h"
 #include "../geometry/Geometry.h"
-#include "LevelLoader.h"
 #include "ITileSet.h"
-#include <tinyxml.h>
 #include <iostream>
+#include <hgeresource.h>
 #include <stdlib.h>
 #include <hge.h>
+#include <tmx/Map.h>
+#include <tmx/LayerVisitor.h>
 
+/*
 ITileSet* LevelLoader::parseTileSet(TiXmlNode* v) {
     TiXmlElement* e = v->ToElement();
 	TiXmlAttribute* attr = e->FirstAttribute();
@@ -154,6 +156,77 @@ GameState* LevelLoader::load(std::string file, Resources &res) {
 	}
 	return state;
 }
+*/
+
+struct MyVisitor : tmx::LayerVisitor {
+	virtual ~MyVisitor() {}
+	virtual void visitTileLayer(const tmx::Map& map, const tmx::TileLayer& layer) override {
+    	std::cerr << "TileLayer" << "\n";
+    }
+  	virtual void visitObjectLayer(const tmx::Map& map, const tmx::ObjectLayer& layer) override {
+        std::cerr << "ObjectLayer" << "\n";
+    }
+  	virtual void visitImageLayer(const tmx::Map& map, const tmx::ImageLayer& layer) override {
+    	std::cerr << "ImageLayer" << "\n";
+    }
+};
+
+bool LevelLoader::load(const char* file, const char* resources, GameState* &state, hgeResourceManager* &res) {
+	res = new hgeResourceManager(resources);
+	Environment* env = new Environment();
+	std::unique_ptr<tmx::Map> map = tmx::Map::parseFile(file);
+	if (map == NULL)
+		return false;
+	env->width = map->getWidth() * map->getTileWidth();
+	env->hight = map->getHeight() * map->getTileHeight();
+	for (auto ts : map->getTileSets()) {
+		for (auto it = ts->begin(); it != ts->end(); ++it) {
+			std::cerr << (*it)->getId();
+		}
+		std::cerr << ts->hasImage();
+	}
+	return true;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
