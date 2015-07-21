@@ -1,7 +1,6 @@
 #ifndef GAMESTATE_H
 #define GAMESTATE_H
 
-#include <hge.h>
 #include <vector>
 #include "Environment.h"                   
 #include "IBody.h"
@@ -15,6 +14,7 @@ struct GameState {
 	void frame(int event);
 	Environment* getEnvironment();
 	friend class Camera;
+
 private:
 	std::vector<IBody*> bodies;
 	Environment* env;

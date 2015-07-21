@@ -2,6 +2,7 @@
 #define IBODY_H
 #include "IObject.h"
 #include "Environment.h"
+#include "../geometry/Geometry.h"
 
 struct IBody : IObject {
 	virtual ~IBody(){};                      

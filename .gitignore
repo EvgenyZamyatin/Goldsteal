@@ -2,3 +2,4 @@
 *.exe
 resources/*
 lib/*
+dependencies/*

@@ -1,8 +1,8 @@
 CC=C:\mingw32\bin\g++.exe
 BOOST_PATH=C:\boost_1_58_0
-HGE_PATH=C:\hge181\include
-HGE_LIB=C:\hge181\lib\gcc
-FLAGS= -std=c++11 -I$(BOOST_PATH) -L$(BOOST_PATH) -I$(HGE_PATH) -L$(HGE_LIB) -Ilib/ -Llib/ -lhgehelp -lhge -ltinyxml 
+INCLUDES=dependencies/includes/
+LIBS=dependencies/libs/
+FLAGS= -std=c++11 -I$(BOOST_PATH) -I$(INCLUDES) -L$(LIBS) -lhgehelp -lhge -ltinyxml 
 
 all: main
 
