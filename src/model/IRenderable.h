@@ -1,18 +1,10 @@
 #ifndef IRENDERABLE_H
 #define IRENDERABLE_H
-
-#include "Forward.h"
-#include <functional>
 #include <hge.h>
-#include <hgeresource.h>
-
-typedef std::function<void(HGE* hge, hgeResourceManager* res)> RenderFunction;
+#include "Forward.h"                
 
 struct IRenderable {
-	friend struct Camera;
-protected:
-	RenderFunction render;
-	bool clear=false;
+	virtual ~IRenderable() {}
+	virtual void render(HGE* hge, Renderer* renderer, Camera* cam) = 0;
 };
-
 #endif

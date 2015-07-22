@@ -12,7 +12,7 @@ struct IBody : IObject {
 	virtual double getViewAngle() = 0;
 	virtual void frame(int event) = 0;
 	void setGameState(GameState* state) {this->state=state;}
-	friend struct Camera;
+	//friend struct Camera;
 private:
 	GameState* state;
 	Geo::Polygon visible;	

@@ -1,5 +1,6 @@
 *.o
 *.exe
 resources/*
+out/*.png
 lib/*
 dependencies/*

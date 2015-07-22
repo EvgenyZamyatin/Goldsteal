@@ -10,6 +10,7 @@
 #include "model/Camera.h"
 #include "model/IBody.h"
 #include <hgeresource.h>
+#include "model/Renderer.h"
 
 #define WIDTH 800
 
@@ -17,39 +18,18 @@
              
 HGE *hge = 0;
 
-/*GameState* state;
-hgeFont* fnt;
+GameState* state;
+hgeResourceManager* res;
 Camera* cam;
-IBody* bd;
+Renderer* rend;
 
-struct Dot : IBody {
-    virtual double getViewAngle() {return 0;}
-    Dot() {
-    	pos = Geo::Polygon({{400, 300},{410,300},{410,310},{400,310}});
-    }
-    virtual void render(HGE* hge) {
-    	for (int i = 0; i < (int)pos.size(); ++i) {    		
-    		hge->Gfx_RenderLine(pos[i].x, pos[i].y, pos[(i+1)%pos.size()].x, pos[(i+1)%pos.size()].y, 0xFFFF0000, 0.4); 
-    	}
-    }
-    virtual void frame(HGE* hge) {
-    	for (Geo::Vector& v : pos.points) {
-        	if (hge->Input_GetKeyState(HGEK_UP)) 
-        	    v.y -= 5;
-        	if (hge->Input_GetKeyState(HGEK_DOWN)) 
-           		v.y += 5;
-        	if (hge->Input_GetKeyState(HGEK_RIGHT)) 
-            	v.x += 5;
-        	if (hge->Input_GetKeyState(HGEK_LEFT)) 
-            	v.x -= 5;
-        }     
-    }
-};
-*/
 bool FrameFunc() {
 	if (hge->Input_GetKeyState(HGEK_ESCAPE)) return true;
-	//cam->frame(hge);
+	float a,b;
+	hge->Input_GetMousePos(&a,&b);
+	cam->frame(Geo::Vector(a,b), true);
 	//bd->frame(hge);
+	//cam->view(hge, res);
 	return false;
 }          
 		
@@ -57,16 +37,16 @@ bool RenderFunc() {
 	//cam->view(hge);
 	//fnt->printf(5, 5, HGETEXT_LEFT, "dt:%.3f\nFPS:%d (constant)", hge->Timer_GetDelta(), hge->Timer_GetFPS());
 	//std::cerr << hge->Timer_GetFPS() << "\n";
+	hge->Gfx_BeginScene();
+	hge->Gfx_Clear(0);
+	rend->show(hge, state->getEnvironment(), cam);
+	hge->Gfx_EndScene();
 	return false;
 }
 
 
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
-	LevelLoader loader;
-	GameState* state;
-	hgeResourceManager* res;
-	loader.load("level1.tmx", "", state, res);
-	/*hge = hgeCreate(HGE_VERSION);
+	hge = hgeCreate(HGE_VERSION);
 
 	hge->System_SetState(HGE_FRAMEFUNC, FrameFunc);
 	hge->System_SetState(HGE_RENDERFUNC, RenderFunc);
@@ -77,18 +57,16 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	hge->System_SetState(HGE_SCREENHEIGHT, HIGHT);
 	hge->System_SetState(HGE_SCREENBPP, 32);
 	hge->System_SetState(HGE_FPS, 100);
-	hge->System_SetState(HGE_ZBUFFER, true);
+	hge->System_SetState(HGE_ZBUFFER, true);		
 
-	
 	if (hge->System_Initiate()) {
-		hgeResourceManager* res = new hgeResourceManager();
-		HTEXTURE tex = hge->Texture_Load("crate1.png");
-		std::cerr << res->GetTexture("crate1.png") << "\n" << tex;
+		LevelLoader loader;
+		loader.load(hge, "level.tmx", "level.res", state, res, rend);
+	    cam = new Camera(state, {400,300}, 80*5, 60*5, 800, 600, 50);
 		hge->System_Start();
   	}	
 
   	hge->System_Shutdown();
 	hge->Release();
-	*/
 	return 0; 
 }

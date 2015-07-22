@@ -9,6 +9,7 @@
 #include <hgeresource.h>
 #include <vector>
 
+
 struct Camera {
 	Camera(GameState* state, Geo::Vector pos, 
 			double cameraWidth, double cameraHight, double screenWidth, double screenHight,
@@ -21,9 +22,10 @@ struct Camera {
 	void setGameState(GameState* state) {this->state=state;}
 	void bind(IBody* body) {this->body=body;}
 	void move(Geo::Vector const& v) {pos += v;}
+	friend struct Renderer;
 
 private:
-	IBody* body;
+	IBody* body=NULL;
 	Geo::Vector pos;
 	GameState* state;
 	double radius;
