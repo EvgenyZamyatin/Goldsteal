@@ -6,5 +6,5 @@ struct IBody;
 struct IObject;
 struct IRenderable;
 struct GameState;
-struct Renderer;
+struct SimpleObstacle;
 #endif

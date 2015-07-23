@@ -18,11 +18,17 @@ struct Camera {
 	//calls after gamestate frame;
 	void view(HGE* hge, hgeResourceManager* res);
 	void frame(Geo::Vector const& mousePos, bool freeMode);
+	Geo::Vector getPos() const {return pos;}
+	double cWidth() const {return cameraWidth;}
+	double cHight() const {return cameraHight;}
+
+	double sWidth() const {return screenWidth;}
+	double sHight() const {return screenHight;}
+
 	
 	void setGameState(GameState* state) {this->state=state;}
 	void bind(IBody* body) {this->body=body;}
 	void move(Geo::Vector const& v) {pos += v;}
-	friend struct Renderer;
 
 private:
 	IBody* body=NULL;

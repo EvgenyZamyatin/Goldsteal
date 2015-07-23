@@ -3,14 +3,13 @@ Texture Ground
 	filename=Ground.png	
 }
                  
-Target envTarget 
+Texture Box
 {
-	size=1024,1024
-	zbuffer=false
+	filename=crate1.png
 }
 
-Target dynamicTarget 
+Sprite Box
 {
-	size=1024,1024
-	zbuffer=false
+	texture=Box
+	rect=0,0,128,128
 }

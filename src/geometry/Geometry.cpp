@@ -173,6 +173,17 @@ void Geo::Polygon::rotate(const Vector& o, double angle) {
 	}
 }
 
+void Geo::Polygon::rotate(int v, double angle) {
+	Vector& o = points[v];
+	for (int i = 0; i < size(); ++i) {
+		if (i == v)
+			continue;
+		points[i] -= o;
+		points[i].rotate(angle);
+		points[i] += o;
+	}
+}
+
 void Geo::Polygon::rotate(double angle) {
 	Vector& o = points[0];
 	for (int i = 1; i < size(); ++i) {

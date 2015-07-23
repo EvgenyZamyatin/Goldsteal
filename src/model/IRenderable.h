@@ -5,6 +5,6 @@
 
 struct IRenderable {
 	virtual ~IRenderable() {}
-	virtual void render(HGE* hge, Renderer* renderer, Camera* cam) = 0;
+	virtual void render(HGE* hge, Camera const* cam) = 0;
 };
 #endif

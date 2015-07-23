@@ -79,8 +79,9 @@ namespace Geo {
         std::string to_string() const;
         void makeCW();
         void makeNCW();
-        int order();
+        int order();                             
         void rotate(const Vector&, double angle);
+        void rotate(int v, double angle);
         Vector center();
         //around first point.
         void rotate(double angle);

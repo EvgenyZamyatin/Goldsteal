@@ -10,7 +10,6 @@
 #include "model/Camera.h"
 #include "model/IBody.h"
 #include <hgeresource.h>
-#include "model/Renderer.h"
 
 #define WIDTH 800
 
@@ -21,7 +20,6 @@ HGE *hge = 0;
 GameState* state;
 hgeResourceManager* res;
 Camera* cam;
-Renderer* rend;
 
 bool FrameFunc() {
 	if (hge->Input_GetKeyState(HGEK_ESCAPE)) return true;
@@ -39,7 +37,9 @@ bool RenderFunc() {
 	//std::cerr << hge->Timer_GetFPS() << "\n";
 	hge->Gfx_BeginScene();
 	hge->Gfx_Clear(0);
-	rend->show(hge, state->getEnvironment(), cam);
+	state->getEnvironment()->render(hge, cam);
+	for (IObject* o : state->getEnvironment()->getObjects())
+		o->render(hge, cam);
 	hge->Gfx_EndScene();
 	return false;
 }
@@ -58,11 +58,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	hge->System_SetState(HGE_SCREENBPP, 32);
 	hge->System_SetState(HGE_FPS, 100);
 	hge->System_SetState(HGE_ZBUFFER, true);		
+	hge->System_SetState(HGE_HIDEMOUSE, false);
 
 	if (hge->System_Initiate()) {
 		LevelLoader loader;
-		loader.load(hge, "level.tmx", "level.res", state, res, rend);
-	    cam = new Camera(state, {400,300}, 80*5, 60*5, 800, 600, 50);
+		loader.load(hge, "level.tmx", "level.res", state, res);
+	    //return 0;
+	    cam = new Camera(state, {400,300}, 80*6, 60*6, 800, 600, 50);
 		hge->System_Start();
   	}	
 
