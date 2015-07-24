@@ -5,8 +5,7 @@
 #include <fstream>
 #include <vector>
 #include <algorithm>
-#include "model/GameState.h"
-#include "utils/LevelLoader.h"
+#include "model/GameState.h"  
 #include "model/Camera.h"
 #include "model/IBody.h"
 #include <hgeresource.h>
@@ -25,19 +24,21 @@ bool FrameFunc() {
 	if (hge->Input_GetKeyState(HGEK_ESCAPE)) return true;
 	float a,b;
 	hge->Input_GetMousePos(&a,&b);
-	int evt = 0;
+	/*int evt = 0;
 	if (hge->Input_KeyDown(HGEK_W))
 		evt |= Hero::INPUT_UP;
 	else
 		if (hge->Input_KeyDown(HGEK_S))
 			evt |= Hero::INPUT_DOWN;
 
+
 	if (hge->Input_KeyDown(HGEK_D))
 		evt |= Hero::INPUT_RIGHT;
 	else
 		if (hge->Input_KeyDown(HGEK_A))
 			evt |= Hero::INPUT_LEFT;
-	state->getHero()->frame(evt, Geo::Vector(a,b));
+
+	state->getHero()->frame(evt, Geo::Vector(a,b));*/
 	cam->frame(Geo::Vector(a,b), true);
 	//bd->frame(hge);
 	//cam->view(hge, res);
@@ -53,7 +54,7 @@ bool RenderFunc() {
 	state->getEnvironment()->render(hge, cam);
 	for (IObject* o : state->getEnvironment()->getObjects())
 		o->render(hge, cam);
-	state->getHero()->render(hge, cam);
+	//state->getHero()->render(hge, cam);
 	hge->Gfx_EndScene();
 	return false;
 }
@@ -75,10 +76,15 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	hge->System_SetState(HGE_HIDEMOUSE, false);
 
 	if (hge->System_Initiate()) {
-		LevelLoader loader;
-		loader.load(hge, "level.tmx", "level.res", state, res);
+		//LevelLoader loader;
+		//loader.load(hge, "level.tmx", "level.res", state, res);
 	    //return 0;
-	    cam = new Camera(state, {400,300}, 80*6, 60*6, 800, 600, 50);
+	    res = new hgeResourceManager("level.res");
+	    Tmx::Map map;
+		map.ParseFile("level.tmx");
+	    state = new GameState(&map, res);
+	    cam = new Camera(state->getEnvironment()->getWidth(), state->getEnvironment()->getHight(), 
+	    					{400,300}, 80*6, 60*6, 800, 600, 50);
 		hge->System_Start();
   	}	
 

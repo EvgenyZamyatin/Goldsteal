@@ -1,13 +1,5 @@
 #include "GameState.h"
 
-std::vector<IBody*> GameState::getBodies() {return bodies;}
-std::vector<IBody*>& GameState::getBodies() const {return bodies;}
-
-void GameState::addBody(IBody* body) {
-	bodies.push_back(body);
-	body->setGameState(this);		
+GameState::GameState(Tmx::Map const* map, hgeResourceManager* res) {
+	env = new Environment(map, res);
 }
-
-void GameState::frame(int event) {}
-
-Environment* getEnvironment() {return env;}

@@ -1,10 +1,10 @@
 #ifndef IRENDERABLE_H
 #define IRENDERABLE_H
 #include <hge.h>
-#include "Forward.h"                
+#include "Camera.h"                
 
 struct IRenderable {
 	virtual ~IRenderable() {}
-	virtual void render(HGE* hge, Camera const* cam) = 0;
+	virtual void render(HGE* hge, Camera const* cam) {};
 };
 #endif

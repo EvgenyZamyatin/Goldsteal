@@ -1,42 +1,45 @@
 #ifndef IBODY_H
 #define IBODY_H
 
-#include "Forward.h"
+#include <tmx/TmxObject.h>
+#include <hgeresource.h>
+
 #include "IObject.h"
 #include "Environment.h"
 #include "../geometry/Geometry.h"
-#include "GameState.h"
 #include "../render/BodyData.h"
+#include "Camera.h"
 
-struct LevelLoader;
-struct IBrain;
+
+struct GameState;
 
 struct IBody : IObject {                
 	const int LEG_STATE_IDLE = 0;
-	
 	const int BODY_STATE_IDLE = 0;
-	const int BODY_STATE_WALK = 1;
+	const double MAX_SPEED = 3;
+	const double ACCELERATION = 1;
 
-	const double maxSpeed = 3;
-	const double acceleration = 1;
-
+	IBody(Tmx::Object const* obj, hgeResourceManager* res);
 	virtual ~IBody(){};                      
+	
 	void setGameState(GameState* state) {this->state=state;}
+	
+	Geo::Vector getDir() const {return dir;}
 	double getViewAngle() const {return viewAngle;}
-    void move(Geo::Vector vec) {pos += vec;}
+   
     virtual void render(HGE* hge, Camera const* cam);
-	virtual void frame();
-	friend struct LevelLoader;
+	
 private:
 	Render::BodyData rData;
+
 	int legState=0;
 	int bodyState=0;
 	
-	//IBrain* brain;
 	double viewAngle;	
 	Geo::Vector velocity;
 	GameState* state;
-	Geo::Polygon visible;	
+	Geo::Polygon visible;
+	Geo::Vector dir;	
 };
 
 #endif

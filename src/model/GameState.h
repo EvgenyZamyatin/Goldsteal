@@ -1,32 +1,34 @@
 #ifndef GAMESTATE_H
 #define GAMESTATE_H
 
-#include "Forward.h"
+#include <hgeresource.h>
 #include <vector>
+#include <tmx/Tmx.h.in>
+
 #include "Environment.h"                   
-#include "Camera.h"
 #include "IRenderable.h"
-#include "Hero.h"
-struct LevelLoader;
+#include "Camera.h"
+#include "IBody.h"
 
-
-struct GameState {
+struct GameState : IRenderable {
 	GameState() {}
-    GameState(Environment* env) : env(env) {}
-	std::vector<IBody*> getBodies();
-	std::vector<IBody*>& getBodies() const;
-	void addBody(IBody* body);
-	void frame(int event);
-	Environment* getEnvironment() {return env;}
-	void setHero(Hero* hero) {this->hero = hero;}
-	Hero* getHero() {return hero;}
+	GameState(Tmx::Map const* map, hgeResourceManager* res);
+	    
+//	std::vector<IBody*> GameState::getBodies() {return bodies;}
+//	std::vector<IBody*>& GameState::getBodies() const {return bodies;}
+
+	void addBody(IBody* body) {body->setGameState(this); bodies.push_back(body);}
 	
-	friend struct Camera;
-	friend struct LevelLoader;
+	void render(HGE* hge, Camera* cam);
+	
+	void setEnvironment(Environment* env) {this->env=env;}
+	Environment* getEnvironment() {return env;}
+	
+	//void setHero(Hero* hero) {this->hero = hero;}
+	//Hero* getHero() {return hero;}
 
 private:
 	std::vector<IBody*> bodies;
 	Environment* env;
-	Hero* hero;
 };
 #endif

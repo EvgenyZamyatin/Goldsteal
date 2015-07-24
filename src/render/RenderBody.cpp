@@ -4,6 +4,7 @@
 #include <hge.h>
 #include "help.h"
 
+/*
 void IBody::render(HGE *hge, Camera const* cam) {
 	
 	Rect r = boundingBox(bounds);
@@ -40,3 +41,4 @@ void IBody::render(HGE *hge, Camera const* cam) {
 	rData.lastLegState = legState;
 	rData.lastBodyState = bodyState;
 }
+*/
