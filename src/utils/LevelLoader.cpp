@@ -24,6 +24,28 @@ SimpleObstacle* LevelLoader::constructSimpleObstacle(Tmx::Object* o, hgeResource
 	return ans;
 }
 
+Hero* LevelLoader::constructHero(Tmx::Object* o, hgeResourceManager* res) {
+	Hero* ans = new Hero();
+	double x = o->GetX();
+	double y = o->GetY();
+	double width = o->GetWidth();
+	double hight = o->GetHeight();
+	Geo::Polygon bounds({{x, y-hight}, {x+width, y-hight}, {x+width, y}, {x, y}});
+	double angle = o->GetRot()*M_PI/180;
+	bounds.rotate(3, angle);
+	ans->setBounds(bounds);
+	ans->setPos(bounds.center());
+	ans->setDir(Geo::Vector(0,1));
+	//ans rData                                                                                                   
+	ans->rData.legAnims.push_back(*(res->GetAnimation(o->GetProperties().GetStringProperty("LEG_IDLE").c_str())));
+	ans->rData.legAnims.push_back(*(res->GetAnimation(o->GetProperties().GetStringProperty("LEG_WALK").c_str())));
+	
+	ans->rData.bodyAnims.push_back(*(res->GetAnimation(o->GetProperties().GetStringProperty("BODY_IDLE").c_str())));
+	return ans;
+}
+
+
+
 bool LevelLoader::load(HGE* hge, const char* file, const char* resources, GameState* &state, hgeResourceManager* &res) {
 	res = new hgeResourceManager(resources);
 	Tmx::Map map;
@@ -82,6 +104,8 @@ bool LevelLoader::load(HGE* hge, const char* file, const char* resources, GameSt
    		for (Tmx::Object* o : ob->GetObjects()) {
    			if (o->GetType() == "SimpleObstacle") {
    				state->env->addObject(constructSimpleObstacle(o, res));
+   			} else if (o->GetType() == "Hero") {
+   				state->setHero(constructHero(o, res));
    			}
    		}
    	}

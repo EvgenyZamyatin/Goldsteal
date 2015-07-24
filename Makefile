@@ -6,22 +6,28 @@ FLAGS= -std=c++11 -I$(BOOST_PATH) -I$(INCLUDES) -L$(LIBS)
 
 all: main
 
-main: LevelLoader.o Camera.o Geometry.o Renderer main.o
-	$(CC) -o out/main.exe main.o LevelLoader.o Camera.o Geometry.o RendererEnvironment.o RendererSimpleObstacle.o $(FLAGS) -lhgehelp -lhge -ltmx -ltinyxml2 -lboost_filesystem -lboost_system -lz
+main: LevelLoader.o Camera.o Geometry.o Render main.o Hero.o
+	$(CC) -o out/main.exe main.o LevelLoader.o Camera.o Geometry.o RenderEnvironment.o RenderSimpleObstacle.o $(FLAGS) -lhgehelp -lhge -ltmx -ltinyxml2 -lboost_filesystem -lboost_system -lz
 	
-Renderer: RendererEnvironment.o RendererSimpleObstacle.o
+Render: RenderEnvironment.o RenderSimpleObstacle.o RenderBody.o
 
 main.o: src/main.cpp
 	$(CC) -c src/main.cpp $(FLAGS)
 
 LevelLoader.o: src/utils/LevelLoader.cpp src/utils/LevelLoader.h
 	$(CC) -c -std=c++11 src/utils/LevelLoader.cpp $(FLAGS)
-	   
-RendererEnvironment.o: src/render/RendererEnvironment.cpp
-	$(CC) -c -std=c++11 src/render/RendererEnvironment.cpp $(FLAGS)
 
-RendererSimpleObstacle.o:  src/render/RendererSimpleObstacle.cpp
-	$(CC) -c -std=c++11 src/render/RendererSimpleObstacle.cpp $(FLAGS)
+Hero.o: src/model/Hero.h src/model/Hero.cpp
+	$(CC) -c -std=c++11 src/model/Hero.cpp $(FLAGS)
+
+RenderBody.o: src/render/RenderBody.cpp
+	$(CC) -c -std=c++11 src/render/RenderBody.cpp $(FLAGS)
+
+RenderEnvironment.o: src/render/RenderEnvironment.cpp
+	$(CC) -c -std=c++11 src/render/RenderEnvironment.cpp $(FLAGS)
+
+RenderSimpleObstacle.o:  src/render/RenderSimpleObstacle.cpp
+	$(CC) -c -std=c++11 src/render/RenderSimpleObstacle.cpp $(FLAGS)
 
 Camera.o: src/model/Camera.cpp src/model/Camera.h
 	$(CC) -c -std=c++11 src/model/Camera.cpp $(FLAGS)

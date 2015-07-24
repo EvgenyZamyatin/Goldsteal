@@ -19,7 +19,6 @@ struct IObject : IRenderable {
 	void setBounds(Geo::Polygon const& p) {this->bounds=p;}
 	void setDir(Geo::Vector const& p) {this->dir=p;}
 	
-	
 protected:
 	Geo::Polygon bounds;
 	Geo::Vector pos;

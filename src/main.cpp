@@ -25,6 +25,19 @@ bool FrameFunc() {
 	if (hge->Input_GetKeyState(HGEK_ESCAPE)) return true;
 	float a,b;
 	hge->Input_GetMousePos(&a,&b);
+	int evt = 0;
+	if (hge->Input_KeyDown(HGEK_W))
+		evt |= Hero::INPUT_UP;
+	else
+		if (hge->Input_KeyDown(HGEK_S))
+			evt |= Hero::INPUT_DOWN;
+
+	if (hge->Input_KeyDown(HGEK_D))
+		evt |= Hero::INPUT_RIGHT;
+	else
+		if (hge->Input_KeyDown(HGEK_A))
+			evt |= Hero::INPUT_LEFT;
+	state->getHero()->frame(evt, Geo::Vector(a,b));
 	cam->frame(Geo::Vector(a,b), true);
 	//bd->frame(hge);
 	//cam->view(hge, res);
@@ -40,6 +53,7 @@ bool RenderFunc() {
 	state->getEnvironment()->render(hge, cam);
 	for (IObject* o : state->getEnvironment()->getObjects())
 		o->render(hge, cam);
+	state->getHero()->render(hge, cam);
 	hge->Gfx_EndScene();
 	return false;
 }

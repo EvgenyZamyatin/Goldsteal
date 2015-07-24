@@ -5,8 +5,10 @@
 #include <vector>
 #include "Environment.h"                   
 #include "Camera.h"
-
+#include "IRenderable.h"
+#include "Hero.h"
 struct LevelLoader;
+
 
 struct GameState {
 	GameState() {}
@@ -16,12 +18,15 @@ struct GameState {
 	void addBody(IBody* body);
 	void frame(int event);
 	Environment* getEnvironment() {return env;}
+	void setHero(Hero* hero) {this->hero = hero;}
+	Hero* getHero() {return hero;}
 	
 	friend struct Camera;
 	friend struct LevelLoader;
+
 private:
 	std::vector<IBody*> bodies;
 	Environment* env;
-	IBody* hero;
+	Hero* hero;
 };
 #endif

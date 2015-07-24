@@ -6,14 +6,35 @@
 #include "Environment.h"
 #include "../geometry/Geometry.h"
 #include "GameState.h"
+#include "../render/BodyData.h"
 
-struct IBody : IObject {
+struct LevelLoader;
+struct IBrain;
+
+struct IBody : IObject {                
+	const int LEG_STATE_IDLE = 0;
+	
+	const int BODY_STATE_IDLE = 0;
+	const int BODY_STATE_WALK = 1;
+
+	const double maxSpeed = 3;
+	const double acceleration = 1;
+
 	virtual ~IBody(){};                      
-	virtual double getViewAngle() = 0;
-	virtual void frame(int event) = 0;
 	void setGameState(GameState* state) {this->state=state;}
-	//friend struct Camera;
+	double getViewAngle() const {return viewAngle;}
+    void move(Geo::Vector vec) {pos += vec;}
+    virtual void render(HGE* hge, Camera const* cam);
+	virtual void frame();
+	friend struct LevelLoader;
 private:
+	Render::BodyData rData;
+	int legState=0;
+	int bodyState=0;
+	
+	//IBrain* brain;
+	double viewAngle;	
+	Geo::Vector velocity;
 	GameState* state;
 	Geo::Polygon visible;	
 };
