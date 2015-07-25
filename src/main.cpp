@@ -25,7 +25,7 @@ InputData* input;
 
 bool FrameFunc() {
 	if (hge->Input_GetKeyState(HGEK_ESCAPE)) return true;
-	input->update(hge);
+	input->update(hge, cam);
 	for (IBody* b : state->getBodies())
 		b->frame();
 	state->getHero()->frame();

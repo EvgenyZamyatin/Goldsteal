@@ -1,6 +1,7 @@
 #ifndef INPUTDATA_H
 #define INPUTDATA_H
 #include <hge.h>
+struct Camera;
 //p-pressed
 //d-downed
 struct InputData {
@@ -23,7 +24,7 @@ struct InputData {
 	bool dLMouse;
 	bool dRMouse;*/
 
-	void update(HGE* hge);
+	void update(HGE* hge, Camera const* cam);
 	void flush();
 };
 #endif

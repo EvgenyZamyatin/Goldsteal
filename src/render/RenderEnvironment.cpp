@@ -15,8 +15,8 @@ void Environment::render(HGE* hge, Camera const* cam) {
 	Rect cur;
 	static hgeQuad quad;                          
 	
-	double kx = cam->sWidth()/cam->cWidth();
-	double ky = cam->sHight()/cam->cHight();
+	double kx = cam->KX;
+	double ky = cam->KY;
 	
 	for (int i = 0; i < env->rData.tilesInRow; ++i) {
 		for (int j = 0; j < env->rData.tilesInColumn; ++j) {

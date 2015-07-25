@@ -7,10 +7,10 @@ struct Rect {
 	Rect(){}
 	Rect(double x, double y, double width, double hight) : x(x), y(y), width(width), hight(hight){}
 	Rect(Camera const* cam) {
-		width = cam->cWidth();
-		hight = cam->cHight();      
-		x = cam->getPos().x-width/2;
-		y = cam->getPos().y-hight/2;
+		width = cam->CAMERA_WIDTH;
+		hight = cam->CAMERA_HIGHT;      
+		x = cam->getPos().x-cam->CAMERA_WIDTH/2;
+		y = cam->getPos().y-cam->CAMERA_HIGHT/2;
 	}
 	double x, y, width, hight;
 };                            
