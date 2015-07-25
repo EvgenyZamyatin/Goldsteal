@@ -33,8 +33,13 @@ struct IBody : IObject {
 	void postChanges() {changes();}
     void frame();
     virtual void render(HGE* hge, Camera const* cam);
-    void move(Geo::Vector const& v);
-	
+    
+    virtual void onCollision(IObject* obj) {}
+	virtual void onCollision(IBody* body) {}
+
+    //void move(Geo::Vector const& v);
+
+	friend struct GameState;
 	friend struct BrainPlayerInput;
 
 private:

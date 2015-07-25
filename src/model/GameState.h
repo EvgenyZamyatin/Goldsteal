@@ -15,17 +15,13 @@ struct GameState : IRenderable {
 	GameState(Tmx::Map const* map, hgeResourceManager* res);
 	    
 	std::vector<IBody*> getBodies() {return bodies;}
-//	std::vector<IBody*>& GameState::getBodies() const {return bodies;}
-
-	void addBody(IBody* body) {body->setGameState(this); bodies.push_back(body);}
-	
+	void addBody(IBody* body) {body->setGameState(this); bodies.push_back(body);}	
+	void setHero(IBody* body) {body->setGameState(this); this->hero=body;}	
 	void render(HGE* hge, Camera* cam);
-	
 	void setEnvironment(Environment* env) {this->env=env;}
 	Environment* getEnvironment() {return env;}
-	
-	//void setHero(Hero* hero) {this->hero = hero;}
 	IBody* getHero() {return hero;}
+	void tryMove(IBody* body, Geo::Vector const& velocity);
 
 private:
 	std::vector<IBody*> bodies;

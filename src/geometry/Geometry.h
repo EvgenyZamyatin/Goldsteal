@@ -101,13 +101,14 @@ namespace Geo {
     bool intersect (const Line& a, const Segment& s, Vector& res, bool consider_touch=true);
     bool intersect (const Segment& a, const Segment& b, Vector& res, bool consider_touch=true);
     bool intersect (const Line& line, const Polygon& p, std::vector<Vector>& res, bool consider_touch=true);
+
     bool intersect (Polygon p1, Polygon p2, std::vector<Polygon>& out);
 	bool intersect (Polygon p1, Polygon p2, Polygon& out);
-
 
     Polygon visibilityPolygon(Vector o, std::vector<Polygon> polygons, double w, double h);
     Polygon visibilityPolygon(Vector o, std::vector<Polygon> polygons);
     
+    double distance(Vector a, Polygon b);
     double distance(Polygon a, Polygon b);
 	double distance(Segment a, Polygon b);
 

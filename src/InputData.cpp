@@ -11,10 +11,10 @@ void InputData::flush() {
 }
 
 void InputData::update(HGE* hge, Camera const* cam) {               
-	pUp = hge->Input_GetKeyState(HGEK_UP);
-	pDown = hge->Input_GetKeyState(HGEK_DOWN);
-	pRight = hge->Input_GetKeyState(HGEK_RIGHT);
-	pLeft = hge->Input_GetKeyState(HGEK_LEFT);
+	pUp = hge->Input_GetKeyState(HGEK_W);
+	pDown = hge->Input_GetKeyState(HGEK_S);
+	pRight = hge->Input_GetKeyState(HGEK_D);
+	pLeft = hge->Input_GetKeyState(HGEK_A);
 
 	pShift = hge->Input_GetKeyState(HGEK_SHIFT);
 	hge->Input_GetMousePos(&mX, &mY);

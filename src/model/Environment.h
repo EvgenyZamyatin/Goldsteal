@@ -11,6 +11,7 @@
 #include "../render/EnvironmentData.h"
 
 
+struct GameState;
 struct Environment : IRenderable {
 	Environment() {};
 	Environment(Tmx::Map const* map, hgeResourceManager* res);
@@ -20,7 +21,7 @@ struct Environment : IRenderable {
 	double getWidth() const {return width;}
 	double getHight() const {return hight;}
 	void render(HGE* hge, Camera const* cam);
-	
+	friend struct GameState;
 private:
 	std::vector<IObject*> objs;
 	double width;

@@ -325,5 +325,10 @@ double Geo::distance(Segment a, Polygon b) {
 	return boost::geometry::distance(a, b.points);
 }
 
+double Geo::distance(Vector a, Polygon b) {
+	boost::geometry::correct(a);
+	boost::geometry::correct(b.points);
+	return boost::geometry::distance(a, b.points);
+}
 
 

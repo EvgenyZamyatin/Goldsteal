@@ -2,5 +2,6 @@
 *.exe
 resources/*
 out/*.png
+out/*.jpg
 lib/*
 dependencies/*
