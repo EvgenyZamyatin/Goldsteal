@@ -18,18 +18,17 @@ Camera::Camera(double fieldWidth, double fieldHight, Geo::Vector pos,
 	this->radius = radius;
 }
 
-void Camera::frame(Geo::Vector const& mouse, bool freeMode) {
+void Camera::frame(InputData* input, bool freeMode) {
 	Geo::Vector tmp;
-	if (freeMode) {
-		tmp = (mouse-Geo::Vector(screenWidth/2, screenHight/2));
+	if (input->pShift || freeMode) {
+		tmp = (Geo::Vector(input->mX, input->mY)-Geo::Vector(screenWidth/2, screenHight/2));
 	} else {
-		tmp = (mouse - body->getPosition());
+		tmp = (body->getPosition() - pos);
 	}
-	
 	if (Geo::greater(tmp.len(), radius)) 
-		move(tmp/radius);                
+		move(tmp/radius*3);                
 	else return;
-
+	
 	pos.x=std::max(pos.x, cameraWidth/2);
 	pos.x=std::min(pos.x, fieldWidth - cameraWidth/2); 
 

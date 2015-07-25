@@ -14,7 +14,7 @@ struct GameState : IRenderable {
 	GameState() {}
 	GameState(Tmx::Map const* map, hgeResourceManager* res);
 	    
-//	std::vector<IBody*> GameState::getBodies() {return bodies;}
+	std::vector<IBody*> getBodies() {return bodies;}
 //	std::vector<IBody*>& GameState::getBodies() const {return bodies;}
 
 	void addBody(IBody* body) {body->setGameState(this); bodies.push_back(body);}
@@ -25,10 +25,11 @@ struct GameState : IRenderable {
 	Environment* getEnvironment() {return env;}
 	
 	//void setHero(Hero* hero) {this->hero = hero;}
-	//Hero* getHero() {return hero;}
+	IBody* getHero() {return hero;}
 
 private:
 	std::vector<IBody*> bodies;
 	Environment* env;
+	IBody* hero;
 };
 #endif

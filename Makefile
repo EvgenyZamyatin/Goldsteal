@@ -6,8 +6,22 @@ FLAGS= -std=c++11 -I$(BOOST_PATH) -I$(INCLUDES) -L$(LIBS)
 
 all: main
 
-main: Camera.o Geometry.o Render main.o Environment.o IObject.o SimpleObstacle.o GameState.o
-	$(CC) -o out/main.exe GameState.o Camera.o Geometry.o RenderEnvironment.o RenderSimpleObstacle.o main.o Environment.o IObject.o SimpleObstacle.o $(FLAGS) -lhgehelp -lhge -ltmx -ltinyxml2 -lboost_filesystem -lboost_system -lz
+main: Camera.o Geometry.o Render main.o Environment.o IObject.o SimpleObstacle.o GameState.o Brains InputData.o IBody.o
+	$(CC) -o out/main.exe GameState.o Camera.o Geometry.o RenderEnvironment.o RenderSimpleObstacle.o RenderBody.o main.o Environment.o IObject.o SimpleObstacle.o InputData.o IBrain.o IBody.o BrainPlayerInput.o $(FLAGS) -lhgehelp -lhge -ltmx -ltinyxml2 -lboost_filesystem -lboost_system -lz
+
+IBody.o: src/model/IBody.h src/model/IBody.cpp
+	$(CC) -c src/model/IBody.cpp $(FLAGS)
+
+Brains: IBrain.o BrainPlayerInput.o
+
+IBrain.o: src/model/brains/IBrain.h src/model/brains/IBrain.cpp
+	$(CC) -c src/model/brains/IBrain.cpp $(FLAGS)
+
+BrainPlayerInput.o: src/model/brains/BrainPlayerInput.h src/model/brains/BrainPlayerInput.cpp
+	$(CC) -c src/model/brains/BrainPlayerInput.cpp $(FLAGS)
+
+InputData.o: src/InputData.h src/InputData.cpp
+	$(CC) -c src/InputData.cpp $(FLAGS)
 
 GameState.o: src/model/GameState.h src/model/GameState.cpp
 	$(CC) -c src/model/GameState.cpp $(FLAGS)

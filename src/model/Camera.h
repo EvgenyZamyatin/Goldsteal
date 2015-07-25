@@ -3,6 +3,7 @@
 
 #include <hge.h>
 #include "../geometry/Geometry.h"
+#include "../InputData.h"
 
 struct IBody;
 struct Camera {
@@ -10,7 +11,7 @@ struct Camera {
 			double cameraWidth, double cameraHight, double screenWidth, double screenHight,
 			double radius);
 
-	void frame(Geo::Vector const& mousePos, bool freeMode);
+	void frame(InputData* input, bool freeMode);
 	
 	Geo::Vector getPos() const {return pos;}
 	

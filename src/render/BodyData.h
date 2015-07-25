@@ -6,20 +6,11 @@
 
 namespace Render {
 	struct BodyData {
-		std::vector<hgeAnimation> legAnims;
-		std::vector<hgeAnimation> bodyAnims;
-
-		int lastLegState;
-		int lastBodyState;
-
-		hgeAnimation& getLeg(int state) {
-			return legAnims[state];
+		std::vector<hgeAnimation> anims;
+		int lastState;
+		hgeAnimation& get(int state) {
+			return anims[state];
 		}
-
-		hgeAnimation& getBody(int state) {
-			return bodyAnims[state];
-		}
-
 	};
 }
 #endif
