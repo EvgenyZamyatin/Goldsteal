@@ -82,7 +82,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		map.ParseFile("level.tmx");
 	    state = new GameState(&map, res);
 	    cam = new Camera(state->getEnvironment()->getWidth(), state->getEnvironment()->getHight(), 
-	    					{400,300}, 80*6, 60*6, 800, 600, 50);
+	    					{400,300}, 80*6, 60*6, 800, 600, 100);
 		cam->bind(state->getHero());
 		hge->System_Start();
   	}	

@@ -37,6 +37,7 @@ namespace Geo {
         double len () const;
         double len2 () const;
         void rotate(double angle);
+        void rotate(double sn, double cs);
         void norm() {*this/=len();}
         double operator* (const Vector& other) const {return x*other.y-y*other.x;}
         double operator^ (const Vector& other) const {return x*other.x+y*other.y;}
@@ -82,6 +83,7 @@ namespace Geo {
         int order();                             
         void rotate(const Vector&, double angle);
         void rotate(int v, double angle);
+        void rotate(const Vector&, double sn, double cs);
         Vector center();
         //around first point.
         void rotate(double angle);

@@ -7,6 +7,9 @@
 
 struct IBody;
 struct Camera {
+	
+	static const double SHIFT_MULTIPLY;
+
 	Camera(double fieldWidth, double fieldHight, Geo::Vector pos, 
 			double cameraWidth, double cameraHight, double screenWidth, double screenHight,
 			double radius);

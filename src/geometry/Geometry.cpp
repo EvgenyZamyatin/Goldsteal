@@ -132,8 +132,12 @@ bool Geo::intersect (const Line& l, const Polygon& p, std::vector<Vector>& res,
 }
 
 void Geo::Vector::rotate(double angle) {
-	double nx = std::cos(angle)*x-std::sin(angle)*y;
-	double ny = std::sin(angle)*x+std::cos(angle)*y;
+	rotate(std::sin(angle), std::cos(angle));
+}
+
+void Geo::Vector::rotate(double sn, double cs) {
+	double nx = cs*x-sn*y;
+	double ny = sn*x+cs*y;
 	x = nx;
 	y = ny;
 }
@@ -169,6 +173,14 @@ void Geo::Polygon::rotate(const Vector& o, double angle) {
 	for (Vector& v : points) {
 		v -= o;
 		v.rotate(angle);
+		v += o;
+	}
+}
+
+void Geo::Polygon::rotate(const Vector& o, double sn, double cs) {
+	for (Vector& v : points) {
+		v -= o;
+		v.rotate(sn, cs);
 		v += o;
 	}
 }

@@ -7,6 +7,13 @@ BrainPlayerInput::BrainPlayerInput(InputData const* input) {
 void BrainPlayerInput::decide(IBody* body) {
 	InputData in = *input;
 	body->changes = [body, in]() {
+		
+		Geo::Vector ms(in.mX-body->pos.x, in.mY-body->pos.y);
+		double sn = (body->dir)*ms/(body->dir).len()/ms.len();
+		double cs = (body->dir)^ms/(body->dir).len()/ms.len();
+		//body->dir.rotate(sn, cs);
+		//body->bounds.rotate(body->pos, sn, cs);
+		
 		if (in.pUp || in.pDown)
 			body->velocity.y += in.pUp ? -IBody::ACCELERATION : IBody::ACCELERATION;
 		else {
@@ -44,5 +51,6 @@ void BrainPlayerInput::decide(IBody* body) {
 			body->moveState=IBody::STATE_IDLE;
 		//std::cerr << body->velocity << "\n";
 		body->move(body->velocity);
+
 	};
 }
