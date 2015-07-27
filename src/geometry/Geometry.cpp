@@ -219,7 +219,159 @@ Vector Geo::Polygon::center() {
 	return ans;
 }
 
+struct Segment1 : Segment {
+	Segment1(Vector const& a, Vector const& b) : Segment(a, b) {}
+	Vector next;
+	double val;
+};
+
+bool intersect1 (const Vector& o, const Line& l, const Polygon& p, Vector& rv, Vector& nxt, 
+        bool consider_touch) {
+    double mn = 0;
+    bool was = false;
+    for (int i = 0, cnt = p.size(); cnt > 0; i++, cnt--) {
+        Segment s(p[i], p[(i+1)%p.size()]);
+        Vector pt;
+        if (!intersect (l, s, pt))
+            continue;
+        if (collinear(l, s)) {
+            if (consider_touch) {
+                if (greater(l.v^(p[i]-o), 0) && (!was || (less((p[i]-o).len2(), mn)))) {
+                	mn = (p[i]-o).len2();
+                	rv = p[i];
+                	Vector const& a = (i==p.size()-1) ? p[0] : p[i+1];
+					Vector const& b = (i==0) ? p[p.size()-1] : p[i-1];
+					if (orientation(p[i], o, a) == LEFT)
+						nxt = a;
+					else
+						nxt = b;	
+				   	was = true;
+                }
+            }
+            continue;
+        }
+        if (pt != p[i] && pt != p[(i+1)%p.size()]) {
+            if (greater(l.v^(pt-o), 0) && (!was || (less((pt-o).len2(), mn)))) {
+                mn = (pt-o).len2();
+                rv = pt;
+                Vector const& a = p[i];
+				Vector const& b = p[(i+1)%p.size()];
+				if (orientation(pt, o, a) == LEFT)
+					nxt = a;
+				else
+					nxt = b;	
+				was = true;
+            }
+            continue;
+        }
+        if (pt == p[i]) {
+            Vector a, b, c;
+            a = p[(i-1+p.size())%p.size()], b = p[i], c = p[(i+1)%p.size()];
+            if (consider_touch || orientation(a, b, b+l.v) * orientation(c, b, b+l.v) == -1) {
+                if (greater(l.v^(p[i]-o), 0) && (!was || (less((pt-o).len2(), mn)))) {
+                    mn = (pt-o).len2();
+                    rv = pt;
+                    if (orientation(pt, o, a) == LEFT)
+    					nxt = a;
+    				else
+    					nxt = c;	
+    				was = true;
+                }    
+            }
+        }
+    }
+
+    return was;
+}
+
 Polygon Geo::visibilityPolygon (Vector o, std::vector<Polygon> polygons) {
+	for (Polygon& p : polygons) {
+    	assert(p.size() > 1);
+    	if (p.size() > 2)
+    		p.makeNCW();
+    	else {
+    		if (orientation(p.points[0], o, p.points[1]) == RIGHT)
+    			std::swap(p.points[0], p.points[1]);    
+    	}
+	}
+	std::vector<Segment1> vertices;                  
+	for (Polygon& p : polygons) {
+    	for (int i = 0; i < p.size(); ++i) {
+    	    Vector& a = p[i]; 
+    	    Vector& b = (i == p.size() - 1) ? p[0] : p[i+1]; 
+    	    Vector& c = (i == 0) ? p[p.size()-1] : p[i-1];
+    	    vertices.push_back(Segment1(a, b));
+    	    if (orientation(a, o, b) == LEFT)
+    	    	vertices.back().next = b;
+    	    else
+	    	    vertices.back().next = c;
+    	   	vertices.back().val = std::max((a-o).len2(), (vertices.back().next-o).len2());
+    	}
+    }    
+    int cnt = 0;
+    for (int i = 0; i < vertices.size(); ++i) { 
+        if (less(vertices[i].a.y, o.y))
+            std::swap(vertices[i], vertices[cnt++]);
+    }
+    std::sort(vertices.begin(), vertices.begin() + cnt, 
+            [o](const Segment1& a, const Segment1& b) {
+                return orientation(a.a, o, b.a) == LEFT || 
+                    (orientation(a.a, o, b.a) == COLLINEAR && (a.a-o).len2() < (b.a-o).len2());    
+            });
+    std::sort(vertices.begin() + cnt, vertices.end(), 
+            [o](const Segment1& a, const Segment1& b) {
+                return orientation(a.a, o, b.a) == LEFT || 
+                    (orientation(a.a, o, b.a) == COLLINEAR && (a.a-o).len2() < (b.a-o).len2());
+            });
+    std::vector<Vector> candidates;
+    std::vector<std::pair<Vector, double>> stack;
+    for (int i = 0; i < (int)vertices.size(); ++i) {
+    	Segment1& v = vertices[i];
+    	while (stack.size() > 0 && (orientation(stack.back().first, o, v.a) == LEFT))
+    		stack.pop_back();
+    	if (i > 0) {
+    		if (orientation(vertices[i-1].a, o, vertices[i].a) == COLLINEAR || 
+    				(stack.size() > 0 && less(stack.back().second, (o-v.a).len2())))
+    			continue;
+    	}
+    	Line l(o, v.a-o);
+   		Vector nearest, nxt;
+   		double d = 0;
+   		bool was = false;
+   		for (Polygon& p : polygons) {
+   			Vector n1, nxt1;
+   			if (intersect1(o, l, p, n1, nxt1, false)) {
+   				if (!was || less((o-n1).len2(), d)) {
+   					d = (o-n1).len2();
+   					nearest = n1;
+   					nxt = nxt1; 
+   			   	}
+   				was = true;
+   			}
+   		}
+   	    double val = std::max((o-nxt).len2(), (o-nearest).len2());
+   	    
+   	    if (less((nearest-o).len2(), (v.a-o).len2()))
+   	 		continue;
+   	 	if (nearest == v.a) {
+   	 		candidates.push_back(nearest);
+   	 		stack.push_back(std::make_pair(nxt, val));
+   	 		continue;
+   		}	
+   		if (orientation(nearest, v.a, v.b) == LEFT) {
+    		candidates.push_back(nearest); 
+    		candidates.push_back(v.a);
+    		stack.push_back(std::make_pair(v.next, v.val)); 
+    	} else {
+    		candidates.push_back(v.a); 
+    		candidates.push_back(nearest); 
+    		stack.push_back(std::make_pair(nxt, val));
+    	}
+   	}
+   	return Geo::Polygon(candidates);
+}
+
+/*Polygon Geo::visibilityPolygon (Vector o, std::vector<Polygon> polygons) {
 	for (Polygon& p : polygons) {
     	assert(p.size() > 1);
     	if (p.size() > 2)
@@ -284,6 +436,7 @@ Polygon Geo::visibilityPolygon (Vector o, std::vector<Polygon> polygons) {
     }
     return Polygon(candidates);        
 }
+*/
 
 Polygon Geo::visibilityPolygon (Vector o, std::vector<Polygon> polygons, double w, double h) {
 	Polygon p;

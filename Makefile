@@ -2,7 +2,7 @@ CC=C:\mingw32\bin\g++.exe
 BOOST_PATH=C:\boost_1_58_0
 INCLUDES=dependencies/includes/
 LIBS=dependencies/libs/
-FLAGS= -std=c++11 -I$(BOOST_PATH) -I$(INCLUDES) -L$(LIBS)
+FLAGS= -std=c++11 -O2 -I$(BOOST_PATH) -I$(INCLUDES) -L$(LIBS)
 
 all: main
 
@@ -57,7 +57,7 @@ RenderSimpleObstacle.o:  src/render/RenderSimpleObstacle.cpp
 	$(CC) -c -std=c++11 src/render/RenderSimpleObstacle.cpp $(FLAGS)
 
 tests: src/geometry/tests.cpp Geometry.o
-	$(CC) -o out/tests.exe tests.cpp Geometry.o $(FLAGS)
+	$(CC) -o out/tests.exe src/geometry/tests.cpp Geometry.o $(FLAGS)
 
 clean:
 	cmd //C del *.o
