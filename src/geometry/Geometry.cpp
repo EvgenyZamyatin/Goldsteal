@@ -142,6 +142,12 @@ void Geo::Vector::rotate(double sn, double cs) {
 	y = ny;
 }
 
+Geo::Vector Geo::Vector::normal() {
+	Vector ans(-y, x);
+	ans.norm();
+	return ans;
+}
+
 int Geo::Polygon::order() {
 	for (int i = 0; i < points.size(); ++i) {
     	if (orientation(points[i], points[(i+1)%points.size()], points[(i+2)%points.size()]) == LEFT)
@@ -329,6 +335,12 @@ double Geo::distance(Vector a, Polygon b) {
 	boost::geometry::correct(a);
 	boost::geometry::correct(b.points);
 	return boost::geometry::distance(a, b.points);
+}
+
+double Geo::distance(Vector a, Segment b) {
+	boost::geometry::correct(a);
+	boost::geometry::correct(b);
+	return boost::geometry::distance(a, b);
 }
 
 

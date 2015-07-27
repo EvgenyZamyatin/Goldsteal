@@ -3,9 +3,31 @@
 #include <hgeanim.h>
 #include <hge.h>
 #include "help.h"
+#include "../model/GameState.h"
 
 
 void IBody::render(HGE *hge, Camera const* cam) {
+	
+	for (int i = 0; i < visible.size(); ++i) {
+		Geo::Vector a = visible[i], b = visible[(i+1)%visible.size()];
+		hgeTriple trip;
+		hgeU32 col = ARGB(50,0,100,0);                      
+		double sw = state->getEnvironment()->getWidth();
+		double sh = state->getEnvironment()->getHight();
+		double x1=pos.x,y1=pos.y,x2=a.x,y2=a.y,x3=b.x,y3=b.y;
+		cam->convertGS(x1,y1);
+		cam->convertGS(x2,y2);
+		cam->convertGS(x3,y3);
+
+		trip.tex = 0;
+		trip.blend = BLEND_DEFAULT;
+		fillTriple(trip, {
+						  {(float)x1, (float)y1, 0.f, col, 0, 0},
+						  {(float)x2, (float)y2, 0.f, col, 1, 0},
+						  {(float)x3, (float)y3, 0.f, col, 1, 1}
+						 });
+		hge->Gfx_RenderTriple(&trip);
+	}
 	
 	Rect r = boundingBox(bounds);
 	Rect c(cam);

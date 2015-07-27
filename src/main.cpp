@@ -29,7 +29,6 @@ bool FrameFunc() {
 	for (IBody* b : state->getBodies())
 		b->frame();
 	state->getHero()->frame();
-	
 	for (IBody* b : state->getBodies())
 		b->postChanges();
 	state->getHero()->postChanges();
@@ -41,7 +40,7 @@ bool FrameFunc() {
 bool RenderFunc() {
 	//cam->view(hge);
 	//fnt->printf(5, 5, HGETEXT_LEFT, "dt:%.3f\nFPS:%d (constant)", hge->Timer_GetDelta(), hge->Timer_GetFPS());
-	//std::cerr << hge->Timer_GetFPS() << "\n";
+	std::cerr << hge->Timer_GetFPS() << "\n";
 	hge->Gfx_BeginScene();
 	hge->Gfx_Clear(0);
 	state->getEnvironment()->render(hge, cam);
@@ -79,10 +78,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	    res = new hgeResourceManager("level.res");
 	    IBrain::initBrains(input);
 	    Tmx::Map map;
-		map.ParseFile("level.tmx");
+		map.ParseFile("levelHARD.tmx");
 	    state = new GameState(&map, res);
 	    cam = new Camera(state->getEnvironment()->getWidth(), state->getEnvironment()->getHight(), 
-	    					{400,300}, 80*6, 60*6, 800, 600, 100);
+					{400,300}, 80*6, 60*6, 800, 600, 100);
 		cam->bind(state->getHero());
 		hge->System_Start();
   	}	

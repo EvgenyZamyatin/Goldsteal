@@ -39,6 +39,7 @@ namespace Geo {
         void rotate(double angle);
         void rotate(double sn, double cs);
         void norm() {*this/=len();}
+        Geo::Vector normal();
         double operator* (const Vector& other) const {return x*other.y-y*other.x;}
         double operator^ (const Vector& other) const {return x*other.x+y*other.y;}
         bool operator==(const Vector& other) const;
@@ -109,6 +110,7 @@ namespace Geo {
     Polygon visibilityPolygon(Vector o, std::vector<Polygon> polygons);
     
     double distance(Vector a, Polygon b);
+    double distance(Vector a, Segment b);
     double distance(Polygon a, Polygon b);
 	double distance(Segment a, Polygon b);
 

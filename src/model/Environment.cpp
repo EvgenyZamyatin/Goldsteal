@@ -19,7 +19,7 @@ Environment::Environment(Tmx::Map const* map, hgeResourceManager* res) {
 	       
 	rData.envTileWidth=width/map->GetWidth();
 	rData.envTileHight=hight/map->GetHeight();
-	
+			
 	for (Tmx::TileLayer* tl : map->GetTileLayers()) {
 		Render::EnvironmentData::Layer l;
 		Tmx::Tileset const* ts = NULL;
@@ -55,7 +55,7 @@ Environment::Environment(Tmx::Map const* map, hgeResourceManager* res) {
 		}
 		rData.layers.push_back(l);
    	}
-
+   	
    	for (Tmx::ObjectGroup* ob : map->GetObjectGroups()) {
    		for (Tmx::Object* o : ob->GetObjects()) {
    			if (o->GetType() == "SimpleObstacle") {

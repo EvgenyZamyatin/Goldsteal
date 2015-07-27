@@ -54,8 +54,9 @@ private:
 	GameState* state;
 	Geo::Polygon visible;
 	Geo::Vector dir;	
-
+	double collisionRadius;
 	std::function<void()> changes=[](){};
+	Geo::Polygon visibleBounds;
 };
 
 #endif

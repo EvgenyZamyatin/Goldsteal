@@ -13,36 +13,54 @@ GameState::GameState(Tmx::Map const* map, hgeResourceManager* res) {
 	}
 }
 
-void GameState::tryMove(IBody* body, Geo::Vector const& vel) {
+void GameState::tryMove(IBody* body, Geo::Vector& vel) {
 	if (Geo::equals(vel.len(), 0))
 		return; 
 	
-	double mx = 0;
-	for (Geo::Vector const& v : body->bounds.points) {
-		mx = std::max(mx, (body->pos-v).len());
-	}
+	Geo::Vector newPos = body->pos + vel;
+	//double d = 1000000000;
+	//Geo::Segment mn;
+	bool was = false;
+	static std::vector<Geo::Vector> newVels;
+	newVels.clear();
+	newVels.push_back(vel);
 
-	body->pos += vel;
-	bool ok = true;
 	for (IObject* obj : env->objs) {
-		if (Geo::less(Geo::distance(body->pos, obj->bounds), mx)) {
-			body->onCollision(obj);
-			ok = false;
+		for (int i = 0; i < obj->bounds.size(); ++i) {
+			Geo::Segment s(obj->bounds[i], obj->bounds[(i+1)%obj->bounds.size()]);
+			double d = Geo::distance(newPos, s);
+			if (Geo::less(d, body->collisionRadius)) {
+				Geo::Vector n((s.b-s.a).normal());
+				Geo::Vector part(n*(vel^n));
+				newVels.push_back(vel-part);
+				was = true;
+			}
+		}
+		if (was)
+			break;
+	}
+	newVels.push_back({0,0});
+	for (Geo::Vector& nvel : newVels) {
+		newPos = body->pos + nvel;
+		bool ok = true;
+		for (IObject* obj : env->objs) {
+			if (Geo::less(Geo::distance(newPos, obj->bounds), body->collisionRadius))
+				ok = false;
+		}
+		if (ok) {
+			body->pos = newPos;
+			for (Geo::Vector& v : body->bounds.points)
+				v += nvel;
+			vel = nvel;
+			return;
 		}
 	}
-	for (IBody* b : bodies) {
-		if (b == body)
-			continue;
-		if (Geo::less(Geo::distance(body->pos, b->bounds), mx)) {
-			body->onCollision(b);
-			b->onCollision(body);
-			ok = false;
-		}
-	}
-	if (ok) {
-		for (Geo::Vector& v : body->bounds.points)
-			v += vel;
-	} else {
-		body->pos -= vel;
-	}
+	assert(false);
 }
+
+
+
+
+
+
+

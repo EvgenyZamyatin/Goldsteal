@@ -1,12 +1,20 @@
 #include "BrainPlayerInput.h"
 #include "../GameState.h"
 
+
 BrainPlayerInput::BrainPlayerInput(InputData const* input) {
 	this->input = input;
 }
 
 void BrainPlayerInput::decide(IBody* body) {
 	InputData in = *input;
+	//double st = clock();
+	std::vector<Geo::Polygon> objs;
+	for (IObject* obj : body->state->getEnvironment()->getObjects())
+		if (obj->isObstruct())
+			objs.push_back(obj->getBounds());
+	body->visible = Geo::visibilityPolygon(body->pos, objs, body->state->getEnvironment()->getWidth(), body->state->getEnvironment()->getHight());
+	//std::cerr << "Elapsed: " << (clock()-st)/CLOCKS_PER_SEC << "\n";
 	body->changes = [body, in]() {
 		Geo::Vector ms(in.mX-body->pos.x, in.mY-body->pos.y);
 		double sn = (body->dir)*ms/(body->dir).len()/ms.len();
