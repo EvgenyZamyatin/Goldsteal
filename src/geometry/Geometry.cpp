@@ -392,16 +392,13 @@ bool touch (Vector const& o, Segment1 const& s) {
 bool remove(std::set<Segment1, std::function<bool(Segment1 const&, Segment1 const&)>>& set, Vector const& o, Segment1 const& s) {
 	Segment1 s1(s.d, s.a);
 	auto it = set.lower_bound(s1);
-	auto end = set.upper_bound(s1);
-	for (;it != end;++it) {
-		if ((*it).a==s1.a && (*it).b==s1.b) {
-			s1=*it;
-			bool ans = (it == set.begin()) && !touch(o, s1);
-			set.erase(it);
-			return ans;
-		}
-	}	
-	return false;
+	if ((*it).a==s1.a && (*it).b==s1.b) {
+		s1=*it;
+		bool ans = (it == set.begin()) && !touch(o, s1);
+		set.erase(it);
+		return ans;
+	}
+   	return false;
 } 
 
 Polygon Geo::visibilityPolygonFast (Vector o, std::vector<Polygon> polygons) {
