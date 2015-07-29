@@ -445,7 +445,7 @@ Polygon Geo::visibilityPolygonFast (Vector o, std::vector<Polygon> polygons) {
     			Segment1 s(p[i], i == p.size() - 1 ? p[0] : p[i+1], (i == p.size() - 1) ? p[1] : (i == p.size() - 2 ? p[0] : p[i+2]), i == 0 ? p[p.size()-1] : p[i-1]);
     			if (!intersect(l, s, pt))
     				continue;
-    			if (greater(l.v^(pt-o), 0)) {
+    			if (s.a != pt && greater(l.v^(pt-o), 0)) {
     				add(set, o, s);
     			}
     		}
@@ -466,11 +466,6 @@ Polygon Geo::visibilityPolygonFast (Vector o, std::vector<Polygon> polygons) {
  			j++;
  		}
  		
- 		/*std::cerr << v.a << "\n";
- 		for (auto j : set)
- 			std::cerr << j.a << " " << j.b << "\n";
- 		std::cerr << "===";*/
- 		//std::cerr << isAns << "\n";
  		if ((i == 0 || orientation(vertices[i-1].a, o, vertices[i].a) != COLLINEAR)) {
      			Vector nearest;
             	bool have = isAns;

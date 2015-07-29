@@ -192,6 +192,14 @@ void visibilityPolygon_test() {
         Vector(0,10)*1000
     }));
 	assert(check(myPoly, truePoly));
+	/*
+	std::vector<Polygon> polys = (std::vector<Polygon>({
+			Polygon(std::vector<Vector>({Vector(95, 15), Vector(105,15), Vector(105,25), Vector(95,25)}))
+		}));
+	Vector o4(97, 33);
+	Polygon myPoly = visibilityPolygon(o4, polys, 128, 128);
+	std::cerr << myPoly << "\n";	
+	*/
 }
 
 int main() {

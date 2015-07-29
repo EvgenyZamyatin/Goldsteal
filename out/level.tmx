@@ -419,10 +419,10 @@
  </layer>
  <objectgroup name="Boxes">
   <object id="37" name="Box" type="SimpleObstacle" gid="3" x="426.157" y="635.123" width="216" height="206" rotation="23.2009"/>
-  <object id="38" name="Box" type="SimpleObstacle" gid="3" x="942" y="428" width="184" height="194"/>
+  <object id="38" name="Box" type="SimpleObstacle" gid="3" x="950" y="250" width="100" height="100"/>
   <object id="39" name="Box" type="SimpleObstacle" gid="3" x="822" y="1048" width="128" height="128"/>
   <object id="40" name="Box" type="SimpleObstacle" gid="3" x="65.257" y="246.682" width="128" height="128" rotation="21.0908"/>
-  <object id="41" name="WalkingBox" type="Hero" gid="3" x="504" y="168" width="46" height="46">
+  <object id="41" name="WalkingBox" type="Hero" gid="3" x="950" y="350" width="40" height="40">
    <properties>
     <property name="Brain" value="BrainPlayerInput"/>
     <property name="CollisionRadius" value="26.5"/>
