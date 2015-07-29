@@ -78,7 +78,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	    res = new hgeResourceManager("level.res");
 	    IBrain::initBrains(input);
 	    Tmx::Map map;
-		map.ParseFile("level.tmx");
+		map.ParseFile("levelHARD.tmx");
 	    state = new GameState(&map, res);
 	    cam = new Camera(state->getEnvironment()->getWidth(), state->getEnvironment()->getHight(), 
 					{400,300}, 80*6, 60*6, 800, 600, 100);

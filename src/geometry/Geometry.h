@@ -68,6 +68,7 @@ namespace Geo {
         Segment (const Vector& a, const Vector& b) : a(a), b(b) {}
         double len() const {return (a-b).len();}
         double len2() const {return (a-b).len2();}
+        bool operator==(Segment const& other) {return a==other.a && b==other.b;}
     };
 
     struct Polygon {
