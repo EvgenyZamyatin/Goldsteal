@@ -29,9 +29,9 @@ void IBody::render(HGE *hge, Camera const* cam) {
 		hge->Gfx_RenderTriple(&trip);
 	}
 	
-	Rect r = boundingBox(bounds);
-	Rect c(cam);
-	if (!intersect(r, c))
+	Geo::Box r(bounds);
+	Geo::Box c(cam->getPos().x-cam->CAMERA_WIDTH/2, cam->getPos().y-cam->CAMERA_HIGHT/2, cam->CAMERA_WIDTH, cam->CAMERA_HIGHT);
+	if (!intersects(r, c))
 		return; 	                        
 	
 	hgeAnimation& a = rData.get(moveState);

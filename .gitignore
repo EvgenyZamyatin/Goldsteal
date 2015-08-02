@@ -3,5 +3,6 @@
 resources/*
 out/*.png
 out/*.jpg
+out/*.db
 lib/*
 dependencies/*

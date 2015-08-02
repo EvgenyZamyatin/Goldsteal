@@ -13,15 +13,15 @@ GameState::GameState(Tmx::Map const* map, hgeResourceManager* res) {
 	}
 }
 
-void GameState::tryMove(IBody* body, Geo::Vector& vel) {
+void GameState::process(IBody* body) {
+	Geo::Vector& vel = body->velocity; 
 	if (Geo::equals(vel.len(), 0))
 		return; 
 	
 	Geo::Vector newPos = body->pos + vel;
-	//double d = 1000000000;
-	//Geo::Segment mn;
+	
 	bool was = false;
-	static std::vector<Geo::Vector> newVels;
+	std::vector<Geo::Vector> newVels;
 	newVels.clear();
 	newVels.push_back(vel);
 
@@ -58,9 +58,8 @@ void GameState::tryMove(IBody* body, Geo::Vector& vel) {
 	assert(false);
 }
 
-
-
-
-
-
-
+void GameState::frame() {
+	process(hero);
+	for (IBody* body : bodies) 
+		process(body);
+}

@@ -30,14 +30,12 @@ struct IBody : IObject {
 	
 	Geo::Vector getDir() const {return dir;}
 	double getViewAngle() const {return viewAngle;}
-	void postChanges() {changes();}
+
     void frame();
     virtual void render(HGE* hge, Camera const* cam);
     
     virtual void onCollision(IObject* obj) {}
 	virtual void onCollision(IBody* body) {}
-
-    //void move(Geo::Vector const& v);
 
 	friend struct GameState;
 	friend struct BrainPlayerInput;
@@ -55,8 +53,9 @@ private:
 	Geo::Polygon visible;
 	Geo::Vector dir;	
 	double collisionRadius;
-	std::function<void()> changes=[](){};
-	Geo::Polygon visibleBounds;
 };
 
 #endif
+
+
+

@@ -19,6 +19,7 @@ struct IObject : IRenderable {
 	virtual bool isObstacle() {return true;}
 	void setPos(Geo::Vector const& p) {this->pos=p;}
 	void setBounds(Geo::Polygon const& p) {this->bounds=p;}
+
 	friend struct GameState;
 protected:
 	Geo::Polygon bounds;

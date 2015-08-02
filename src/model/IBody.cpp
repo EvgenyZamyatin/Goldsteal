@@ -24,10 +24,3 @@ IBody::IBody(Tmx::Object const* o, hgeResourceManager* res) : IObject(o, res), d
 void IBody::frame() {
 	brain->decide(this);
 }
-/*
-void IBody::move(Geo::Vector const& v) {
-	pos += v;
-	for (Geo::Vector& b : bounds.points)
-		b += v;
-}
-*/

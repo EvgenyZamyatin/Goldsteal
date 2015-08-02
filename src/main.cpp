@@ -24,22 +24,20 @@ Camera* cam;
 InputData* input;
 
 bool FrameFunc() {
+	//double start = clock();
 	if (hge->Input_GetKeyState(HGEK_ESCAPE)) return true;
 	input->update(hge, cam);
 	for (IBody* b : state->getBodies())
 		b->frame();
 	state->getHero()->frame();
-	for (IBody* b : state->getBodies())
-		b->postChanges();
-	state->getHero()->postChanges();
-	
+	state->frame();
 	cam->frame(input, false);
+	//std::cerr << "TOTAL FRAME: " << (clock()-start)/CLOCKS_PER_SEC << "\n";
 	return false;
 }          
 		
 bool RenderFunc() {
-	//cam->view(hge);
-	//fnt->printf(5, 5, HGETEXT_LEFT, "dt:%.3f\nFPS:%d (constant)", hge->Timer_GetDelta(), hge->Timer_GetFPS());
+	//double start = clock();
 	std::cerr << hge->Timer_GetFPS() << "\n";
 	hge->Gfx_BeginScene();
 	hge->Gfx_Clear(0);
@@ -51,6 +49,7 @@ bool RenderFunc() {
 	state->getHero()->render(hge, cam);
 	//state->getHero()->render(hge, cam);
 	hge->Gfx_EndScene();
+	//std::cerr << "TOTAL REND: " << (clock()-start)/CLOCKS_PER_SEC << "\n";
 	return false;
 }
 
@@ -66,7 +65,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	hge->System_SetState(HGE_SCREENWIDTH, WIDTH);
 	hge->System_SetState(HGE_SCREENHEIGHT, HIGHT);
 	hge->System_SetState(HGE_SCREENBPP, 32);
-	hge->System_SetState(HGE_FPS, 100);
+	//hge->System_SetState(HGE_FPS, 100);
 	hge->System_SetState(HGE_ZBUFFER, true);		
 	hge->System_SetState(HGE_HIDEMOUSE, false);
 
@@ -81,7 +80,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		map.ParseFile("levelHARD.tmx");
 	    state = new GameState(&map, res);
 	    cam = new Camera(state->getEnvironment()->getWidth(), state->getEnvironment()->getHight(), 
-					{400,300}, 80*6, 60*6, 800, 600, 100);
+					{400,300}, 800, 600, 800, 600, 100);
 		cam->bind(state->getHero());
 		hge->System_Start();
   	}	

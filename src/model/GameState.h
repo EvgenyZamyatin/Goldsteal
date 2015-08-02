@@ -21,7 +21,8 @@ struct GameState : IRenderable {
 	void setEnvironment(Environment* env) {this->env=env;}
 	Environment* getEnvironment() {return env;}
 	IBody* getHero() {return hero;}
-	void tryMove(IBody* body, Geo::Vector& velocity);
+	void process(IBody* body);
+	void frame();
 
 private:
 	std::vector<IBody*> bodies;

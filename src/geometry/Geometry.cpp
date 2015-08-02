@@ -49,8 +49,6 @@ std::ostream& Geo::operator<<(std::ostream &strm, Polygon p) {
 int Geo::orientation (Vector a, Vector c, Vector b) {
     a -= c;
     b -= c;
-    //a.norm();
-    //b.norm();
     double tmp = a*b;
     if (fabs(tmp) < Geo::EPSILON)
         return Geo::COLLINEAR;
@@ -158,6 +156,8 @@ int Geo::Polygon::order() {
 	for (int i = 0; i < points.size(); ++i) {
     	if (orientation(points[i], points[(i+1)%points.size()], points[(i+2)%points.size()]) == LEFT)
     		return Geo::COUNTERCLOCKWISE;    	
+		if (orientation(points[i], points[(i+1)%points.size()], points[(i+2)%points.size()]) == RIGHT)
+    		return Geo::CLOCKWISE;    	
     }
     return Geo::CLOCKWISE;
 }
@@ -166,17 +166,21 @@ void Geo::Polygon::makeCW() {
 	for (int i = 0; i < points.size(); ++i) {
     	if (orientation(points[i], points[(i+1)%points.size()], points[(i+2)%points.size()]) == LEFT) {
     		std::reverse(points.begin(), points.end());
-    		break;
+    		return;
     	}    	
+    	if (orientation(points[i], points[(i+1)%points.size()], points[(i+2)%points.size()]) == RIGHT)
+    		return;
     }
 }
 
-void Geo::Polygon::makeNCW() {
+void Geo::Polygon::makeCCW() {
 	for (int i = 0; i < points.size(); ++i) {
     	if (orientation(points[i], points[(i+1)%points.size()], points[(i+2)%points.size()]) == RIGHT) {
     		std::reverse(points.begin(), points.end());
-    		break;
-    	}    	
+    		return;
+    	}
+    	if (orientation(points[i], points[(i+1)%points.size()], points[(i+2)%points.size()]) == LEFT)
+    		return;	
     }
 }
 
@@ -224,6 +228,19 @@ Vector Geo::Polygon::center() {
 	ans /= points.size();
 	return ans;
 }
+
+Box::Box(Polygon const& p) {
+	a.x = a.y = 1000000000;
+	b.x = b.y = -1000000000;
+	for (Vector const& v : p.points) {
+		a.x = std::min(a.x, v.x);
+		a.y = std::min(a.y, v.y);
+		
+		b.x = std::max(b.x, v.x);
+		b.y = std::max(b.y, v.y);
+	}
+}
+
 /*
 struct Segment1 : Segment {
 	Segment1(Vector const& a, Vector const& b) : Segment(a, b) {}
@@ -386,16 +403,18 @@ struct Segment1 : Segment {
 }; 
 
 void add(std::set<Segment1, std::function<bool(Segment1 const&, Segment1 const&)>>& set, Vector const& o, Segment1 const& s) {
-	if (orientation(s.a, o, s.b) == LEFT) {
+	if (orientation(s.a, o, s.b) == LEFT)
 		set.insert(s);
-	}
 } 
 
 bool touch (Vector const& o, Segment1 const& s) {
 	return !(orientation(o, s.b, s.a) * orientation(o, s.b, s.c) == -1);	
 } 
 
+
 bool remove(std::set<Segment1, std::function<bool(Segment1 const&, Segment1 const&)>>& set, Vector const& o, Segment1 const& s) {
+	if (orientation(s.d, o, s.a) == RIGHT)
+		return false;
 	Segment1 s1(s.d, s.a);
 	auto it = set.lower_bound(s1);
 	if ((*it).a==s1.a && (*it).b==s1.b) {
@@ -444,8 +463,6 @@ Polygon Geo::visibilityPolygonFast (Vector o, std::vector<Polygon> polygons) {
  	                            double b = (o-pt).len2();
  	                            assert((Segment)s1 == (Segment)s2 || !Geo::equals(a, b));
  	                            return Geo::less(a, b);
- 								/*return less((o-s1.a).len2(), (o-s2.a).len2()) || (equals((o-s1.a).len2(), (o-s2.a).len2()) && less((o-s1.b).len2(), (o-s2.b).len2())) 
- 									|| ((equals((o-s1.a).len2(), (o-s2.a).len2()) && less((o-s1.b).len2(), (o-s2.b).len2())) && orientation(s1.a, o, s1.b) == LEFT);*/
  							});
  	
  	std::vector<Vector> candidates;
@@ -512,13 +529,11 @@ Polygon Geo::visibilityPolygonFast (Vector o, std::vector<Polygon> polygons) {
     return Polygon(candidates);
 }
 
-
-
 Polygon Geo::visibilityPolygon (Vector o, std::vector<Polygon> polygons, double w, double h) {
 	for (Polygon& p : polygons) {
     	assert(p.size() > 1);
     	if (p.size() > 2)
-    		p.makeNCW();
+    		p.makeCCW();
     	else {
     		if (orientation(p.points[0], o, p.points[1]) == RIGHT)
     			std::swap(p.points[0], p.points[1]);    
@@ -532,7 +547,6 @@ Polygon Geo::visibilityPolygon (Vector o, std::vector<Polygon> polygons, double 
     polygons.push_back(p);
     return visibilityPolygonFast (o, polygons);    
 }
-
 
 bool Geo::intersect(Polygon p1, Polygon p2, std::vector<Polygon>& out) {
 	boost::geometry::correct(p1.points);
@@ -581,4 +595,6 @@ double Geo::distance(Vector a, Segment b) {
 	return boost::geometry::distance(a, b);
 }
 
-
+bool Geo::intersects(Box const& a, Box const& b) {
+	return boost::geometry::intersects(a, b);
+}

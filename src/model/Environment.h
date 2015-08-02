@@ -22,6 +22,7 @@ struct Environment : IRenderable {
 	double getHight() const {return hight;}
 	void render(HGE* hge, Camera const* cam);
 	friend struct GameState;
+
 private:
 	std::vector<IObject*> objs;
 	double width;

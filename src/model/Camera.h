@@ -38,7 +38,6 @@ struct Camera {
 	void convertSG(double& x, double& y) const;
 	void convertGS(double& x, double& y) const;
 
-
 private:
 	IBody* body=NULL;
 	Geo::Vector pos;

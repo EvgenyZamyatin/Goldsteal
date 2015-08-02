@@ -1,14 +1,13 @@
-#include "../model/SimpleObstacle.h"
-#include "SimpleObstacleData.h"
+#include "../model/SimpleObject.h"
+#include "SimpleObjectData.h"
 #include "help.h"
 #include "../geometry/Geometry.h"
 
-void SimpleObstacle::render(HGE* hge, Camera const* cam) {
-	Rect r = boundingBox(bounds);
-	Rect c(cam);
-	if (!intersect(r, c))
+void SimpleObject::render(HGE* hge, Camera const* cam) {
+	Geo::Box r(bounds);
+	Geo::Box c(cam->getPos().x-cam->CAMERA_WIDTH/2, cam->getPos().y-cam->CAMERA_HIGHT/2, cam->CAMERA_WIDTH, cam->CAMERA_HIGHT);
+	if (!intersects(r, c))
 		return; 	                        
-	
 	static double pt[4][2];
 	for (int i = 0; i < 4; ++i) {
 		pt[i][0] = bounds[rData.point[i]].x;

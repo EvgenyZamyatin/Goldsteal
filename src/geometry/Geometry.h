@@ -8,6 +8,7 @@
 #include <boost/geometry/geometries/register/point.hpp>
 #include <boost/geometry/geometries/register/segment.hpp>
 #include <boost/geometry/geometries/register/ring.hpp>
+#include <boost/geometry/geometries/register/box.hpp>
 
 namespace Geo {
     
@@ -73,27 +74,39 @@ namespace Geo {
 
     struct Polygon {
         std::vector<Vector> points;
+
         Polygon () {}
         Polygon (const std::vector<Vector>& pts) : points(pts) {}
         void addPoint(const Vector& pt) {points.push_back(pt);}
         int size() const {return points.size();}
-        Vector& operator[] (int i) {return points[i];}
-        Vector operator[] (int i) const {return points[i];}
+        Vector const& operator[] (int i) const {return points[i];}
+        Vector operator[] (int i) {return points[i];}
         std::string to_string() const;
         void makeCW();
-        void makeNCW();
+        void makeCCW();
         int order();                             
         void rotate(const Vector&, double angle);
         void rotate(int v, double angle);
         void rotate(const Vector&, double sn, double cs);
-        Vector center();
         //around first point.
         void rotate(double angle);
+        Vector center();
     };
     
     std::ostream& operator<<(std::ostream&, Polygon);
     
+    struct Box {
+
+    	Vector a, b;
+        Box() {}
+    	Box(Vector const& a, Vector const& b) : a(a), b(b) {}
+    	Box(double x, double y, double width, double hight) : a(x,y), b(x+width, y+hight) {}
+    	Box(Polygon const& p);
+    };
+    
+    
     int orientation (Vector a, Vector c, Vector b);
+    
     bool onLine(const Vector& v, const Line& l);
     bool collinear (const Line& a, const Line& b);
     bool collinear (const Line& a, const Segment& b);
@@ -107,6 +120,8 @@ namespace Geo {
     bool intersect (Polygon p1, Polygon p2, std::vector<Polygon>& out);
 	bool intersect (Polygon p1, Polygon p2, Polygon& out);
 
+	bool intersects(Box const& a, Box const& b);
+
     Polygon visibilityPolygon(Vector o, std::vector<Polygon> polygons, double w, double h);
     Polygon visibilityPolygon(Vector o, std::vector<Polygon> polygons);
     Polygon visibilityPolygonFast(Vector o, std::vector<Polygon> polygons);
@@ -114,14 +129,12 @@ namespace Geo {
     double distance(Vector a, Polygon b);
     double distance(Vector a, Segment b);
     double distance(Polygon a, Polygon b);
-	double distance(Segment a, Polygon b);
-
-    
+	double distance(Segment a, Polygon b);  
 }
 
-BOOST_GEOMETRY_REGISTER_POINT_2D(Geo::Vector, double, boost::geometry::cs::cartesian, x, y)
-BOOST_GEOMETRY_REGISTER_RING(std::vector<Geo::Vector>)
+BOOST_GEOMETRY_REGISTER_POINT_2D(Geo::Vector, double, boost::geometry::cs::cartesian, x, y);
+BOOST_GEOMETRY_REGISTER_RING(std::vector<Geo::Vector>);
 BOOST_GEOMETRY_REGISTER_SEGMENT(Geo::Segment, Geo::Vector, a, b);
-
+BOOST_GEOMETRY_REGISTER_BOX(Geo::Box, Geo::Vector, a, b);
 
 #endif

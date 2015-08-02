@@ -1,5 +1,5 @@
 #include "Environment.h"
-#include "SimpleObstacle.h"
+#include "SimpleObject.h"
 
 inline int norm(int a) {
 	int i = 0;
@@ -58,8 +58,8 @@ Environment::Environment(Tmx::Map const* map, hgeResourceManager* res) {
    	
    	for (Tmx::ObjectGroup* ob : map->GetObjectGroups()) {
    		for (Tmx::Object* o : ob->GetObjects()) {
-   			if (o->GetType() == "SimpleObstacle") {
-   				addObject(new SimpleObstacle(o, res));
+   			if (o->GetType() == "SimpleObject") {
+   				addObject(new SimpleObject(o, res));
    			} 
    		}
    	}

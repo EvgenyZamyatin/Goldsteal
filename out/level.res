@@ -38,3 +38,14 @@ Animation AnimBox2
 	fps=4.0
 	frames=4
 }
+
+Texture Wall 
+{
+	filename=blacksquare.jpg
+}
+
+Sprite Wall 
+{
+	texture=Wall
+	rect=0,0,16,16
+}

@@ -11,21 +11,25 @@ inline void Render::EnvironmentData::Layer::get(int i, int j, int& ti, int& tj, 
 
 void Environment::render(HGE* hge, Camera const* cam) {
 	Environment const* env = this;
-	Rect c(cam);
-	Rect cur;
+	Geo::Box c(cam->getPos().x-cam->CAMERA_WIDTH/2, cam->getPos().y-cam->CAMERA_HIGHT/2, cam->CAMERA_WIDTH, cam->CAMERA_HIGHT);
+	Geo::Box cur;
 	static hgeQuad quad;                          
 	
 	double kx = cam->KX;
 	double ky = cam->KY;
 	
-	for (int i = 0; i < env->rData.tilesInRow; ++i) {
-		for (int j = 0; j < env->rData.tilesInColumn; ++j) {
-			cur.x=i*env->rData.envTileWidth;
-			cur.y=j*env->rData.envTileHight;  
-			cur.width=env->rData.envTileWidth;
-			cur.hight=env->rData.envTileHight;
-			if (!intersect(c, cur))
-				continue;
+	//double start = clock();
+	int firstcolumn = int( floor(c.a.x / env->rData.envTileWidth) );
+    int firstrow = int( floor(c.a.y / env->rData.envTileHight) );
+    int lastcolumn = int( ceil(c.b.x / env->rData.envTileWidth) );
+    int lastrow = int( ceil(c.b.y / env->rData.envTileHight) );;
+
+	for (int i = firstcolumn; i < lastcolumn; ++i) {
+		for (int j = firstrow; j < lastrow; ++j) {
+			cur.a.x=i*env->rData.envTileWidth;
+			cur.a.y=j*env->rData.envTileHight;  
+			cur.b.x=cur.a.x + env->rData.envTileWidth;
+			cur.b.y=cur.a.y + env->rData.envTileHight;
 			for (Render::EnvironmentData::Layer l : env->rData.layers) {
 				int ti, tj;
 				l.get(i, j, ti, tj, env->rData.tilesInRow);
@@ -35,16 +39,17 @@ void Environment::render(HGE* hge, Camera const* cam) {
 				quad.blend = BLEND_DEFAULT_Z;
 				hgeU32 col = ARGB(l.alpha, 255, 255, 255);
 				fillQuad(quad, {                                                   
-								{(float)((cur.x-c.x)*kx),           (float)((cur.y-c.y)*ky),           0.5f, col, ti*1.f/l.texWidth,                           tj*1.f/l.texHight},
-								{(float)((cur.x+cur.width-c.x)*kx), (float)((cur.y-c.y)*ky),           0.5f, col, (ti+env->rData.texTileWidth)*1.f/l.texWidth, tj*1.f/l.texHight},
-								{(float)((cur.x+cur.width-c.x)*kx), (float)((cur.y+cur.hight-c.y)*ky), 0.5f, col, (ti+env->rData.texTileWidth)*1.f/l.texWidth, (tj+env->rData.texTileHight)*1.f/l.texHight},
-								{(float)((cur.x-c.x)*kx),           (float)((cur.y+cur.hight-c.y)*ky), 0.5f, col, ti*1.f/l.texWidth,                           (tj+env->rData.texTileHight)*1.f/l.texHight}
+								{(float)((cur.a.x-c.a.x)*kx), (float)((cur.a.y-c.a.y)*ky), 0.5f, col, ti*1.f/l.texWidth,                           tj*1.f/l.texHight},
+								{(float)((cur.b.x-c.a.x)*kx), (float)((cur.a.y-c.a.y)*ky), 0.5f, col, (ti+env->rData.texTileWidth)*1.f/l.texWidth, tj*1.f/l.texHight},
+								{(float)((cur.b.x-c.a.x)*kx), (float)((cur.b.y-c.a.y)*ky), 0.5f, col, (ti+env->rData.texTileWidth)*1.f/l.texWidth, (tj+env->rData.texTileHight)*1.f/l.texHight},
+								{(float)((cur.a.x-c.a.x)*kx), (float)((cur.b.y-c.a.y)*ky), 0.5f, col, ti*1.f/l.texWidth,                           (tj+env->rData.texTileHight)*1.f/l.texHight}
 							   });
 				                           
 				hge->Gfx_RenderQuad(&quad);
 			}
 		}
 	}
+	//std::cerr << "ELAPSED: " << (clock() - start)/CLOCKS_PER_SEC << "\n";
 }
  
 /*int firstcolumn = int( floor(c.x / envData.envTileWidth) );
