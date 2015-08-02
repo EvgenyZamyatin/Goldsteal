@@ -89,8 +89,13 @@ bool Geo::intersect (const Line& a, const Line& b, Vector& res) {
 //If overlaps returns true.
 bool Geo::intersect (const Line& a, const Segment& b, Vector& res, 
         bool consider_touch) {
-    if (collinear(a, b) && (onLine(b.a, a) || onLine(b.b, a)))
+    if (collinear(a, b) && (onLine(b.a, a) || onLine(b.b, a))) {
+        if (Geo::less((a.u-b.a).len2(), (a.u-b.b).len2()))
+        	res = b.a;
+        else 
+        	res = b.b;
         return true;
+    }
     if (collinear(a, b))
         return false;
     Vector u(b.a), v(b.b-b.a);
@@ -381,8 +386,9 @@ struct Segment1 : Segment {
 }; 
 
 void add(std::set<Segment1, std::function<bool(Segment1 const&, Segment1 const&)>>& set, Vector const& o, Segment1 const& s) {
-	if (orientation(s.a, o, s.b) == LEFT)
+	if (orientation(s.a, o, s.b) == LEFT) {
 		set.insert(s);
+	}
 } 
 
 bool touch (Vector const& o, Segment1 const& s) {
@@ -427,14 +433,26 @@ Polygon Geo::visibilityPolygonFast (Vector o, std::vector<Polygon> polygons) {
                 return orientation(a.a, o, b.a) == LEFT || 
                     (orientation(a.a, o, b.a) == COLLINEAR && (a.a-o).len2() < (b.a-o).len2());
             });
- 	std::set<Segment1, std::function<bool(Segment1 const&, Segment1 const&)>> set([o](Segment1 const& s1, Segment1 const& s2) {
- 								return less((o-s1.a).len2(), (o-s2.a).len2()) || (equals((o-s1.a).len2(), (o-s2.a).len2()) && less((o-s1.b).len2(), (o-s2.b).len2())) 
- 									|| ((equals((o-s1.a).len2(), (o-s2.a).len2()) && less((o-s1.b).len2(), (o-s2.b).len2())) && orientation(s1.a, o, s1.b) == LEFT);
+    
+    Geo::Vector dirV;
+ 	std::set<Segment1, std::function<bool(Segment1 const&, Segment1 const&)>> set([o, &dirV](Segment1 const& s1, Segment1 const& s2) {
+ 	                            Geo::Vector pt;
+ 	                            Line l(o, dirV-o);
+ 	                            assert(intersect(l, s1, pt));
+ 	                            double a = (o-pt).len2();
+ 	                            assert(intersect(l, s2, pt));
+ 	                            double b = (o-pt).len2();
+ 	                            assert((Segment)s1 == (Segment)s2 || !Geo::equals(a, b));
+ 	                            return Geo::less(a, b);
+ 								/*return less((o-s1.a).len2(), (o-s2.a).len2()) || (equals((o-s1.a).len2(), (o-s2.a).len2()) && less((o-s1.b).len2(), (o-s2.b).len2())) 
+ 									|| ((equals((o-s1.a).len2(), (o-s2.a).len2()) && less((o-s1.b).len2(), (o-s2.b).len2())) && orientation(s1.a, o, s1.b) == LEFT);*/
  							});
+ 	
  	std::vector<Vector> candidates;
    	
    	{//init st.
     	Vector const& st = vertices[0].a;
+    	dirV = st;//!!Important for comparator!!
     	Line l(o, (st-o));
     	Vector pt;
     	for (Polygon const& p : polygons) {
@@ -444,13 +462,14 @@ Polygon Geo::visibilityPolygonFast (Vector o, std::vector<Polygon> polygons) {
     				continue;
     			if (s.a != pt && greater(l.v^(pt-o), 0)) {
     				add(set, o, s);
-    			}
+    			}    			
     		}
     	}
     }
 
     for (int i = 0; i < (int)vertices.size(); ++i) {
  		Segment1 const& v = vertices[i];
+ 		dirV = v.a;//!!Important for comparator!!
  		int j = i;
  		bool isAns = false;
  		Vector ans;
@@ -462,7 +481,6 @@ Polygon Geo::visibilityPolygonFast (Vector o, std::vector<Polygon> polygons) {
  			}
  			j++;
  		}
- 		
  		if ((i == 0 || orientation(vertices[i-1].a, o, vertices[i].a) != COLLINEAR)) {
      			Vector nearest;
             	bool have = isAns;
