@@ -15,16 +15,7 @@ void collinear_test() {
 
 }
 
-void onLine_test() {
-    Line l(Vector(7,5), Vector(1,2));
-    Vector v1(6, 3);
-    Vector v2(5, 1);
-    assert(onLine(v1, l));
-    assert(onLine(v2, l));
-
-}
-
-void intersect_test() {
+/*void intersect_test() {
     //Line-Line
     {
         Line a(Vector(3, 1), Vector(1, 3));
@@ -39,6 +30,10 @@ void intersect_test() {
         Segment s(Vector(5, 1), Vector(6, 3));
         Vector pt;
         assert(intersect(l, s, pt, true));
+        l = Line(Vector(62,5350.12), Vector(2355,5350.1)-Vector(62,5350.12));
+        s = Segment(Vector(2227,5350.1), Vector(2227, 5222.1));        
+        assert(!intersect(l, s, pt, true));
+
     }
     //Seg-Seg
     {
@@ -86,6 +81,12 @@ void intersect_test() {
         assert(check(l, false, std::vector<Vector>()));
     }
 }
+*/
+
+void write(Polygon p, std::string file) {
+	freopen(file.c_str(), "w", stdout);
+	printf("%s\n", p.to_string().c_str());
+}
 
 void visibilityPolygon_test() {
     auto check = [](Polygon a, Polygon b) {
@@ -113,22 +114,16 @@ void visibilityPolygon_test() {
     };
     Polygon myPoly;
     Polygon truePoly;
+    std::vector<Polygon> polys;
     Vector o;
     int testNumber = 0;
-    
-    o = Vector(250,2943.79);
-    myPoly = visibilityPolygon(o, std::vector<Polygon>({}), 3200, 3200);
-    truePoly = Polygon(std::vector<Vector>({Vector(0,0), Vector(3200,0), Vector(3200, 3200), Vector(0, 3200)}));
-    assert(check(myPoly, truePoly));    
-    std::cerr << "VisiblePolygon test #" << testNumber++ << " - Ok\n";
     
     Polygon poly(std::vector<Vector>({Vector(1,1),Vector(2,1), Vector(2,2),Vector(1,2)}));
     o = Vector(3,3);
     myPoly = visibilityPolygon(o, std::vector<Polygon>({poly}), 5, 5);
-    truePoly = Polygon(std::vector<Vector>({Vector(1.5,0), Vector(5,0), Vector(5, 5), Vector(0, 5), Vector(0, 1.5), Vector(1, 2), Vector(2,2), Vector(2, 1)}));
-    assert(check(myPoly, truePoly));    
-    std::cerr << "VisiblePolygon test #" << testNumber++ << " - Ok\n";
-    std::vector<Polygon> polys(std::vector<Polygon>({
+    write(myPoly, std::string("test") + std::to_string(testNumber++) + ".ans");
+    
+    polys = (std::vector<Polygon>({
             Polygon(std::vector<Vector>({Vector(1,2), Vector(1,4), Vector(2,4), Vector(2,2)})),
             Polygon(std::vector<Vector>({Vector(3,5), Vector(3,6), Vector(4,6), Vector(4,5)})),
             Polygon(std::vector<Vector>({Vector(4,1), Vector(4,3), Vector(5,3), Vector(5,1)})),
@@ -138,102 +133,37 @@ void visibilityPolygon_test() {
             }));
     o = Vector(5,5);
     myPoly = visibilityPolygon(o, polys, 10, 10);
-    truePoly = Polygon(std::vector<Vector>({
-            Vector(0,0),
-            Vector(2.5,0),
-            Vector(4,3),
-            Vector(5,3),
-            Vector(5,0),
-            Vector(10,0),
-            Vector(8,2),
-            Vector(8,7),
-            Vector(10,7+4.0/3),
-            Vector(10,10),
-            Vector(6,6),
-            Vector(5,6),
-            Vector(5,8),
-            Vector(4,8),
-            Vector(3+1.0/3,10),
-            Vector(0,10),
-            Vector(4,6),
-            Vector(4,5),
-            Vector(0,5),
-            Vector(0,3.75),
-            Vector(1,4),
-            Vector(2,4),
-            Vector(2,2)
-        }));
-    assert(check(myPoly, truePoly));
-    std::cerr << "VisiblePolygon test #" << testNumber++ << " - Ok\n";
+    write(myPoly, std::string("test") + std::to_string(testNumber++) + ".ans");
+
+
     polys = (std::vector<Polygon>({
 			Polygon(std::vector<Vector>({Vector(7,5), Vector(5,8), Vector(9,6)})),			
 			Polygon(std::vector<Vector>({Vector(6,1), Vector(7,3), Vector(8,4), Vector(10,3)}))
 		}));
 	o = Vector(2,3);
 	myPoly = visibilityPolygon(o, polys, 15, 10);
-	truePoly = Polygon(std::vector<Vector>({
-    	Vector(0,0),
-        Vector(8,0),
-        Vector(6,1),
-        Vector(7,3),
-        Vector(8,4),
-        Vector(15,5+1.0/6),
-        Vector(15,8+1.0/5),
-        Vector(7,5),
-        Vector(5,8),
-        Vector(6+1.0/5,10),
-        Vector(0,10)
-    }));
-	assert(check(myPoly, truePoly));
-	std::cerr << "VisiblePolygon test #" << testNumber++ << " - Ok\n";
+	write(myPoly, std::string("test") + std::to_string(testNumber++) + ".ans");
+    
     polys = (std::vector<Polygon>({
 			Polygon(std::vector<Vector>({Vector(7,5)*1000, Vector(5,8)*1000, Vector(9,6)*1000})),			
 			Polygon(std::vector<Vector>({Vector(6,1)*1000, Vector(7,3)*1000, Vector(8,4)*1000, Vector(10,3)*1000}))
 		}));
 	o = Vector(2,3); o*=1000;
 	myPoly = visibilityPolygon(o, polys, 15*1000, 10*1000);
-	truePoly = Polygon(std::vector<Vector>({
-        Vector(0,0)*1000,
-        Vector(8,0)*1000,
-        Vector(6,1)*1000,
-        Vector(7,3)*1000,
-        Vector(8,4)*1000,
-        Vector(15,5+1.0/6)*1000,
-        Vector(15,8+1.0/5)*1000,
-        Vector(7,5)*1000,
-        Vector(5,8)*1000,
-        Vector(6+1.0/5,10)*1000,
-        Vector(0,10)*1000
-    }));
-	assert(check(myPoly, truePoly));
-	std::cerr << "VisiblePolygon test #" << testNumber++ << " - Ok\n";
-    
+	write(myPoly, std::string("test") + std::to_string(testNumber++) + ".ans");
+
 	polys = (std::vector<Polygon>({
 			Polygon(std::vector<Vector>({Vector(591, 171), Vector(591,329), Vector(607,329), Vector(607,171)}))
 		}));
 	o = Vector(528, 532);
 	myPoly = visibilityPolygon(o, polys, 640, 640);
-	truePoly = Polygon (std::vector<Vector>( {
-		{640.000000 , 244.202532}, 
-		{607.000000 , 329.000000}, 
-		{591.000000 , 329.000000}, 
-		{591.000000 , 171.000000}, 
-		{620.842105 , 0.000000}, 
-		{0.000000 , 0.000000}, 
-		{0.000000 , 640.000000}, 
-		{640.000000 , 640.000000}
-	}));
-	//std::cerr << myPoly << "\n";
-	assert(check(myPoly, truePoly));
-	std::cerr << "VisiblePolygon test #" << testNumber++ << " - Ok\n";
+	write(myPoly, std::string("test") + std::to_string(testNumber++) + ".ans");
     
 }
 
 int main() {
-    orientation_test();
+	orientation_test();
     collinear_test();
-    onLine_test();
-    intersect_test();
     visibilityPolygon_test();
     /*Polygon a(std::vector<Vector>({{0,0}, {0,2}, {2,2}, {2,0}}));
     Polygon b(std::vector<Vector>({{2,0}, {2,2}, {4,2}, {4,0}}));
