@@ -38,7 +38,6 @@ namespace Geo {
         Vector operator/ (double c) const {return Vector(x*1.0/c, y*1.0/c);}
         Vector& operator/= (double c) {x=x*1.0/c, y=y*1.0/c;return *this;}
         
-        //double len () const;
         int len2 () const;
         
         void rotate(double angle);

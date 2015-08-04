@@ -84,34 +84,6 @@ bool Geo::intersect (const Line& l, const Segment& s, Vector& res,
     return true;
 }
 
-/*bool Geo::intersect (const Line& l, const Polygon& p, std::vector<Vector>& res, 
-        bool consider_touch) {
-    for (int i = 0, cnt = p.size(); cnt > 0; i++, cnt--) {
-        Segment s(p[i], p[(i+1)%p.size()]);
-        Vector pt;
-        if (!intersect (l, s, pt))
-            continue;
-        if (collinear(l, s)) {
-            if (consider_touch) {
-                res.push_back(p[i]);
-            }
-            continue;
-        }
-        if (pt != p[i] && pt != p[(i+1)%p.size()]) {
-            res.push_back(pt);
-            continue;
-        }
-        if (pt == p[i]) {
-            Vector a, b, c;
-            a = p[(i-1+p.size())%p.size()], b = p[i], c = p[(i+1)%p.size()];
-            if (consider_touch || orientation(a, b, b+l.v) * orientation(c, b, b+l.v) == -1) {
-                res.push_back(pt);
-            }
-        }
-    }
-    return res.size() > 0;
-}*/
-
 void Geo::Vector::rotate(double angle) {
 	rotate(std::sin(angle), std::cos(angle));
 }
@@ -211,7 +183,7 @@ Vector Geo::Polygon::center() const {
 	for (int i = 0; i < size(); ++i) {
 		ans += points[i];
 	}
-	ans /= points.size();
+	ans /= size();
 	return ans;
 }
 

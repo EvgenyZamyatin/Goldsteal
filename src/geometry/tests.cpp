@@ -118,6 +118,13 @@ void visibilityPolygon_test() {
     Vector o;
     int testNumber = 0;
     
+    polys = (std::vector<Polygon>({
+            	Polygon(std::vector<Vector>({Vector(269,257), Vector(269,385), Vector(397,385), Vector(397,257)}))
+            }));
+    o = Vector(267,370);
+    myPoly = visibilityPolygon(o, polys, 640, 640);
+    write(myPoly, std::string("test") + std::to_string(testNumber++) + ".ans");
+    
     Polygon poly(std::vector<Vector>({Vector(1,1),Vector(2,1), Vector(2,2),Vector(1,2)}));
     o = Vector(3,3);
     myPoly = visibilityPolygon(o, std::vector<Polygon>({poly}), 5, 5);
@@ -134,7 +141,6 @@ void visibilityPolygon_test() {
     o = Vector(5,5);
     myPoly = visibilityPolygon(o, polys, 10, 10);
     write(myPoly, std::string("test") + std::to_string(testNumber++) + ".ans");
-
 
     polys = (std::vector<Polygon>({
 			Polygon(std::vector<Vector>({Vector(7,5), Vector(5,8), Vector(9,6)})),			
