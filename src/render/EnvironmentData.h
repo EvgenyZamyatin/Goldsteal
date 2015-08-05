@@ -11,8 +11,8 @@ struct EnvironmentData {
 	int texTileWidth;
 	int texTileHight;
 
-	double envTileWidth;
-	double envTileHight;
+	int envTileWidth;
+	int envTileHight;
 	
 	struct Layer {
 		HTEXTURE tex;

@@ -8,6 +8,8 @@ namespace Render {
 	struct BodyData {
 		std::vector<hgeAnimation> anims;
 		int lastState;
+		int width;
+		int hight;
 		hgeAnimation& get(int state) {
 			return anims[state];
 		}

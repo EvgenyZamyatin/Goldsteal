@@ -16,26 +16,28 @@
 struct GameState;
 struct BrainPlayerInput;
 
-struct IBody : IObject {                
+struct IBody : IRenderable {                
 	static const int STATE_IDLE = 0;
 	static const int STATE_WALK = 1;
 	
-	static const double MAX_SPEED;
-	static const double ACCELERATION;
+	static const int MAX_SPEED;
+	static const int ACCELERATION;
 
 	IBody(Tmx::Object const* obj, hgeResourceManager* res);
 	virtual ~IBody(){};                      
-	
+	virtual void render(HGE* hge, Camera const* cam);
+    
 	void setGameState(GameState* state) {this->state=state;}
 	
 	Geo::Vector getDir() const {return dir;}
-	double getViewAngle() const {return viewAngle;}
+	Geo::Vector getPosition() const {return pos;}
 
-    void frame();
-    virtual void render(HGE* hge, Camera const* cam);
-    
-    virtual void onCollision(IObject* obj) {}
-	virtual void onCollision(IBody* body) {}
+	void frame();
+    int getRadius() {return radius;}
+    int getRadius2() {return radius2;}
+
+    //virtual void onCollision(IObject* obj) {}
+	//virtual void onCollision(IBody* body) {}
 
 	friend struct GameState;
 	friend struct BrainPlayerInput;
@@ -44,15 +46,15 @@ private:
 	Render::BodyData rData;
 
 	IBrain* brain;
-
 	int moveState=0;
-	
-	double viewAngle;	
+	Geo::Vector pos;
 	Geo::Vector velocity;
-	GameState* state;
 	Geo::Polygon visible;
 	Geo::Vector dir;	
-	double collisionRadius;
+	
+	GameState* state;
+	int radius;
+	int radius2;
 };
 
 #endif

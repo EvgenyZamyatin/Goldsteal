@@ -17,13 +17,14 @@ struct IObject : IRenderable {
 	virtual Geo::Polygon getBounds() const {return bounds;}
 	virtual bool isObstruct() {return true;}
 	virtual bool isObstacle() {return true;}
-	void setPos(Geo::Vector const& p) {this->pos=p;}
-	void setBounds(Geo::Polygon const& p) {this->bounds=p;}
+	//void setPos(Geo::Vector const& p) {this->pos=p;}
+	//void setBounds(Geo::Polygon const& p) {this->bounds=p;}
 
 	friend struct GameState;
 protected:
 	Geo::Polygon bounds;
 	Geo::Vector pos;
+	bool havePoly;
 };
 
 #endif

@@ -228,8 +228,8 @@ int Geo::distance2(Vector const& a, Segment const& b) {
 
 bool Geo::intersects(Box const& a, Box const& b) {
 	#ifdef DEBUG                                
-		assert(a.a.x <= a.b.x && a.a.y < a.b.y);
-		assert(b.a.x <= b.b.x && b.a.y < b.b.y);
+		assert(a.a.x <= a.b.x && a.a.y <= a.b.y);
+		assert(b.a.x <= b.b.x && b.a.y <= b.b.y);
 	#endif
 	return boost::geometry::intersects(a, b);
 }

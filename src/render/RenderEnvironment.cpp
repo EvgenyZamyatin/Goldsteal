@@ -4,7 +4,7 @@
 #include "help.h"
 
 inline void Render::EnvironmentData::Layer::get(int i, int j, int& ti, int& tj, int tilesInRow) {
-	std::pair<int, int> &p = tcorners[j*tilesInRow + i];
+	std::pair<int, int> &p = tcorners.at(j*tilesInRow + i);
 	ti = p.first;
 	tj = p.second;
 }
@@ -15,15 +15,14 @@ void Environment::render(HGE* hge, Camera const* cam) {
 	Geo::Box cur;
 	static hgeQuad quad;                          
 	
-	double kx = cam->KX;
-	double ky = cam->KY;
+	float kx = cam->KX;
+	float ky = cam->KY;
 	
-	//double start = clock();
-	int firstcolumn = int( floor(c.a.x / env->rData.envTileWidth) );
-    int firstrow = int( floor(c.a.y / env->rData.envTileHight) );
-    int lastcolumn = int( ceil(c.b.x / env->rData.envTileWidth) );
-    int lastrow = int( ceil(c.b.y / env->rData.envTileHight) );;
-
+	int firstcolumn = std::max(0, int( floor(c.a.x*1.0 / env->rData.envTileWidth) ));
+    int firstrow = std::max(0,int( floor(c.a.y*1.0 / env->rData.envTileHight) ));
+    int lastcolumn = std::min(rData.tilesInRow, int( ceil(c.b.x*1.0 / env->rData.envTileWidth) ));
+    int lastrow = std::min(rData.tilesInColumn, int( ceil(c.b.y*1.0 / env->rData.envTileHight) ));
+    
 	for (int i = firstcolumn; i < lastcolumn; ++i) {
 		for (int j = firstrow; j < lastrow; ++j) {
 			cur.a.x=i*env->rData.envTileWidth;
@@ -39,10 +38,10 @@ void Environment::render(HGE* hge, Camera const* cam) {
 				quad.blend = BLEND_DEFAULT_Z;
 				hgeU32 col = ARGB(l.alpha, 255, 255, 255);
 				fillQuad(quad, {                                                   
-								{(float)((cur.a.x-c.a.x)*kx), (float)((cur.a.y-c.a.y)*ky), 0.5f, col, ti*1.f/l.texWidth,                           tj*1.f/l.texHight},
-								{(float)((cur.b.x-c.a.x)*kx), (float)((cur.a.y-c.a.y)*ky), 0.5f, col, (ti+env->rData.texTileWidth)*1.f/l.texWidth, tj*1.f/l.texHight},
-								{(float)((cur.b.x-c.a.x)*kx), (float)((cur.b.y-c.a.y)*ky), 0.5f, col, (ti+env->rData.texTileWidth)*1.f/l.texWidth, (tj+env->rData.texTileHight)*1.f/l.texHight},
-								{(float)((cur.a.x-c.a.x)*kx), (float)((cur.b.y-c.a.y)*ky), 0.5f, col, ti*1.f/l.texWidth,                           (tj+env->rData.texTileHight)*1.f/l.texHight}
+								{kx*(cur.a.x-c.a.x), ky*(cur.a.y-c.a.y), 0.5f, col, ti*1.f/l.texWidth,                           tj*1.f/l.texHight},
+								{kx*(cur.b.x-c.a.x), ky*(cur.a.y-c.a.y), 0.5f, col, (ti+env->rData.texTileWidth)*1.f/l.texWidth, tj*1.f/l.texHight},
+								{kx*(cur.b.x-c.a.x), ky*(cur.b.y-c.a.y), 0.5f, col, (ti+env->rData.texTileWidth)*1.f/l.texWidth, (tj+env->rData.texTileHight)*1.f/l.texHight},
+								{kx*(cur.a.x-c.a.x), ky*(cur.b.y-c.a.y), 0.5f, col, ti*1.f/l.texWidth,                           (tj+env->rData.texTileHight)*1.f/l.texHight}
 							   });
 				                           
 				hge->Gfx_RenderQuad(&quad);

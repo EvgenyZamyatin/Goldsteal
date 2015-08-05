@@ -25,8 +25,8 @@ struct Environment : IRenderable {
 
 private:
 	std::vector<IObject*> objs;
-	double width;
-	double hight;
+	int width;
+	int hight;
 	Render::EnvironmentData rData;
 };
 #endif

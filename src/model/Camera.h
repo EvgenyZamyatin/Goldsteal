@@ -8,22 +8,23 @@
 struct IBody;
 struct Camera {
 	
-	static const double SHIFT_MULTIPLY;
+	static const int SHIFT_MULTIPLY;
 	
-	const double KX;
-	const double KY;
-	const double RADIUS;
-	const double CAMERA_WIDTH;
-	const double CAMERA_HIGHT;
-	const double SCREEN_WIDTH;
-	const double SCREEN_HIGHT;
-	const double FIELD_WIDTH;
-	const double FIELD_HIGHT;
+	const float KX;
+	const float KY;
+	const int RADIUS;
+	const int RADIUS2;
+	const int CAMERA_WIDTH;
+	const int CAMERA_HIGHT;
+	const int SCREEN_WIDTH;
+	const int SCREEN_HIGHT;
+	const int FIELD_WIDTH;
+	const int FIELD_HIGHT;
 
 
-	Camera(double fieldWidth, double fieldHight, Geo::Vector pos, 
-			double cameraWidth, double cameraHight, double screenWidth, double screenHight,
-			double radius);
+	Camera(int fieldWidth, int fieldHight, Geo::Vector pos, 
+			int cameraWidth, int cameraHight, int screenWidth, int screenHight,
+			int radius);
 
 	void frame(InputData* input, bool freeMode);
 	
@@ -32,11 +33,8 @@ struct Camera {
 	void bind(IBody* body) {this->body=body;}
 	void move(Geo::Vector const& v) {pos += v;}
 
-	void convertSG(Geo::Vector& v) const;
-	void convertGS(Geo::Vector& v) const;
-
-	void convertSG(double& x, double& y) const;
-	void convertGS(double& x, double& y) const;
+	void convertSG(float& x, float& y) const;
+	void convertGS(float& x, float& y) const;
 
 private:
 	IBody* body=NULL;

@@ -101,6 +101,7 @@ namespace Geo {
     	Box(Vector const& a, Vector const& b) : a(a), b(b) {}
     	Box(int x, int y, int width, int hight) : a(x,y), b(x+width, y+hight) {}
     	Box(Polygon const& p);
+    	Box(Vector pos, int radius) : a(pos.x-radius, pos.y-radius), b(pos.x+radius, pos.y+radius) {}
     };
     
     

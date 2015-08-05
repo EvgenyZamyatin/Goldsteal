@@ -7,7 +7,7 @@
 
 struct LevelLoader;
 struct SimpleObject : IObject {
-	SimpleObject(Tmx::Object const* obj, hgeResourceManager* res);
+	SimpleObject(Tmx::Object const* obj, Tmx::ObjectGroup const* textureLayer, hgeResourceManager* res);
 
 	virtual bool isObstruct() const {return obstruct;}
 	virtual bool isObstacle() const {return obstacle;}

@@ -16,7 +16,7 @@ struct InputData {
 	bool dRight;
 	bool dLeft;*/
 
-	float mX, mY;
+	int mX, mY;
 
 	/*bool pLMouse;
 	bool pRMouse;

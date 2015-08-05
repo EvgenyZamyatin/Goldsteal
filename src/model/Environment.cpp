@@ -56,10 +56,19 @@ Environment::Environment(Tmx::Map const* map, hgeResourceManager* res) {
 		rData.layers.push_back(l);
    	}
    	
+   	Tmx::ObjectGroup const* textureLayer = NULL;
+   	for (Tmx::ObjectGroup const* og : map->GetObjectGroups()) {
+   		if (og->GetName() == "TextureLayer") {
+   			textureLayer = og;
+   			break;
+   		}
+   	}
    	for (Tmx::ObjectGroup* ob : map->GetObjectGroups()) {
+   		if (ob->GetName() != "ObjectLayer")
+   			continue;
    		for (Tmx::Object* o : ob->GetObjects()) {
    			if (o->GetType() == "SimpleObject") {
-   				addObject(new SimpleObject(o, res));
+   				addObject(new SimpleObject(o, textureLayer, res));
    			} 
    		}
    	}

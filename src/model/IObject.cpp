@@ -1,16 +1,19 @@
 #include "IObject.h"
 
 IObject::IObject (Tmx::Object const* o, hgeResourceManager* res) {
-	double x = o->GetX();
-	double y = o->GetY();
-	
-	double width = o->GetWidth();
-	double hight = o->GetHeight();
-	
-	this->bounds = Geo::Polygon({{x, y-hight}, {x+width, y-hight}, {x+width, y}, {x, y}});
-	double angle = o->GetRot()*M_PI/180;
-	this->bounds.rotate(3, angle);
-	this->bounds = bounds;
-	
-	this->pos = bounds.center();
+	int x = o->GetX();
+	int y = o->GetY();
+	pos = Geo::Vector(x, y);
+	Tmx::Polygon const* p = o->GetPolygon();
+	if (p != NULL) {
+    	std::vector<Geo::Vector> poly;
+    	for (int i = 0; i < p->GetNumPoints(); ++i) {
+    		poly.push_back(Geo::Vector((int)(p->GetPoint(i).x), (int)(p->GetPoint(i).y)) + pos);
+    	}
+    	bounds = Geo::Polygon(poly);
+    	havePoly = true;
+    } else {
+    	havePoly = false;
+    }
+
 }

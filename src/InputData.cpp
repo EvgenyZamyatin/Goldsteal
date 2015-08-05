@@ -17,10 +17,8 @@ void InputData::update(HGE* hge, Camera const* cam) {
 	pLeft = hge->Input_GetKeyState(HGEK_A);
 
 	pShift = hge->Input_GetKeyState(HGEK_SHIFT);
-	hge->Input_GetMousePos(&mX, &mY);
-	double a=mX,b=mY;
+	float a,b;
+	hge->Input_GetMousePos(&a, &b);
 	cam->convertSG(a, b);
-	mX=a, mY=b;
-	//mX = mX/cam->KX + cam->getPos().x;
-	//mY = mY/cam->KY + cam->getPos().y;
+	mX=(int)a, mY=(int)b;
 }
