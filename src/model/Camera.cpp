@@ -16,9 +16,6 @@ Camera::Camera(int fieldWidth, int fieldHight, Geo::Vector pos,
 
 
 void Camera::frame(InputData* input, bool freeMode) {
-	pos.x = body->getPosition().x;
-	pos.y = body->getPosition().y;
-	return;
 	Geo::Vector mouseDir(input->mX-pos.x, input->mY-pos.y);
 	mouseDir *= -1;//(RADIUS/mouseDir.len());
 	if (input->pShift) {
@@ -26,7 +23,7 @@ void Camera::frame(InputData* input, bool freeMode) {
 			mouseDir *= RADIUS2*SHIFT_MULTIPLY*1.0/mouseDir.len2();
 	} else {
 		if (mouseDir.len2() > RADIUS2) 
-			mouseDir *= RADIUS2*1.0/mouseDir.len2();	
+			mouseDir *= sqrt(RADIUS2*1.0/mouseDir.len2());	
 	}
 
 	Geo::Vector moveDir(pos+mouseDir);

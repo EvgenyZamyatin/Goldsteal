@@ -435,7 +435,7 @@
    </properties>
    <polygon points="0,0 0,442.477 60.9091,442.659 60.9091,0.18179"/>
   </object>
-  <object id="69" x="874" y="1029">
+  <object id="69" type="SimpleObject" x="874" y="1029">
    <properties>
     <property name="TexturesID" value="60"/>
    </properties>
