@@ -22,7 +22,7 @@ namespace Geo {
         int x, y;
         Vector () {}
         Vector (int x, int y) : x(x), y(y) {};
-        Vector (double x, double y) : x(x), y(y) {};
+        Vector (double x, double y);
 
         Vector operator+ (const Vector& other) const {return Vector(x+other.x, y+other.y);}
         Vector& operator+= (const Vector& other){x+=other.x, y+=other.y; return *this;}
@@ -32,11 +32,14 @@ namespace Geo {
         Vector operator* (int c) const {return Vector(x*c, y*c);}
         Vector& operator*= (int c) {x*=c, y*=c;return *this;}              
         
-        Vector operator* (double c) const {return Vector(x*c, y*c);}
-        Vector& operator*= (double c) {x*=c, y*=c;return *this;}              
+        Vector operator* (double c) const;
+        Vector& operator*= (double c);
         
-        Vector operator/ (double c) const {return Vector(x*1.0/c, y*1.0/c);}
-        Vector& operator/= (double c) {x=x*1.0/c, y=y*1.0/c;return *this;}
+        Vector operator/ (int c) const;
+        Vector& operator/= (int c);
+        
+        Vector operator/ (double c) const;
+        Vector& operator/= (double c);
         
         int len2 () const;
         

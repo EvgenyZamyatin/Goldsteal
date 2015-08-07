@@ -1,8 +1,10 @@
 #include "Geometry.h"
+#include <boost/math/special_functions/round.hpp>
 #include <cmath>
 #include <algorithm>
 #include <cassert>
 #include <set>
+#include <limits>
 
 using namespace Geo;
 
@@ -14,6 +16,35 @@ bool Geo::Vector::operator== (const Vector& other) const {
 bool Geo::Vector::operator< (const Vector& other) const {
     return x < other.x || 
         (x == other.x && y < other.y);
+}
+
+Geo::Vector::Vector (double x, double y) {        
+	this->x = boost::math::iround(x);
+	this->y = boost::math::iround(y);
+}
+
+Vector Geo::Vector::operator* (double c) const {return Vector(c*x, c*y);}
+
+Vector& Geo::Vector::operator*= (double c) {
+	x=boost::math::iround(c*x); 
+	y=boost::math::iround(c*y); 
+	return *this;
+}              
+        
+Vector Geo::Vector::operator/ (double c) const {return Vector(x*1.0/c, y*1.0/c);}
+
+Vector& Geo::Vector::operator/= (double c) {
+	x=boost::math::iround(x*1.0/c); 
+	y=boost::math::iround(y*1.0/c);
+	return *this;
+}
+
+Vector Geo::Vector::operator/ (int c) const {return Vector((x+(c>>1))/c, (y+(c>>1))/c);}
+
+Vector& Geo::Vector::operator/= (int c) {
+	x=((x+(c>>1))/c); 
+	y=((y+(c>>1))/c);
+	return *this;
 }
 
 int Geo::Vector::len2() const {
@@ -64,8 +95,10 @@ bool Geo::intersect (const Line& m, const Line& n, Vector& res) {
     long long zn = det(m.a, m.b, n.a, n.b);
     if (zn == 0)
     	return false;
-    res.x = (int)(-det(m.c, m.b, n.c, n.b)*1.0 / zn);
-	res.y = (int)(-det(m.a, m.c, n.a, n.c)*1.0 / zn);
+    //res.x = boost::math::iround(-det(m.c, m.b, n.c, n.b)*1.0 / zn);//!!!may be cast to double not necessary.
+	//res.y = boost::math::iround(-det(m.a, m.c, n.a, n.c)*1.0 / zn);
+	res.x = (-det(m.c, m.b, n.c, n.b) + (zn>>1)) / zn;
+	res.y = (-det(m.a, m.c, n.a, n.c) + (zn>>1)) / zn;
     return true;    
 }
 
@@ -89,8 +122,8 @@ void Geo::Vector::rotate(double angle) {
 }
 
 void Geo::Vector::rotate(double sn, double cs) {
-	int nx = (int)(cs*x-sn*y);
-	int ny = (int)(sn*x+cs*y);
+	int nx = boost::math::iround(cs*x-sn*y);
+	int ny = boost::math::iround(sn*x+cs*y);
 	x = nx;
 	y = ny;
 }
@@ -188,8 +221,8 @@ Vector Geo::Polygon::center() const {
 }
 
 Box::Box(Polygon const& p) {
-	a.x = a.y = 1000000000;
-	b.x = b.y = -1000000000;
+	a.x = a.y = std::numeric_limits<int>::max();
+	b.x = b.y = std::numeric_limits<int>::min();
 	for (Vector const& v : p.points) {
 		a.x = std::min(a.x, v.x);
 		a.y = std::min(a.y, v.y);
