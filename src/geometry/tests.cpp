@@ -168,6 +168,11 @@ void visibilityPolygon_test() {
 }
 
 int main() {
+    Line l({901, 1169}, {1052,1055});
+    Segment s({1052,1055},{950, 1132});
+    Vector pt;
+    assert(intersect(l, s, pt));
+
 	orientation_test();
     collinear_test();
     visibilityPolygon_test();

@@ -8,6 +8,15 @@
 
 using namespace Geo;
 
+template<typename T, typename E>
+inline T Geo::divRoundClosest(const T& n, const E& d) {
+	#ifdef DEBUG
+		T r = boost::math::iround(n*1.0 / d);
+		assert((((n < 0) ^ (d < 0)) ? ((n - (d/2))/d) : ((n + (d/2))/d)) == r);
+   	#endif 
+	return ((n < 0) ^ (d < 0)) ? ((n - (d/2))/d) : ((n + (d/2))/d);
+}
+
 
 bool Geo::Vector::operator== (const Vector& other) const {
     return x==other.x && y==other.y;   
@@ -39,11 +48,11 @@ Vector& Geo::Vector::operator/= (double c) {
 	return *this;
 }
 
-Vector Geo::Vector::operator/ (int c) const {return Vector((x+(c>>1))/c, (y+(c>>1))/c);}
+Vector Geo::Vector::operator/ (int c) const {return Vector(divRoundClosest(x,c), divRoundClosest(y,c));}
 
 Vector& Geo::Vector::operator/= (int c) {
-	x=((x+(c>>1))/c); 
-	y=((y+(c>>1))/c);
+	x=divRoundClosest(x,c); 
+	y=divRoundClosest(y,c);
 	return *this;
 }
 
@@ -95,10 +104,8 @@ bool Geo::intersect (const Line& m, const Line& n, Vector& res) {
     long long zn = det(m.a, m.b, n.a, n.b);
     if (zn == 0)
     	return false;
-    //res.x = boost::math::iround(-det(m.c, m.b, n.c, n.b)*1.0 / zn);//!!!may be cast to double not necessary.
-	//res.y = boost::math::iround(-det(m.a, m.c, n.a, n.c)*1.0 / zn);
-	res.x = (-det(m.c, m.b, n.c, n.b) + (zn>>1)) / zn;
-	res.y = (-det(m.a, m.c, n.a, n.c) + (zn>>1)) / zn;
+    res.x = divRoundClosest(-det(m.c, m.b, n.c, n.b), zn);
+	res.y = divRoundClosest(-det(m.a, m.c, n.a, n.c), zn);
     return true;    
 }
 
@@ -110,7 +117,7 @@ bool Geo::intersect (const Line& l, const Segment& s, Vector& res,
         bool consider_touch) {
     if (!intersect(l, Line(s.a, s.b), res))
     	return false;
-  	if (res == s.a || res == s.b)	
+    if (res == s.a || res == s.b)	
     	return consider_touch;
     if (!between(s.a.x, res.x, s.b.x) || !between(s.a.y, res.y, s.b.y))
     	return false;
@@ -129,7 +136,7 @@ void Geo::Vector::rotate(double sn, double cs) {
 }
 
 Geo::Vector Geo::Vector::normal() const {
-	Vector ans(-y, x);
+	Vector ans(y, -x);
 	return ans;
 }
 

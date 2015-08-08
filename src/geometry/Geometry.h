@@ -107,7 +107,9 @@ namespace Geo {
     	Box(Vector pos, int radius) : a(pos.x-radius, pos.y-radius), b(pos.x+radius, pos.y+radius) {}
     };
     
-    
+    template<typename T, typename E>
+    inline T divRoundClosest(const T& n, const E& d);
+
     bool between(int a, int b, int c);
     int orientation (Vector a, Vector c, Vector b);
     
