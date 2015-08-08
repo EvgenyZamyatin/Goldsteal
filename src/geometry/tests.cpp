@@ -168,12 +168,12 @@ void visibilityPolygon_test() {
 }
 
 int main() {
-    /*Line l({5, 5}, {6, 0});
-    Segment s({0, 0},{10, 0});
+    Line l({2008, 2303}, {0, 2304});
+    Segment s({0, 2304},{1883, 2304});
     Vector pt;
     std::cerr << intersect(l, s, pt) << "\n";
     std::cerr << pt << "\n";
-    return 0;*/
+    return 0;
 	orientation_test();
     collinear_test();
     visibilityPolygon_test();
