@@ -141,46 +141,35 @@ Geo::Vector Geo::Vector::normal() const {
 }
 
 int Geo::Polygon::order() const {
-	for (int i = 0; i < points.size() - 2; ++i) {
-    	if (orientation(points[i], points[i+1], points[i+2]) == LEFT)
+	/*for (int i = 0; i < points.size() - 2; ++i) {
+    	if (orientation(points[i+1], points[i], points[i+2]) == RIGHT)
     		return Geo::COUNTERCLOCKWISE;    	
-		if (orientation(points[i], points[i+1], points[i+2]) == RIGHT)
+		if (orientation(points[i+1], points[i], points[i+2]) == LEFT)
     		return Geo::CLOCKWISE;    	
     }
     #ifdef DEBUG
     	assert(false && "order(): All points in polygon at the same line");
-    #endif
+    #endif*/
+    long long sum = 0;
+    for (int i = 0; i < size(); ++i) {
+    	Vector const& a = points[i];
+    	Vector const& b = points[i+1];
+    	sum += (b.x-a.x)*(b.y+a.y);
+    }
+    if (sum < 0)	
+    	return COUNTERCLOCKWISE;
+    return CLOCKWISE;
 }
 
 void Geo::Polygon::makeCW() {
-	for (int i = 0; i < points.size() - 2; ++i) {
-    	if (orientation(points[i], points[i+1], points[i+2]) == LEFT) {
-    		std::reverse(points.begin(), points.end());
-    		return;
-    	}    	
-    	if (orientation(points[i], points[i+1], points[i+2]) == RIGHT)
-    		return;
-    }
-    #ifdef DEBUG
-    	assert(false && "makeCW(): All points in polygon at the same line");
-    #endif
+	if (order() == COUNTERCLOCKWISE)
+		std::reverse(points.begin(), points.end());
 }
 
-void Geo::Polygon::makeCCW() {
-	for (int i = 0; i < points.size() - 2; ++i) {
-    	if (orientation(points[i], points[i+1], points[i+2]) == RIGHT) {
-    		std::reverse(points.begin(), points.end());
-    		return;
-    	}    	
-    	if (orientation(points[i], points[i+1], points[i+2]) == LEFT)
-    		return;
-    }
-    #ifdef DEBUG
-    	assert(false && "makeCW(): All points in polygon at the same line");
-    #endif
+void Geo::Polygon::makeCCW() {	
+	if (order() == CLOCKWISE)
+		std::reverse(points.begin(), points.end());
 }
-
-
 
 void Geo::Polygon::rotate(const Vector& o, double angle) {
 	for (Vector& v : points) {
