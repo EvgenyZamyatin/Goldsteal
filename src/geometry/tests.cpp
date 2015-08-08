@@ -118,16 +118,16 @@ void visibilityPolygon_test() {
     Vector o;
     int testNumber = 0;
     
+    Polygon poly(std::vector<Vector>({Vector(1,1),Vector(2,1), Vector(2,2),Vector(1,2)}));
+    o = Vector(3,3);
+    myPoly = visibilityPolygon(o, std::vector<Polygon>({poly}), 5, 5);
+    write(myPoly, std::string("test") + std::to_string(testNumber++) + ".ans");
+
     polys = (std::vector<Polygon>({
             	Polygon(std::vector<Vector>({Vector(269,257), Vector(269,385), Vector(397,385), Vector(397,257)}))
             }));
     o = Vector(267,370);
     myPoly = visibilityPolygon(o, polys, 640, 640);
-    write(myPoly, std::string("test") + std::to_string(testNumber++) + ".ans");
-    
-    Polygon poly(std::vector<Vector>({Vector(1,1),Vector(2,1), Vector(2,2),Vector(1,2)}));
-    o = Vector(3,3);
-    myPoly = visibilityPolygon(o, std::vector<Polygon>({poly}), 5, 5);
     write(myPoly, std::string("test") + std::to_string(testNumber++) + ".ans");
     
     polys = (std::vector<Polygon>({
@@ -168,11 +168,12 @@ void visibilityPolygon_test() {
 }
 
 int main() {
-    Line l({901, 1169}, {1052,1055});
-    Segment s({1052,1055},{950, 1132});
+    /*Line l({5, 5}, {6, 0});
+    Segment s({0, 0},{10, 0});
     Vector pt;
-    assert(intersect(l, s, pt));
-
+    std::cerr << intersect(l, s, pt) << "\n";
+    std::cerr << pt << "\n";
+    return 0;*/
 	orientation_test();
     collinear_test();
     visibilityPolygon_test();

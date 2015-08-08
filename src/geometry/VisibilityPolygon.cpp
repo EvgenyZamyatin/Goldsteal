@@ -38,6 +38,12 @@ bool remove(std::set<Segment1, std::function<bool(Segment1 const&, Segment1 cons
    	return false;
 } 
 
+void check(Vector const& o, std::vector<Segment1> const& v) {
+	for (int i = 0; i < (int)v.size() - 1; ++i) {
+		assert(orientation(v[i].a, o, v[i+1].a) <= 0);
+	}
+}
+
 Polygon Geo::visibilityPolygonFast (Vector const& o, std::vector<Polygon> const& polygons) {
 	std::vector<Segment1> vertices;                  
 	for (Polygon const& p : polygons) {
@@ -51,7 +57,7 @@ Polygon Geo::visibilityPolygonFast (Vector const& o, std::vector<Polygon> const&
     }    
     int cnt = 0;
     for (int i = 0; i < vertices.size(); ++i) { 
-        if (vertices[i].a.y < o.y)
+        if (vertices[i].a.y < o.y || (vertices[i].a.y == o.y && vertices[i].a.x < o.x))
             std::swap(vertices[i], vertices[cnt++]);
     }
     std::sort(vertices.begin(), vertices.begin() + cnt, 
@@ -62,16 +68,20 @@ Polygon Geo::visibilityPolygonFast (Vector const& o, std::vector<Polygon> const&
     std::sort(vertices.begin() + cnt, vertices.end(), 
             [o](const Segment1& a, const Segment1& b) {
                 return orientation(a.a, o, b.a) == LEFT || 
-                    (orientation(a.a, o, b.a) == COLLINEAR && (a.a-o).len2() < (b.a-o).len2());
+                    (orientation(a.a, o, b.a) == COLLINEAR && (a.a-o).len2() < (b.a-o).len2());    
             });
-    
+
+    #ifdef DEBUG
+    	check(o, vertices);
+   	#endif
+
     Geo::Vector dirV;
  	std::set<Segment1, std::function<bool(Segment1 const&, Segment1 const&)>> set([o, &dirV](Segment1 const& s1, Segment1 const& s2) {
  	                            Geo::Vector pt;
  	                            Ray l(o, dirV);
  	                            #ifdef DEBUG
  	                            	assert(intersect(l, s1, pt));
- 	                            #else
+ 	                            #else 	                            	
  	                            	intersect(l, s1, pt)
  	                            #endif
  	                            int a = (o-pt).len2();

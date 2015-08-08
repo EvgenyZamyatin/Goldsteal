@@ -109,17 +109,15 @@ bool Geo::intersect (const Line& m, const Line& n, Vector& res) {
     return true;    
 }
 
-bool Geo::between(int a, int b, int c) {
-	return (a<=c)? (a<=b && b<=c) : (c<=b && b<=a);
-}
-
 bool Geo::intersect (const Line& l, const Segment& s, Vector& res, 
         bool consider_touch) {
     if (!intersect(l, Line(s.a, s.b), res))
     	return false;
-    if (res == s.a || res == s.b)	
-    	return consider_touch;
-    if (!between(s.a.x, res.x, s.b.x) || !between(s.a.y, res.y, s.b.y))
+    int a = (l.c+l.a*s.a.x) + s.a.y*l.b;
+   	a = (a > 0) ? 1 : (a == 0 ? 0 : -1);
+    int b = (l.c+l.a*s.b.x) + s.b.y*l.b;
+   	b = (b > 0) ? 1 : (b == 0 ? 0 : -1);
+    if (a*b > 0 || (a*b == 0 && !consider_touch))
     	return false;
     return true;
 }
@@ -141,16 +139,7 @@ Geo::Vector Geo::Vector::normal() const {
 }
 
 int Geo::Polygon::order() const {
-	/*for (int i = 0; i < points.size() - 2; ++i) {
-    	if (orientation(points[i+1], points[i], points[i+2]) == RIGHT)
-    		return Geo::COUNTERCLOCKWISE;    	
-		if (orientation(points[i+1], points[i], points[i+2]) == LEFT)
-    		return Geo::CLOCKWISE;    	
-    }
-    #ifdef DEBUG
-    	assert(false && "order(): All points in polygon at the same line");
-    #endif*/
-    long long sum = 0;
+	long long sum = 0;
     for (int i = 0; i < size(); ++i) {
     	Vector const& a = points[i];
     	Vector const& b = points[i+1];
