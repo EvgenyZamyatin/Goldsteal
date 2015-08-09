@@ -24,6 +24,7 @@ Camera* cam;
 InputData* input;
 
 bool FrameFunc() {
+	//std::cerr << state->getHero()->getPosition() << "\n";
 	//double start = clock();
 	//std::cerr << state->getHero()->getPosition() << "\n";
 	//std::cerr << state->getEnvironment()->getObjects()[0]->getBounds() << "\n";
@@ -71,19 +72,15 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	hge->System_SetState(HGE_HIDEMOUSE, false);
 
 	if (hge->System_Initiate()) {
-		//LevelLoader loader;
-		//loader.load(hge, "level.tmx", "level.res", state, res);
-	    //return 0;
-	    input = new InputData();
+		input = new InputData();
 	    res = new hgeResourceManager("level.res");
 	    IBrain::initBrains(input);
 	    Tmx::Map map;
-		map.ParseFile("level1.tmx");
+		map.ParseFile("level2.tmx");
 	    state = new GameState(&map, res);
 	    cam = new Camera(state->getEnvironment()->getWidth(), state->getEnvironment()->getHight(), 
 					{400,300}, 80*10, 60*10, 800, 600, 150);
 		cam->bind(state->getHero());
-		//return 0;
 		hge->System_Start();
   	}	
 

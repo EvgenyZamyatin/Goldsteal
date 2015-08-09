@@ -16,55 +16,55 @@ GameState::GameState(Tmx::Map const* map, hgeResourceManager* res) {
 }
 
 void GameState::process(IBody* body) {
-	body->pos += body->velocity;
-	/*
-	body->pos += body->velocity;
-	for (Geo::Vector& v : body->bounds.points)
-		v += body->velocity;
-	return;
+	//body->pos += body->velocity;
+	//return;
 	Geo::Vector& vel = body->velocity; 
 	if (vel.len2() == 0)
 		return; 
 	
 	Geo::Vector newPos = body->pos + vel;
-	
 	bool was = false;
 	std::vector<Geo::Vector> newVels;
-	newVels.clear();
 	newVels.push_back(vel);
 
 	for (IObject* obj : env->objs) {
+		if ((obj->center - body->pos).len2() >= ((std::max(body->radius2, obj->radius2))<<2))
+			continue; 
 		for (int i = 0; i < obj->bounds.size(); ++i) {
 			Geo::Segment s(obj->bounds[i], obj->bounds[i+1]);
 			int d = Geo::distance2(newPos, s);
-			if (d < body->collisionRadius2) {
+			if (d < body->radius2) {
 				Geo::Vector n((s.b-s.a).normal());
 				Geo::Vector part(n*(vel^n));
-				newVels.push_back(vel-part);
+				Geo::Vector vel1(vel);
+				vel1 *= n.len2();
+				Geo::Vector res=vel1-part;
+				res.x = n.x > 0 ? (((res.x + n.len2() - 1) / n.len2())) : res.x / n.len2();
+				res.y = n.y > 0 ? (((res.y + n.len2() - 1) / n.len2())) : res.y / n.len2();
+                //res.x = n.x > 0 ? (res.x >= 0 ? ((res.x + n.len2() - 1) / n.len2()) : ((res.x - n.len2() + 1) / n.len2())) : res.x / n.len2();
+                newVels.push_back(res);
 				was = true;
 			}
 		}
 		if (was)
 			break;
 	}
+
 	newVels.push_back({0,0});
 	for (Geo::Vector& nvel : newVels) {		
 		newPos = body->pos + nvel;
 		bool ok = true;
 		for (IObject* obj : env->objs) {
-			if (Geo::distance2(newPos, obj->bounds) < body->collisionRadius2)
+			if (Geo::distance2(newPos, obj->bounds) < body->radius2)
 				ok = false;
 		}
 		if (ok) {
 			body->pos = newPos;
-			for (Geo::Vector& v : body->bounds.points)
-				v += nvel;
 			vel = nvel;
 			return;
 		}
 	}
-	assert(false);
-	*/
+	assert(false);	
 }
 
 void GameState::frame() {

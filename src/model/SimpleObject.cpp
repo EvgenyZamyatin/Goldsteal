@@ -13,8 +13,7 @@ SimpleObject::SimpleObject(Tmx::Object const* o, Tmx::ObjectGroup const* texture
     	else 
     		obstruct = true;
     } else obstacle = obstruct = false;
-
-	std::vector<std::string> strs;
+    std::vector<std::string> strs;
 	std::string str;
 	boost::split(strs, str=(o->GetProperties().GetStringProperty("TexturesID")), boost::is_any_of(", "));
 	for (std::string const& s : strs) {
@@ -23,7 +22,7 @@ SimpleObject::SimpleObject(Tmx::Object const* o, Tmx::ObjectGroup const* texture
 			if (texture->GetId() == id) {
 				float rot = texture->GetRot();
 				rot *= M_PI/180;
-				Geo::Vector spos((int)texture->GetX(), (int)texture->GetY());
+				Geo::Vector spos(texture->GetX(), texture->GetY());
 				spos -= pos;
 				int width = texture->GetWidth();
 				int hight = texture->GetHeight();

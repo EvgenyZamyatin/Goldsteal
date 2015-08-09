@@ -42,13 +42,14 @@ Animation AnimBox2
 	hotspot = 64,64
 }
 
-Texture Wall 
+Texture BlackSquare 
 {
 	filename=blacksquare.jpg
 }
 
-Sprite Wall 
+Sprite BlackSquare 
 {
-	texture=Wall
+	texture=BlackSquare
 	rect=0,0,16,16
+	hotspot=0,16
 }

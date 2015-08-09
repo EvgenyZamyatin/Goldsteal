@@ -25,6 +25,8 @@ protected:
 	Geo::Polygon bounds;
 	Geo::Vector pos;
 	bool havePoly;
+	int radius2;
+	Geo::Vector center;
 };
 
 #endif
