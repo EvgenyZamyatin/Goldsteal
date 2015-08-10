@@ -44,11 +44,6 @@ void IBody::render(HGE *hge, Camera const* cam) {
 	else
 		a.Play();
 	
-	if (moveState == rData.lastState)
-		a.Update(dt);
-	else
-		a.Play();                         
-	
 	float x = pos.x;
 	float y = pos.y;
 	float sn = dir.x/sqrt((float)dir.len2());

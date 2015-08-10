@@ -53,3 +53,24 @@ Sprite BlackSquare
 	rect=0,0,16,16
 	hotspot=0,16
 }
+
+Texture HeroSpriteSheet {
+	filename=body_move.png
+}
+
+Animation HeroIdle {
+	texture=HeroSpriteSheet
+	rect=384,0,128,128
+	frames=1
+	hotspot=64,64
+}
+
+Animation HeroWalk {
+	texture=HeroSpriteSheet
+	rect=0,0,128,128
+	fps=8.0
+	frames=8
+	hotspot=64,64
+}
+
+

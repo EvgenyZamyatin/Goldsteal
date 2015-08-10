@@ -1,6 +1,6 @@
 *.o
 *.exe
-resources/*
+*.png
 out/*.png
 out/*.jpg
 out/*.db

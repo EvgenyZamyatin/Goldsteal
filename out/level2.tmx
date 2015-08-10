@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="50" height="50" tilewidth="64" tileheight="64" nextobjectid="35">
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="50" height="50" tilewidth="64" tileheight="64" nextobjectid="37">
  <tileset firstgid="1" name="Ground" tilewidth="64" tileheight="64">
   <image source="Ground.png" width="128" height="64"/>
  </tileset>
@@ -8,6 +8,9 @@
  </tileset>
  <tileset firstgid="4" name="BlackSquare" tilewidth="16" tileheight="16">
   <image source="blacksquare.jpg" width="16" height="16"/>
+ </tileset>
+ <tileset firstgid="5" name="hero_wals" tilewidth="128" tileheight="128">
+  <image source="hero_wals.png" width="256" height="128"/>
  </tileset>
  <layer name="Ground" width="50" height="50">
   <properties>
@@ -2553,12 +2556,12 @@
   </object>
  </objectgroup>
  <objectgroup name="BodyLayer">
-  <object id="74" name="WB" type="Hero" gid="3" x="585.94" y="2621.34" width="62" height="62">
+  <object id="74" name="WB" type="Hero" gid="5" x="549.94" y="2649.34" width="200" height="200">
    <properties>
     <property name="Brain" value="BrainPlayerInput"/>
-    <property name="Radius" value="40"/>
-    <property name="STATE_IDLE" value="AnimBox1"/>
-    <property name="STATE_WALK" value="AnimBox2"/>
+    <property name="Radius" value="45"/>
+    <property name="STATE_IDLE" value="HeroIdle"/>
+    <property name="STATE_WALK" value="HeroWalk"/>
    </properties>
   </object>
  </objectgroup>
