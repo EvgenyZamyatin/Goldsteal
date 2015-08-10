@@ -11,12 +11,8 @@ void BrainPlayerInput::decide(IBody* body) {
 
 	body->dir = Geo::Vector(in.mX, in.mY) - body->pos;
 	//double st = clock();
-	std::vector<Geo::Polygon> objs;
-	for (IObject* obj : body->state->getEnvironment()->getObjects())
-		if (obj->isObstruct())
-			objs.push_back(obj->getBounds());
-	body->visible = Geo::visibilityPolygon(body->pos, objs, body->state->getEnvironment()->getWidth(), body->state->getEnvironment()->getHight());
-	
+	body->visible = body->state->getEnvironment()->calcVisible(body->pos);
+
 	if (in.pUp || in.pDown)
 		body->velocity.y += in.pUp ? -IBody::ACCELERATION : IBody::ACCELERATION;
 	else {

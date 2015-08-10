@@ -15,13 +15,15 @@ struct IObject : IRenderable {
 	virtual void activate() {}
 	virtual Geo::Vector getPosition() const {return pos;}
 	virtual Geo::Polygon getBounds() const {return bounds;}
-	virtual bool isObstruct() {return true;}
-	virtual bool isObstacle() {return true;}
+	bool isObstruct() {return obstruct;}
+	bool isObstacle() {return obstacle;}
 	//void setPos(Geo::Vector const& p) {this->pos=p;}
 	//void setBounds(Geo::Polygon const& p) {this->bounds=p;}
 
 	friend struct GameState;
 protected:
+	bool obstruct;
+	bool obstacle;
 	Geo::Polygon bounds;
 	Geo::Vector pos;
 	bool havePoly;

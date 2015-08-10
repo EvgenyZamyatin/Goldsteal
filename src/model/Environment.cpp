@@ -73,3 +73,28 @@ Environment::Environment(Tmx::Map const* map, hgeResourceManager* res) {
    		}
    	}
 }
+
+Geo::Polygon Environment::calcVisible(Geo::Vector const& o) {
+	std::vector<Geo::Polygon> polys;
+	for (IObject* obj : objs) {
+		if (obj->isObstruct())
+			polys.push_back(obj->getBounds());
+	}
+	return Geo::visibilityPolygon(o, polys, width, hight);
+}
+
+void Environment::frame() {
+	for (LightSource* ls : lightSources)
+		ls->frame();
+}
+
+
+
+
+
+
+
+
+
+
+

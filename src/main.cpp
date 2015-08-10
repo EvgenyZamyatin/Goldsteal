@@ -30,11 +30,7 @@ bool FrameFunc() {
 	//std::cerr << state->getEnvironment()->getObjects()[0]->getBounds() << "\n";
 	if (hge->Input_GetKeyState(HGEK_ESCAPE)) return true;
 	input->update(hge, cam);
-	for (IBody* b : state->getBodies())
-		b->frame();
-	state->getHero()->frame();
-	state->frame();
-	cam->frame(input, false);
+	state->frame(input);	
 	//std::cerr << "TOTAL FRAME: " << (clock()-start)/CLOCKS_PER_SEC << "\n";
 	return false;
 }          
@@ -81,6 +77,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	    cam = new Camera(state->getEnvironment()->getWidth(), state->getEnvironment()->getHight(), 
 					{400,300}, 80*10, 60*10, 800, 600, 150);
 		cam->bind(state->getHero());
+		
+		state->setCamera(cam);
 		hge->System_Start();
   	}	
 

@@ -6,8 +6,11 @@ FLAGS= -std=c++11 -O3 -D DEBUG -I$(BOOST_PATH) -I$(INCLUDES) -L$(LIBS)
 
 all: main
 
-main: Camera.o GGeometry Render main.o Environment.o IObject.o SimpleObject.o GameState.o Brains InputData.o IBody.o
-	$(CC) -o out/main.exe GameState.o Camera.o Geometry.o VisibilityPolygon.o RenderEnvironment.o RenderSimpleObject.o RenderBody.o main.o Environment.o IObject.o SimpleObject.o InputData.o IBrain.o IBody.o BrainPlayerInput.o $(FLAGS) -lhgehelp -lhge -ltmx -ltinyxml2 -lboost_filesystem -lboost_system -lz
+main: Camera.o GGeometry Render main.o Environment.o IObject.o SimpleObject.o GameState.o Brains InputData.o IBody.o LightSource.o
+	$(CC) -o out/main.exe GameState.o Camera.o Geometry.o VisibilityPolygon.o RenderEnvironment.o RenderSimpleObject.o RenderBody.o LightSource.o main.o Environment.o IObject.o SimpleObject.o InputData.o IBrain.o IBody.o BrainPlayerInput.o $(FLAGS) -lhgehelp -lhge -ltmx -ltinyxml2 -lboost_filesystem -lboost_system -lz
+
+LightSource.o: src/model/LightSource.cpp src/model/LightSource.h
+	$(CC) -c src/model/LightSource.cpp $(FLAGS)
 
 IBody.o: src/model/IBody.h src/model/IBody.cpp
 	$(CC) -c src/model/IBody.cpp $(FLAGS)

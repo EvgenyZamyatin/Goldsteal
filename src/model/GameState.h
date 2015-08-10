@@ -9,6 +9,7 @@
 #include "IRenderable.h"
 #include "Camera.h"
 #include "IBody.h"
+#include "../InputData.h"
 
 struct GameState : IRenderable {
 	GameState() {}
@@ -22,11 +23,13 @@ struct GameState : IRenderable {
 	Environment* getEnvironment() {return env;}
 	IBody* getHero() {return hero;}
 	void process(IBody* body);
-	void frame();
+	void frame(InputData* input);
+	void setCamera(Camera* cam) {this->cam = cam;}
 
 private:
 	std::vector<IBody*> bodies;
 	Environment* env;
 	IBody* hero;
+	Camera* cam;
 };
 #endif

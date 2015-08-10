@@ -67,8 +67,45 @@ void GameState::process(IBody* body) {
 	assert(false);	
 }
 
-void GameState::frame() {
+void GameState::frame(InputData* input) {
+	hero->frame();
+	for (IBody* b : bodies)
+		b->frame();
+
 	process(hero);
 	for (IBody* body : bodies) 
 		process(body);
+	env->frame();
+	cam->frame(input, false);	
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
