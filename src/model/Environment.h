@@ -18,6 +18,9 @@ struct Environment : IRenderable {
 	Environment(Tmx::Map const* map, hgeResourceManager* res);
 	
 	std::vector<IObject*> getObjects() const {return objs;}
+
+	std::vector<LightSource*> getLightSources() const {return lightSources;}
+
 	void addObject(IObject* obj) {objs.push_back(obj);}
 	void addLightSource(LightSource* ls) {lightSources.push_back(ls); ls->setEnvironment(this);}
 	double getWidth() const {return width;}

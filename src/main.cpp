@@ -25,20 +25,21 @@ InputData* input;
 
 bool FrameFunc() {
 	//std::cerr << state->getHero()->getPosition() << "\n";
-	//double start = clock();
+	double start = clock();
 	//std::cerr << state->getHero()->getPosition() << "\n";
 	//std::cerr << state->getEnvironment()->getObjects()[0]->getBounds() << "\n";
 	if (hge->Input_GetKeyState(HGEK_ESCAPE)) return true;
 	input->update(hge, cam);
-	state->frame(input);	
-	//std::cerr << "TOTAL FRAME: " << (clock()-start)/CLOCKS_PER_SEC << "\n";
+	state->frame();
+	cam->frame(input, false);	
+	std::cerr << "TOTAL FRAME: " << (clock()-start)/CLOCKS_PER_SEC << "\n";
 	return false;
 }          
 		
 bool RenderFunc() {
-	//double start = clock();
-	//std::cerr << hge->Timer_GetFPS() << "\n";
-	hge->Gfx_BeginScene();
+	double start = clock();
+	std::cerr << hge->Timer_GetFPS() << "\n";
+	/*hge->Gfx_BeginScene();
 	hge->Gfx_Clear(0);
 	state->getEnvironment()->render(hge, cam);
 	for (IObject* o : state->getEnvironment()->getObjects())
@@ -46,8 +47,9 @@ bool RenderFunc() {
 	for (IBody* b : state->getBodies())
 		b->render(hge, cam);
 	state->getHero()->render(hge, cam);
-	hge->Gfx_EndScene();
-	//std::cerr << "TOTAL REND: " << (clock()-start)/CLOCKS_PER_SEC << "\n";
+	hge->Gfx_EndScene();*/
+	state->render(hge, cam);
+	std::cerr << "TOTAL REND: " << (clock()-start)/CLOCKS_PER_SEC << "\n";
 	return false;
 }
 
@@ -55,6 +57,7 @@ bool RenderFunc() {
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	hge = hgeCreate(HGE_VERSION);
 
+	hge->System_SetState(HGE_LOGFILE, "main.log");
 	hge->System_SetState(HGE_FRAMEFUNC, FrameFunc);
 	hge->System_SetState(HGE_RENDERFUNC, RenderFunc);
 	hge->System_SetState(HGE_TITLE, "Try");
@@ -76,9 +79,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	    state = new GameState(&map, res);
 	    cam = new Camera(state->getEnvironment()->getWidth(), state->getEnvironment()->getHight(), 
 					{400,300}, 80*10, 60*10, 800, 600, 150);
-		cam->bind(state->getHero());
-		
-		state->setCamera(cam);
+		cam->bind(state->getHero());		
 		hge->System_Start();
   	}	
 

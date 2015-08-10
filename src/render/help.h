@@ -15,14 +15,3 @@ inline void fillTriple(hgeTriple& trip, std::vector<hgeVertex> const& v) {
 	for (int i = 0; i < 3; ++i)
 		trip.v[i]=v[i];
 }
-
-/*inline Rect boundingBox(Geo::Polygon const& pol) {
-	double minX=pol[0].x, minY=pol[0].y, maxX=pol[0].x, maxY=pol[0].y;
-	for (Geo::Vector const& p : pol.points) {
-		minX = std::min(p.x,minX);
-		minY = std::min(p.y,minY);
-		maxX = std::max(p.x,maxX);
-		maxY = std::max(p.y,maxY);
-	}
-	return Rect(minX, minY, maxX-minX, maxY-minY);
-}*/

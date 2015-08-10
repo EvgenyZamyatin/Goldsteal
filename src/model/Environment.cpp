@@ -69,7 +69,9 @@ Environment::Environment(Tmx::Map const* map, hgeResourceManager* res) {
    		for (Tmx::Object* o : ob->GetObjects()) {
    			if (o->GetType() == "SimpleObject") {
    				addObject(new SimpleObject(o, textureLayer, res));
-   			} 
+   			} else if (o->GetType() == "LightSource") {
+   				addLightSource(new LightSource(o, res));
+   			}
    		}
    	}
 }

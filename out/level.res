@@ -73,4 +73,11 @@ Animation HeroWalk {
 	hotspot=64,64
 }
 
+Target GameStateTarget1 {
+	size=1024,1024
+}
+
+Target GameStateTarget2 {
+	size=1024,1024
+}
 

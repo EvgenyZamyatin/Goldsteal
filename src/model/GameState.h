@@ -2,6 +2,7 @@
 #define GAMESTATE_H
 
 #include <hgeresource.h>
+#include <hge.h>
 #include <vector>
 #include <tmx/Tmx.h.in>
 
@@ -23,13 +24,14 @@ struct GameState : IRenderable {
 	Environment* getEnvironment() {return env;}
 	IBody* getHero() {return hero;}
 	void process(IBody* body);
-	void frame(InputData* input);
-	void setCamera(Camera* cam) {this->cam = cam;}
+	void frame();
 
 private:
 	std::vector<IBody*> bodies;
 	Environment* env;
 	IBody* hero;
-	Camera* cam;
+
+	HTARGET target1;
+	HTARGET target2;
 };
 #endif

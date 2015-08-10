@@ -13,6 +13,17 @@ GameState::GameState(Tmx::Map const* map, hgeResourceManager* res) {
 			}
 		}
 	}
+	target1 = res->GetTarget("GameStateTarget1");
+	if (target1 == 0) {
+		std::cerr << "Can't find GameStateTarget1\n";
+		exit(0);
+	}
+
+	target2 = res->GetTarget("GameStateTarget2");
+	if (target2 == 0) {
+		std::cerr << "Can't find GameStateTarget2\n";
+		exit(0);
+	}
 }
 
 void GameState::process(IBody* body) {
@@ -67,7 +78,7 @@ void GameState::process(IBody* body) {
 	assert(false);	
 }
 
-void GameState::frame(InputData* input) {
+void GameState::frame() {
 	hero->frame();
 	for (IBody* b : bodies)
 		b->frame();
@@ -76,11 +87,7 @@ void GameState::frame(InputData* input) {
 	for (IBody* body : bodies) 
 		process(body);
 	env->frame();
-	cam->frame(input, false);	
 }
-
-
-
 
 
 

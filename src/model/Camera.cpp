@@ -29,11 +29,11 @@ void Camera::frame(InputData* input, bool freeMode) {
 	Geo::Vector moveDir(pos+mouseDir);
 	move((body->getPosition() - moveDir)/4);
 	
-	/*pos.x=std::max(pos.x, CAMERA_WIDTH/2);
+	pos.x=std::max(pos.x, CAMERA_WIDTH/2);
 	pos.x=std::min(pos.x, FIELD_WIDTH - CAMERA_WIDTH/2); 
 
 	pos.y=std::max(pos.y, CAMERA_HIGHT/2);
-	pos.y=std::min(pos.y, FIELD_HIGHT - CAMERA_HIGHT/2); */
+	pos.y=std::min(pos.y, FIELD_HIGHT - CAMERA_HIGHT/2); 
 }
 
 void Camera::convertGS(float &x, float& y) const {

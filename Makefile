@@ -7,7 +7,7 @@ FLAGS= -std=c++11 -O3 -D DEBUG -I$(BOOST_PATH) -I$(INCLUDES) -L$(LIBS)
 all: main
 
 main: Camera.o GGeometry Render main.o Environment.o IObject.o SimpleObject.o GameState.o Brains InputData.o IBody.o LightSource.o
-	$(CC) -o out/main.exe GameState.o Camera.o Geometry.o VisibilityPolygon.o RenderEnvironment.o RenderSimpleObject.o RenderBody.o LightSource.o main.o Environment.o IObject.o SimpleObject.o InputData.o IBrain.o IBody.o BrainPlayerInput.o $(FLAGS) -lhgehelp -lhge -ltmx -ltinyxml2 -lboost_filesystem -lboost_system -lz
+	$(CC) -o out/main.exe GameState.o Camera.o Geometry.o VisibilityPolygon.o RenderEnvironment.o RenderSimpleObject.o RenderBody.o RenderGameState.o RenderLightSource.o LightSource.o main.o Environment.o IObject.o SimpleObject.o InputData.o IBrain.o IBody.o BrainPlayerInput.o $(FLAGS) -lhgehelp -lhge -ltmx -ltinyxml2 -lboost_filesystem -lboost_system -lz
 
 LightSource.o: src/model/LightSource.cpp src/model/LightSource.h
 	$(CC) -c src/model/LightSource.cpp $(FLAGS)
@@ -44,7 +44,7 @@ Camera.o: src/model/Camera.cpp src/model/Camera.h
 main.o: src/main.cpp
 	$(CC) -c src/main.cpp $(FLAGS)
 
-Render: RenderEnvironment.o RenderSimpleObject.o RenderBody.o
+Render: RenderEnvironment.o RenderSimpleObject.o RenderBody.o RenderGameState.o RenderLightSource.o
 
 
 RenderBody.o: src/render/RenderBody.cpp
@@ -55,6 +55,12 @@ RenderEnvironment.o: src/render/RenderEnvironment.cpp
 
 RenderSimpleObject.o:  src/render/RenderSimpleObject.cpp
 	$(CC) -c -std=c++11 src/render/RenderSimpleObject.cpp $(FLAGS)
+
+RenderGameState.o:  src/render/RenderGameState.cpp
+	$(CC) -c -std=c++11 src/render/RenderGameState.cpp $(FLAGS)
+
+RenderLightSource.o: src/render/RenderLightSource.cpp
+	$(CC) -c -std=c++11 src/render/RenderLightSource.cpp $(FLAGS)
 
 GGeometry: src/geometry/* Geometry.o VisibilityPolygon.o
 
