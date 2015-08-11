@@ -35,7 +35,7 @@ void Environment::render(HGE* hge, Camera const* cam) {
 				if (ti == -1 && tj == -1)
 					continue;
 				quad.tex=l.tex;	
-				quad.blend = BLEND_DEFAULT_Z;
+				quad.blend = BLEND_DEFAULT;
 				hgeU32 col = ARGB(l.alpha, 255, 255, 255);
 				fillQuad(quad, {                                                   
 								{kx*(cur.a.x-c.a.x), ky*(cur.a.y-c.a.y), 0.5f, col, ti*1.f/l.texWidth,                           tj*1.f/l.texHight},

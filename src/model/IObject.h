@@ -13,8 +13,8 @@ struct IObject : IRenderable {
 
 	virtual ~IObject(){}
 	virtual void activate() {}
-	virtual Geo::Vector getPosition() const {return pos;}
-	virtual Geo::Polygon getBounds() const {return bounds;}
+	Geo::Vector getPosition() const {return pos;}
+	Geo::Polygon getBounds() const {return bounds;}
 	bool isObstruct() {return obstruct;}
 	bool isObstacle() {return obstacle;}
 	//void setPos(Geo::Vector const& p) {this->pos=p;}

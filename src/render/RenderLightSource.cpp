@@ -7,7 +7,7 @@ void LightSource::render(HGE* hge, Camera* cam) {
 	Geo::Box c(cam->getPos().x-cam->CAMERA_WIDTH/2, cam->getPos().y-cam->CAMERA_HIGHT/2, cam->CAMERA_WIDTH, cam->CAMERA_HIGHT);
 	if (!intersects(r, c))
 		return;
-
+/*
 	for (int i = 0; i < bounds.size(); ++i) {
 		Geo::Vector a = bounds[i], b = bounds[i+1];
 		hgeTriple trip;
@@ -29,6 +29,7 @@ void LightSource::render(HGE* hge, Camera* cam) {
 						 });
 		hge->Gfx_RenderTriple(&trip);
 	}
+*/
 	hgeQuad q;
 	q.blend = BLEND_DEFAULT;
 	q.tex=0;
