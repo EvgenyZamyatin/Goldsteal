@@ -3,7 +3,7 @@
 #include "help.h"
 
 void LightSource::render(HGE* hge, Camera* cam) {
-    Geo::Box r(bounds);
+	Geo::Box r(bounds);
 	Geo::Box c(cam->getPos().x-cam->CAMERA_WIDTH/2, cam->getPos().y-cam->CAMERA_HIGHT/2, cam->CAMERA_WIDTH, cam->CAMERA_HIGHT);
 	if (!intersects(r, c))
 		return;
@@ -29,4 +29,22 @@ void LightSource::render(HGE* hge, Camera* cam) {
 						 });
 		hge->Gfx_RenderTriple(&trip);
 	}
+	hgeQuad q;
+	q.blend = BLEND_DEFAULT;
+	q.tex=0;
+	hgeU32 col = ARGB(255, 255, 238, 173);
+	float x1,y1,x2,y2;
+	x1 = pos.x-10;
+	y1 = pos.y-5;
+	x2 = pos.x+10;
+	y2 = pos.y+5;         
+	cam->convertGS(x1,y1);
+	cam->convertGS(x2,y2);	
+	fillQuad(q, {                        
+					{x1,y1,0.5f,col,0,0},
+					{x2,y1,0.5f,col,0,0},
+					{x2,y2,0.5f,col,0,0},
+					{x1,y2,0.5f,col,0,0}
+				});
+	hge->Gfx_RenderQuad(&q);
 }

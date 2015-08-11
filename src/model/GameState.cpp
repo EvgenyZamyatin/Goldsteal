@@ -72,10 +72,14 @@ void GameState::process(IBody* body) {
 		if (ok) {
 			body->pos = newPos;
 			vel = nvel;
-			return;
+			break;
 		}
-	}
-	assert(false);	
+	}                                                 
+	body->pos.x = std::max(body->radius, body->pos.x);
+	body->pos.x = std::min(env->getWidth() - body->radius, body->pos.x);
+
+	body->pos.y = std::max(body->radius, body->pos.y);
+	body->pos.y = std::min(env->getHight() - body->radius, body->pos.y);
 }
 
 void GameState::frame() {

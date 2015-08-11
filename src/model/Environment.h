@@ -23,8 +23,8 @@ struct Environment : IRenderable {
 
 	void addObject(IObject* obj) {objs.push_back(obj);}
 	void addLightSource(LightSource* ls) {lightSources.push_back(ls); ls->setEnvironment(this);}
-	double getWidth() const {return width;}
-	double getHight() const {return hight;}
+	int getWidth() const {return width;}
+	int getHight() const {return hight;}
 	void render(HGE* hge, Camera const* cam);
 	Geo::Polygon calcVisible(Geo::Vector const& o);
 	void frame();

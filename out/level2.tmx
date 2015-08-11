@@ -2558,7 +2558,7 @@
   <object id="40" name="Lamp" type="LightSource" gid="4" x="854" y="2780" width="16" height="16"/>
  </objectgroup>
  <objectgroup name="BodyLayer">
-  <object id="74" name="WB" type="Hero" gid="5" x="549.94" y="2649.34" width="200" height="200">
+  <object id="74" name="WB" type="Hero" gid="5" x="539.94" y="2584" width="200" height="200">
    <properties>
     <property name="Brain" value="BrainPlayerInput"/>
     <property name="Radius" value="45"/>

@@ -3,9 +3,8 @@
 using namespace Geo;
 
 struct Segment1 : Segment {
-	Segment1(Vector const& a, Vector const& b, Vector const& c, Vector const& d) : Segment(a, b), c(c), d(d) {}
+	Segment1(Vector const& a, Vector const& b, Vector const& d) : Segment(a, b), d(d) {}
 	Segment1(Vector const& a, Vector const& b) : Segment(a, b) {}
-	Vector c; // point after b
 	Vector d; // point before a
 }; 
 
@@ -15,27 +14,23 @@ struct Ray : Line {
 };
 
 void add(std::set<Segment1, std::function<bool(Segment1 const&, Segment1 const&)>>& set, Vector const& o, Segment1 const& s) {
-	if (orientation(s.a, o, s.b) == LEFT) {
+	if (orientation(s.a, o, s.b) == LEFT)
 		set.insert(s);
-	}
 } 
 
-bool touch (Vector const& o, Segment1 const& s) {
+/*bool touch (Vector const& o, Segment1 const& s) {
 	return !(orientation(o, s.b, s.a) * orientation(o, s.b, s.c) == -1);	
-} 
+}*/ 
 
-bool remove(std::set<Segment1, std::function<bool(Segment1 const&, Segment1 const&)>>& set, Vector const& o, Segment1 const& s) {
-	if (orientation(s.d, o, s.a) >= 0)
-		return false;
+void remove(std::set<Segment1, std::function<bool(Segment1 const&, Segment1 const&)>>& set, Vector const& o, Segment1 const& s) {
+	if (orientation(s.d, o, s.a) != LEFT)
+		return;
 	Segment1 s1(s.d, s.a);
 	auto it = set.lower_bound(s1);
 	if ((*it).a==s1.a && (*it).b==s1.b) {
 		s1=*it;
-		bool ans = (it == set.begin()) && !touch(o, s1);
 		set.erase(it);
-		return ans;
 	}
-   	return false;
 } 
 
 void check(Vector const& o, std::vector<Segment1> const& v) {
@@ -50,9 +45,8 @@ Polygon Geo::visibilityPolygonFast (Vector const& o, std::vector<Polygon> const&
     	for (int i = 0; i < p.size(); ++i) {
     	    Vector const& a = p[i]; 
     	    Vector const& b = p[i+1]; 
-    	    Vector const& c = (i == p.size() - 1) ? p[1] : (i == p.size() - 2 ? p[0] : p[i+2]);
     	    Vector const& d = (i == 0) ? p[p.size()-1] : p[i-1];
-    	    vertices.push_back(Segment1(a, b, c, d));
+    	    vertices.push_back(Segment1(a, b, d));
     	}
     }    
     int cnt = 0;
@@ -106,63 +100,79 @@ Polygon Geo::visibilityPolygonFast (Vector const& o, std::vector<Polygon> const&
     	Vector pt;
     	for (Polygon const& p : polygons) {
     		for (int i = 0; i < p.size(); ++i) {
-    			Segment1 s(p[i], i == p.size() - 1 ? p[0] : p[i+1], (i == p.size() - 1) ? p[1] : (i == p.size() - 2 ? p[0] : p[i+2]), i == 0 ? p[p.size()-1] : p[i-1]);
-    			if (!intersect(l, s, pt)) 
+    			Segment1 s(p[i], i == p.size() - 1 ? p[0] : p[i+1], i == 0 ? p[p.size()-1] : p[i-1]);
+    			if (!intersect(l, s, pt, false)) 
     				continue;
-    			if (s.a != pt && (l.v^(pt-o)) > 0) {
+    			if ((l.v^(pt-o)) > 0) 
     				add(set, o, s);
-    			}    			
     		}
     	}
     }
     
     for (int i = 0; i < (int)vertices.size(); ++i) {
+ 		if (i != 0 && orientation(vertices[i-1].a, o, vertices[i].a) == COLLINEAR)
+ 			continue;
+
  		Segment1 const& v = vertices[i];
  		dirV = v.a;//!!Important for comparator!!
+
  		int j = i;
- 		bool isAns = false;
- 		Vector ans;
  		while (j < vertices.size() && orientation(vertices[j].a, o, vertices[i].a) == COLLINEAR) {
- 			bool now = remove(set, o, vertices[j]);
- 			if (!isAns && now) {
- 				isAns = true;
- 				ans = vertices[j].a;
+ 			remove(set, o, vertices[j]);
+ 			j++;
+ 		}
+ 		Vector nv1;
+ 		bool ok1=false;
+ 		if (set.size() > 0) {
+ 			Segment const& s = *(set.begin());
+ 			Ray l(o, v.a);            		            		
+    		#ifdef DEBUG
+ 				assert(intersect(l, s, nv1));
+ 			#else
+ 				intersect(l, s, nv1)
+ 			#endif		
+ 			ok1 = true;
+ 		}
+
+ 		Vector nv2;
+ 		bool ok2=false;
+ 		j = i; 		
+ 		while (j < vertices.size() && orientation(vertices[j].a, o, vertices[i].a) == COLLINEAR) {
+ 			add(set, o, vertices[j]);
+ 			if (!ok2) {
+ 				int a = orientation(vertices[j].a, o, vertices[j].d);
+ 				int b = orientation(vertices[j].a, o, vertices[j].b);
+ 				if (a*b==-1 || 
+ 					(a==COLLINEAR && b == LEFT && ((vertices[j].a-vertices[j].d)^(o-vertices[j].d)) < 0) || 
+ 					(b==COLLINEAR && a == RIGHT && ((vertices[j].a-vertices[j].b)^(o-vertices[j].b)) < 0)) {
+ 					ok2 = true;
+ 					nv2 = vertices[j].a;
+ 				}
+ 					
  			}
  			j++;
  		}
- 		if ((i == 0 || orientation(vertices[i-1].a, o, vertices[i].a) != COLLINEAR)) {
-     			Vector nearest;
-            	bool have = isAns;
-     			if (!isAns) {
-         			#ifdef DEBUG
-         				assert(set.size() > 0);
-         			#endif
-             		Segment const& nearestSeg = *(set.begin());
-             		double val = std::max((nearestSeg.a-o).len2(), (nearestSeg.b-o).len2());
-             		if (val == (o-v.a).len2() || val > (o-v.a).len2()) {
-             			Ray l(o, v.a);            		            		
-                		#ifdef DEBUG
-         					assert(intersect(l, nearestSeg, nearest));
-         				#else
-         					intersect(l, nearestSeg, nearest)
-         				#endif		
-                		have = true;
-                	}
-                } else nearest = ans;
-
-            	if (have && ((nearest-o).len2() == (v.a-o).len2() || (nearest-o).len2() > (v.a-o).len2())) {
-                	if (nearest == v.a) {
-               	 		candidates.push_back(v.a);
-               	 	} else if (orientation(nearest, v.a, v.b) == LEFT) {
-                    	candidates.push_back(nearest); 
-                    	candidates.push_back(v.a);
-                   	} else {
-                   		candidates.push_back(v.a); 
-                   		candidates.push_back(nearest); 
-                   	}			
-                }
-    	}
-    	add(set, o, v);
+ 		assert(ok1 || ok2);
+ 		Geo::Vector nearest;
+ 		if (ok1 && ok2) {
+ 			nearest = (o-nv1).len2() < (o-nv2).len2() ? nv1 : nv2;
+ 		} else if (ok1) {
+ 			nearest = nv1;
+ 		} else {
+ 		    nearest = nv2;
+ 		}
+ 		
+ 		if ((nearest-o).len2() >= (v.a-o).len2()) {
+        	if (nearest == v.a) {
+       	 		candidates.push_back(v.a);
+       	 	} else if (orientation(v.a, o, v.b) == LEFT) {
+            	candidates.push_back(nearest); 
+            	candidates.push_back(v.a);
+           	} else {
+           		candidates.push_back(v.a); 
+           		candidates.push_back(nearest); 
+           	}			
+        }
     }
     return Polygon(candidates);
 }

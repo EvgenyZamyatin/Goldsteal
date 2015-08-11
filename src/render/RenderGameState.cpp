@@ -75,7 +75,7 @@ void GameState::render(HGE* hge, Camera* cam) {
 
     	q.tex=0;
     	q.blend=BLEND_DARKEN | BLEND_NOZWRITE;
-    	col = ARGB(255, 32, 32, 32);
+    	col = ARGB(255, 16, 16, 16);
     	fillQuad(q, {
     	            	{0, 0, 0.5f, col, 0.f, 0.f},
     	            	{(float)cam->SCREEN_WIDTH, 0, 0.5f, col, 1.f, 0.f},
