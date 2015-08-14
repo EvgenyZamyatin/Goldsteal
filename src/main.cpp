@@ -67,7 +67,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	hge->System_SetState(HGE_SCREENWIDTH, WIDTH);
 	hge->System_SetState(HGE_SCREENHEIGHT, HIGHT);
 	hge->System_SetState(HGE_SCREENBPP, 32);
-	hge->System_SetState(HGE_FPS, 100);
+	hge->System_SetState(HGE_FPS, 50);
 	hge->System_SetState(HGE_ZBUFFER, true);		
 	hge->System_SetState(HGE_HIDEMOUSE, false);
 	if (hge->System_Initiate()) {

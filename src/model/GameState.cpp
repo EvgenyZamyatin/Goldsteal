@@ -13,22 +13,35 @@ GameState::GameState(Tmx::Map const* map, hgeResourceManager* res) {
 			}
 		}
 	}
-	target1 = res->GetTarget("GameStateTarget1");
-	if (target1 == 0) {
+	rData.target1 = res->GetTarget("GameStateTarget1");
+	if (rData.target1 == 0) {
 		std::cerr << "Can't find GameStateTarget1\n";
 		exit(0);
 	}
 
-	target2 = res->GetTarget("GameStateTarget2");
-	if (target2 == 0) {
+	rData.target2 = res->GetTarget("GameStateTarget2");
+	if (rData.target2 == 0) {
 		std::cerr << "Can't find GameStateTarget2\n";
 		exit(0);
 	}
+
+	rData.blurShader = res->GetShader("BlurShader");
+	if (rData.blurShader == NULL) {
+		std::cerr << "Can't find BlurShader\n";
+		exit(0);
+	}
+
+	rData.kSize = 9;
+	rData.dirX[0] = 0.002f, rData.dirX[1] = 0.f;
+	rData.dirY[0] = 0.f, rData.dirY[1] = 0.002f;
+	rData.sigma = 3.f;
+	for (int i = -rData.kSize/2; i <= rData.kSize/2; ++i) {
+		rData.kernel[i+rData.kSize/2] = rData.gaussian(rData.dirX[0]*i, rData.sigma);
+	}
+
 }
 
 void GameState::process(IBody* body) {
-	//body->pos += body->velocity;
-	//return;
 	Geo::Vector& vel = body->velocity; 
 	if (vel.len2() == 0)
 		return; 

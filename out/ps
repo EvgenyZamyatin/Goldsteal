@@ -1,3 +1,4 @@
+#define C
 sampler2D inp; 
 uniform int kSize = 9;
 uniform float koeff[9];

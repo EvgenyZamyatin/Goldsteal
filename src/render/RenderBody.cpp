@@ -1,5 +1,5 @@
 #include "../model/IBody.h"
-#include "BodyData.h"
+#include "RenderData.h"
 #include <hgeanim.h>
 #include <hge.h>
 #include "help.h"

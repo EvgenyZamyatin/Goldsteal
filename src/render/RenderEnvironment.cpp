@@ -1,5 +1,5 @@
 #include "../geometry/Geometry.h"
-#include "EnvironmentData.h"
+#include "RenderData.h"
 #include "../model/Environment.h"
 #include "help.h"
 

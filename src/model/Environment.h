@@ -8,7 +8,7 @@
                         
 #include "IRenderable.h"
 #include "IObject.h"
-#include "../render/EnvironmentData.h"
+#include "../render/RenderData.h"
 #include "LightSource.h"
 
 

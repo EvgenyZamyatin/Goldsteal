@@ -8,7 +8,7 @@
 #include "IObject.h"
 #include "Environment.h"
 #include "../geometry/Geometry.h"
-#include "../render/BodyData.h"
+#include "../render/RenderData.h"
 #include "brains/IBrain.h"
 #include "Camera.h"
 

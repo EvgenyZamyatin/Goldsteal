@@ -1,6 +1,6 @@
 #include "../model/GameState.h"
 #include "help.h"
-//#include "../model/LightSource.h"
+#include "RenderData.h"
 
 hgeQuad q;
 hgeTriple trip;    		
@@ -25,77 +25,32 @@ void rendWhitePolygon(HGE* hge, Camera* cam, Geo::Vector const& pos, Geo::Polygo
 	}	
 }
 
-extern HSHADER shader;
-
-float gaussian(float x, float sigma) {
-	return exp(-(x*x)/(2*sigma*sigma))/sqrt(2*M_PI*sigma*sigma);
-}
-
-void blur(HGE* hge, Camera* cam, HTARGET a, HTARGET b) {
-	int kSize = 9;
-	float kernel[9];
-	float sigma = 3;
-	float dir = 0.002;
-	for (int i = -kSize/2; i <= kSize/2; ++i) {
-		kernel[kSize/2+i]=gaussian(dir*i, sigma);
-	}
+void Render::GameStateData::blur(HGE* hge, Camera* cam, HTARGET a, HTARGET b) {
 	{//make temp resized
         hge->Gfx_BeginScene(b);
     	hge->Gfx_Clear(0);
-    	
     	q.blend=BLEND_DEFAULT;
     	col = ARGB(255,255,255,255);
     	q.tex = hge->Target_GetTexture(a);
     	fillQuad(q, {
-        	            {kSize/2,                              kSize/2,                              0.5f, col, 0.f,                           0.f},
-        	            {(float)cam->SCREEN_WIDTH + (kSize/2), kSize/2,                              0.5f, col, (float)cam->SCREEN_WIDTH/1024, 0.f},
+        	            {(float)kSize/2,                       (float)kSize/2,                       0.5f, col, 0.f,                           0.f},
+        	            {(float)cam->SCREEN_WIDTH + (kSize/2), (float)kSize/2,                       0.5f, col, (float)cam->SCREEN_WIDTH/1024, 0.f},
         				{(float)cam->SCREEN_WIDTH + (kSize/2), (float)cam->SCREEN_HIGHT + (kSize/2), 0.5f, col, (float)cam->SCREEN_WIDTH/1024, (float)cam->SCREEN_HIGHT/1024},
-        				{kSize/2,                              (float)cam->SCREEN_HIGHT + (kSize/2), 0.5f, col, 0.f,                           (float)cam->SCREEN_HIGHT/1024},
+        				{(float)kSize/2,                       (float)cam->SCREEN_HIGHT + (kSize/2), 0.5f, col, 0.f,                           (float)cam->SCREEN_HIGHT/1024},
         			});
         hge->Gfx_RenderQuad(&q);
-        /*
-        fillQuad(q, {
-        	            {0,                                      0,         0.5f, col, 0.f,                           0.f},
-        	            {(float)cam->SCREEN_WIDTH + (kSize/2)*2, 0,         0.5f, col, (float)cam->SCREEN_WIDTH/1024, 0.f},
-        				{(float)cam->SCREEN_WIDTH + (kSize/2)*2, (kSize/2), 0.5f, col, (float)cam->SCREEN_WIDTH/1024, 0.f},
-        				{0,                                      (kSize/2), 0.5f, col, 0.f,                           0.f},
-        			});
-        hge->Gfx_RenderQuad(&q);
-        
-        fillQuad(q, {
-        	            {(float)cam->SCREEN_WIDTH + (kSize/2),   0,                                      0.5f, col, (float)cam->SCREEN_WIDTH/1024, 0.f},
-        	            {(float)cam->SCREEN_WIDTH + (kSize/2)*2, 0,                                      0.5f, col, (float)cam->SCREEN_WIDTH/1024, 0.f},
-        				{(float)cam->SCREEN_WIDTH + (kSize/2)*2, (float)cam->SCREEN_HIGHT + (kSize/2)*2, 0.5f, col, (float)cam->SCREEN_WIDTH/1024, (float)cam->SCREEN_HIGHT/1024},
-        				{(float)cam->SCREEN_WIDTH + (kSize/2),   (float)cam->SCREEN_HIGHT + (kSize/2)*2, 0.5f, col, (float)cam->SCREEN_WIDTH/1024, (float)cam->SCREEN_HIGHT/1024},
-        			});
-        hge->Gfx_RenderQuad(&q);
-        
-        
-        fillQuad(q, {
-        	            {0,                                      (float)cam->SCREEN_HIGHT + (kSize/2),         0.5f, col, 0.f,                           (float)cam->SCREEN_HIGHT/1024},
-        	            {(float)cam->SCREEN_WIDTH + (kSize/2)*2, (float)cam->SCREEN_HIGHT + (kSize/2),         0.5f, col, (float)cam->SCREEN_WIDTH/1024, (float)cam->SCREEN_HIGHT/1024},
-        				{(float)cam->SCREEN_WIDTH + (kSize/2)*2, (float)cam->SCREEN_HIGHT + (kSize/2)*2,       0.5f, col, (float)cam->SCREEN_WIDTH/1024, (float)cam->SCREEN_HIGHT/1024},
-        				{0,                                      (float)cam->SCREEN_HIGHT + (kSize/2)*2,       0.5f, col, 0.f,                           (float)cam->SCREEN_HIGHT/1024},
-        			});
-        hge->Gfx_RenderQuad(&q);
-        
-        fillQuad(q, {
-        	            {0,       0,                                      0.5f, col, 0, 0.f},
-        	            {kSize/2, 0,                                      0.5f, col, 0, 0.f},
-        				{kSize/2, (float)cam->SCREEN_HIGHT + (kSize/2)*2, 0.5f, col, 0, (float)cam->SCREEN_HIGHT/1024},
-        				{0,       (float)cam->SCREEN_HIGHT + (kSize/2)*2, 0.5f, col, 0, (float)cam->SCREEN_HIGHT/1024},
-        			});
-        hge->Gfx_RenderQuad(&q);
-        */
         hge->Gfx_EndScene();
     }
+    
+    hge->Shader_SetValue(blurShader, "kSize", (void*)(&kSize), sizeof(int));
+	hge->Shader_SetValue(blurShader, "koeff", (void*)(kernel), kSize*sizeof(float));
+	
     {//Horizontal
+    	int kSize = kSize;
+    	
     	hge->Gfx_BeginScene(a);
-    	hge->Gfx_SetShader(shader, SHADER_PIXEL);
-    	float tmp[] = {dir, 0.f};
-    	hge->Shader_SetValue(shader, "direction", (void*)tmp, 2*sizeof(float));
-		hge->Shader_SetValue(shader, "kSize", (void*)(&kSize), sizeof(int));
-		hge->Shader_SetValue(shader, "koeff", (void*)kernel, kSize*sizeof(float));
+    	hge->Gfx_SetShader(blurShader, SHADER_PIXEL);
+    	hge->Shader_SetValue(blurShader, "direction", (void*)(dirX), 2*sizeof(float));
 		
 		q.blend=BLEND_DEFAULT;
     	col = ARGB(255,255,255,255);
@@ -110,12 +65,11 @@ void blur(HGE* hge, Camera* cam, HTARGET a, HTARGET b) {
         hge->Gfx_EndScene();
 	} 
 	{//Vertical
-		hge->Gfx_BeginScene(b);
-    	hge->Gfx_SetShader(shader, SHADER_PIXEL);
-    	float tmp1[] = {0.f, dir};
-    	hge->Shader_SetValue(shader, "direction", (void*)tmp1, 2*sizeof(float));
-		hge->Shader_SetValue(shader, "kSize", (void*)(&kSize), sizeof(int));
-		hge->Shader_SetValue(shader, "koeff", (void*)kernel, kSize*sizeof(float));
+		int kSize = kSize;
+    	
+		hge->Gfx_BeginScene(b);    	
+    	hge->Gfx_SetShader(blurShader, SHADER_PIXEL);
+    	hge->Shader_SetValue(blurShader, "direction", (void*)(dirY), 2*sizeof(float));
 		
 		q.blend=BLEND_DEFAULT;
     	col = ARGB(255,255,255,255);
@@ -150,31 +104,31 @@ void blur(HGE* hge, Camera* cam, HTARGET a, HTARGET b) {
 void GameState::render(HGE* hge, Camera* cam) {
 	{//DEBUG
 	 	#ifdef DEBUG                                   
-        	HTEXTURE tex = hge->Target_GetTexture(target1);
+        	HTEXTURE tex = hge->Target_GetTexture(rData.target1);
         	assert(hge->Texture_GetWidth(tex) == 1024);
         	assert(hge->Texture_GetHeight(tex) == 1024);
-        	tex = hge->Target_GetTexture(target2);
+        	tex = hge->Target_GetTexture(rData.target2);
         	assert(hge->Texture_GetWidth(tex) == 1024);
         	assert(hge->Texture_GetHeight(tex) == 1024);
         #endif
 	}
 
 	{//MAKE VIEW-LIGHT TARGET(in target1)
-		hge->Gfx_BeginScene(target2);
+		hge->Gfx_BeginScene(rData.target2);
 		hge->Gfx_Clear(0);
 		for (LightSource const* ls : env->getLightSources()) {
 			rendWhitePolygon(hge, cam, ls->pos, ls->getBounds());		
 	   	}
 		hge->Gfx_EndScene();
 
-		hge->Gfx_BeginScene(target1);
+		hge->Gfx_BeginScene(rData.target1);
 		hge->Gfx_Clear(0);
 		
 		rendWhitePolygon(hge, cam, hero->pos, hero->visible);		
 		
 		q.blend=BLEND_DARKEN;
 		col = ARGB(255,255,255,255);
-		q.tex = hge->Target_GetTexture(target2);
+		q.tex = hge->Target_GetTexture(rData.target2);
 		fillQuad(q, {
     	            	{0, 0, 0.5f, col, 0.f, 0.f},
     	            	{(float)cam->SCREEN_WIDTH, 0, 0.5f, col, (float)cam->SCREEN_WIDTH/1024, 0.f},
@@ -194,7 +148,7 @@ void GameState::render(HGE* hge, Camera* cam) {
     				});
     	hge->Gfx_RenderQuad(&q);
     	hge->Gfx_EndScene();
-    	blur(hge, cam, target1, target2);
+    	rData.blur(hge, cam, rData.target1, rData.target2);
 	}
 
     {
@@ -221,7 +175,7 @@ void GameState::render(HGE* hge, Camera* cam) {
     	hge->Gfx_RenderQuad(&q);
 		q.blend=BLEND_DARKEN;
 		col = ARGB(255, 255, 255, 255);
-		q.tex = hge->Target_GetTexture(target1);
+		q.tex = hge->Target_GetTexture(rData.target1);
 		fillQuad(q, {
     	            	{0, 0, 0.5f, col, 0.f, 0.f},
     	            	{(float)cam->SCREEN_WIDTH, 0, 0.5f, col,(float)cam->SCREEN_WIDTH/1024, 0.f},
@@ -236,3 +190,40 @@ void GameState::render(HGE* hge, Camera* cam) {
     
 }
 
+
+
+/*
+        fillQuad(q, {
+        	            {0,                                      0,         0.5f, col, 0.f,                           0.f},
+        	            {(float)cam->SCREEN_WIDTH + (kSize/2)*2, 0,         0.5f, col, (float)cam->SCREEN_WIDTH/1024, 0.f},
+        				{(float)cam->SCREEN_WIDTH + (kSize/2)*2, (kSize/2), 0.5f, col, (float)cam->SCREEN_WIDTH/1024, 0.f},
+        				{0,                                      (kSize/2), 0.5f, col, 0.f,                           0.f},
+        			});
+        hge->Gfx_RenderQuad(&q);
+        
+        fillQuad(q, {
+        	            {(float)cam->SCREEN_WIDTH + (kSize/2),   0,                                      0.5f, col, (float)cam->SCREEN_WIDTH/1024, 0.f},
+        	            {(float)cam->SCREEN_WIDTH + (kSize/2)*2, 0,                                      0.5f, col, (float)cam->SCREEN_WIDTH/1024, 0.f},
+        				{(float)cam->SCREEN_WIDTH + (kSize/2)*2, (float)cam->SCREEN_HIGHT + (kSize/2)*2, 0.5f, col, (float)cam->SCREEN_WIDTH/1024, (float)cam->SCREEN_HIGHT/1024},
+        				{(float)cam->SCREEN_WIDTH + (kSize/2),   (float)cam->SCREEN_HIGHT + (kSize/2)*2, 0.5f, col, (float)cam->SCREEN_WIDTH/1024, (float)cam->SCREEN_HIGHT/1024},
+        			});
+        hge->Gfx_RenderQuad(&q);
+        
+        
+        fillQuad(q, {
+        	            {0,                                      (float)cam->SCREEN_HIGHT + (kSize/2),         0.5f, col, 0.f,                           (float)cam->SCREEN_HIGHT/1024},
+        	            {(float)cam->SCREEN_WIDTH + (kSize/2)*2, (float)cam->SCREEN_HIGHT + (kSize/2),         0.5f, col, (float)cam->SCREEN_WIDTH/1024, (float)cam->SCREEN_HIGHT/1024},
+        				{(float)cam->SCREEN_WIDTH + (kSize/2)*2, (float)cam->SCREEN_HIGHT + (kSize/2)*2,       0.5f, col, (float)cam->SCREEN_WIDTH/1024, (float)cam->SCREEN_HIGHT/1024},
+        				{0,                                      (float)cam->SCREEN_HIGHT + (kSize/2)*2,       0.5f, col, 0.f,                           (float)cam->SCREEN_HIGHT/1024},
+        			});
+        hge->Gfx_RenderQuad(&q);
+        
+        fillQuad(q, {
+        	            {0,       0,                                      0.5f, col, 0, 0.f},
+        	            {kSize/2, 0,                                      0.5f, col, 0, 0.f},
+        				{kSize/2, (float)cam->SCREEN_HIGHT + (kSize/2)*2, 0.5f, col, 0, (float)cam->SCREEN_HIGHT/1024},
+        				{0,       (float)cam->SCREEN_HIGHT + (kSize/2)*2, 0.5f, col, 0, (float)cam->SCREEN_HIGHT/1024},
+        			});
+        hge->Gfx_RenderQuad(&q);
+        */
+        

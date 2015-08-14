@@ -11,6 +11,7 @@
 #include "Camera.h"
 #include "IBody.h"
 #include "../InputData.h"
+#include "../render/RenderData.h"
 
 struct GameState : IRenderable {
 	GameState() {}
@@ -27,11 +28,10 @@ struct GameState : IRenderable {
 	void frame();
 	
 private:
+	Render::GameStateData rData;
+	
 	std::vector<IBody*> bodies;
 	Environment* env;
-	IBody* hero;
-
-	HTARGET target1;
-	HTARGET target2;
+	IBody* hero;	
 };
 #endif

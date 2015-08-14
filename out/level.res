@@ -80,4 +80,7 @@ Target GameStateTarget1 {
 Target GameStateTarget2 {
 	size=1024,1024
 }
-
+Shader BlurShader {
+	filename=ps
+	type=pixel
+}

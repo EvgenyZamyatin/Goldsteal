@@ -3,7 +3,7 @@
 #include <hge.h>
 #include "IObject.h"
 #include "Camera.h"
-#include "../render/SimpleObjectData.h"
+#include "../render/RenderData.h"
 
 struct LevelLoader;
 struct SimpleObject : IObject {
