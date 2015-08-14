@@ -2,7 +2,7 @@ CC=C:\mingw\bin\g++.exe
 BOOST_PATH=C:\boost_1_58_0
 INCLUDES=dependencies/includes/
 LIBS=dependencies/libs/
-FLAGS= -std=c++11 -O3 -D DEBUG -I$(BOOST_PATH) -I$(INCLUDES) -L$(LIBS)
+FLAGS= -DHGE_DIRECTX_VER=9 -std=c++11 -O3 -D DEBUG -I$(BOOST_PATH) -I$(INCLUDES) -L$(LIBS)
 
 all: main
 

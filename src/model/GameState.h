@@ -25,7 +25,7 @@ struct GameState : IRenderable {
 	IBody* getHero() {return hero;}
 	void process(IBody* body);
 	void frame();
-
+	
 private:
 	std::vector<IBody*> bodies;
 	Environment* env;

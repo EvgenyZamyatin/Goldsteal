@@ -53,6 +53,7 @@ bool RenderFunc() {
 	return false;
 }
 
+HSHADER shader=NULL;
 
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	hge = hgeCreate(HGE_VERSION);
@@ -69,7 +70,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	hge->System_SetState(HGE_FPS, 100);
 	hge->System_SetState(HGE_ZBUFFER, true);		
 	hge->System_SetState(HGE_HIDEMOUSE, false);
-
 	if (hge->System_Initiate()) {
 		input = new InputData();
 	    res = new hgeResourceManager("level.res");
@@ -80,6 +80,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	    cam = new Camera(state->getEnvironment()->getWidth(), state->getEnvironment()->getHight(), 
 					{400,300}, 80*10, 60*10, 800, 600, 150);
 		cam->bind(state->getHero());		
+		shader = hge->Shader_Create("ps", SHADER_PIXEL);
 		hge->System_Start();
   	}	
 

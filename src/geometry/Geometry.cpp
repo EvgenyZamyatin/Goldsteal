@@ -10,10 +10,10 @@ using namespace Geo;
 
 template<typename T, typename E>
 inline T Geo::divRoundClosest(const T& n, const E& d) {
-	#ifdef DEBUG
+	/*#ifdef DEBUG
 		T r = boost::math::iround(n*1.0 / d);
 		assert((((n < 0) ^ (d < 0)) ? ((n - (d/2))/d) : ((n + (d/2))/d)) == r);
-   	#endif 
+   	#endif*/
 	return ((n < 0) ^ (d < 0)) ? ((n - (d/2))/d) : ((n + (d/2))/d);
 }
 
