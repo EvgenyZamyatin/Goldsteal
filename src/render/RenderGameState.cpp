@@ -33,10 +33,10 @@ void Render::GameStateData::blur(HGE* hge, Camera* cam, HTARGET a, HTARGET b) {
     	col = ARGB(255,255,255,255);
     	q.tex = hge->Target_GetTexture(a);
     	fillQuad(q, {
-        	            {(float)kSize/2,                       (float)kSize/2,                       0.5f, col, 0.f,                           0.f},
-        	            {(float)cam->SCREEN_WIDTH + (kSize/2), (float)kSize/2,                       0.5f, col, (float)cam->SCREEN_WIDTH/1024, 0.f},
+        	            {(float)(kSize/2),                     (float)(kSize/2),                     0.5f, col, 0.f,                           0.f},
+        	            {(float)cam->SCREEN_WIDTH + (kSize/2), (float)(kSize/2),                     0.5f, col, (float)cam->SCREEN_WIDTH/1024, 0.f},
         				{(float)cam->SCREEN_WIDTH + (kSize/2), (float)cam->SCREEN_HIGHT + (kSize/2), 0.5f, col, (float)cam->SCREEN_WIDTH/1024, (float)cam->SCREEN_HIGHT/1024},
-        				{(float)kSize/2,                       (float)cam->SCREEN_HIGHT + (kSize/2), 0.5f, col, 0.f,                           (float)cam->SCREEN_HIGHT/1024},
+        				{(float)(kSize/2),                     (float)cam->SCREEN_HIGHT + (kSize/2), 0.5f, col, 0.f,                           (float)cam->SCREEN_HIGHT/1024},
         			});
         hge->Gfx_RenderQuad(&q);
         hge->Gfx_EndScene();
