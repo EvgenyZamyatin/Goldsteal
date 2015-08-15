@@ -14,7 +14,7 @@ struct FlashLight : LightSource {
 		sn = sinf(angle);
 		cs = cosf(angle);
 	};
-	void frame();
+	virtual void frame();
 	virtual void setEnvironment(Environment* env);
 	virtual void render(HGE* hge, Camera* cam) {};
 private:

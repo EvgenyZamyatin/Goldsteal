@@ -88,8 +88,8 @@ Geo::Polygon Environment::calcVisible(Geo::Vector const& o) {
 }
 
 void Environment::frame() {
-	/*for (LightSource* ls : lightSources)
-		ls->frame();*/
+	for (LightSource* ls : lightSources)
+		ls->frame();
 }
 
 

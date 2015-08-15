@@ -33,7 +33,6 @@ bool FrameFunc() {
 	if (hge->Input_GetKeyState(HGEK_ESCAPE)) return true;
 	input->update(hge, cam);
 	state->frame();
-	fl->frame();
 	cam->frame(input, false);	
 	std::cerr << "TOTAL FRAME: " << (clock()-start)/CLOCKS_PER_SEC << "\n";
 	return false;
