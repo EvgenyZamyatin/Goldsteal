@@ -6,8 +6,11 @@ FLAGS= -DHGE_DIRECTX_VER=9 -std=c++11 -O3 -D DEBUG -I$(BOOST_PATH) -I$(INCLUDES)
 
 all: main
 
-main: Camera.o GGeometry Render main.o Environment.o IObject.o SimpleObject.o GameState.o Brains InputData.o IBody.o LightSource.o
-	$(CC) -o out/main.exe GameState.o Camera.o Geometry.o VisibilityPolygon.o RenderEnvironment.o RenderSimpleObject.o RenderBody.o RenderGameState.o RenderLightSource.o LightSource.o main.o Environment.o IObject.o SimpleObject.o InputData.o IBrain.o IBody.o BrainPlayerInput.o $(FLAGS) -lhgehelp -lhge -ltmx -ltinyxml2 -lboost_filesystem -lboost_system -lz
+main: Camera.o GGeometry Render main.o Environment.o IObject.o SimpleObject.o GameState.o Brains InputData.o IBody.o LightSource.o FlashLight.o
+	$(CC) -o out/main.exe GameState.o Camera.o Geometry.o VisibilityPolygon.o RenderEnvironment.o RenderSimpleObject.o RenderBody.o RenderGameState.o RenderLightSource.o LightSource.o main.o Environment.o IObject.o SimpleObject.o InputData.o IBrain.o IBody.o BrainPlayerInput.o FlashLight.o $(FLAGS) -lhgehelp -lhge -ltmx -ltinyxml2 -lboost_filesystem -lboost_system -lz
+
+FlashLight.o: src/model/FlashLight.cpp src/model/FlashLight.h
+	$(CC) -c src/model/FlashLight.cpp $(FLAGS)
 
 LightSource.o: src/model/LightSource.cpp src/model/LightSource.h
 	$(CC) -c src/model/LightSource.cpp $(FLAGS)

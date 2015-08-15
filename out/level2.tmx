@@ -2555,7 +2555,7 @@
    <polygon points="0,0 1883.75,0 1883.88,277.625 1868,277.625 1867.88,15.875 0,15.875"/>
   </object>
   <object id="38" name="Lamp" type="LightSource" gid="4" x="1613.21" y="2980.73" width="16" height="16"/>
-  <object id="40" name="Lamp" type="LightSource" gid="4" x="854" y="2780" width="16" height="16"/>
+  <object id="40" name="Lamp" type="LightSource" gid="4" x="854" y="2780" width="16" height="16" visible="0"/>
  </objectgroup>
  <objectgroup name="BodyLayer">
   <object id="74" name="WB" type="Hero" gid="5" x="519.94" y="3000" width="200" height="200">

@@ -11,6 +11,7 @@
 #include <hgeresource.h>
 #include "InputData.h"
 #include "model/brains/IBrain.h"
+#include "model/FlashLight.h"
 
 #define WIDTH 800
 
@@ -22,6 +23,7 @@ GameState* state;
 hgeResourceManager* res;
 Camera* cam;
 InputData* input;
+FlashLight*  fl;
 
 bool FrameFunc() {
 	//std::cerr << state->getHero()->getPosition() << "\n";
@@ -31,6 +33,7 @@ bool FrameFunc() {
 	if (hge->Input_GetKeyState(HGEK_ESCAPE)) return true;
 	input->update(hge, cam);
 	state->frame();
+	fl->frame();
 	cam->frame(input, false);	
 	std::cerr << "TOTAL FRAME: " << (clock()-start)/CLOCKS_PER_SEC << "\n";
 	return false;
@@ -81,6 +84,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 					{400,300}, 80*10, 60*10, 800, 600, 150);
 		cam->bind(state->getHero());		
 		shader = hge->Shader_Create("ps", SHADER_PIXEL);
+		fl = new FlashLight(state->getHero(), {0,0}, M_PI/5);
+		state->getEnvironment()->addLightSource(fl);
 		hge->System_Start();
   	}	
 

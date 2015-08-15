@@ -6,12 +6,12 @@
 #include <hgeresource.h>
 struct Environment;
 struct LightSource : IObject {
-	LightSource(Tmx::Object const* o, hgeResourceManager* res);
-	void frame();
-	void setEnvironment(Environment* env) {this->env = env;}
+	LightSource() {}
+	LightSource(Tmx::Object const* o, hgeResourceManager* res) : IObject(o, res) {}
+	virtual void setEnvironment(Environment* env);
 	virtual void render(HGE* hge, Camera* cam);
 	friend struct Environment;
-private:
+protected:
 	Environment* env;
 };
 

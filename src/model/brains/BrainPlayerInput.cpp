@@ -9,8 +9,13 @@ BrainPlayerInput::BrainPlayerInput(InputData const* input) {
 void BrainPlayerInput::decide(IBody* body) {
 	InputData in = *input;
 
-	body->dir = Geo::Vector(in.mX, in.mY) - body->pos;
-	//double st = clock();
+	Geo::Vector newDir = Geo::Vector(in.mX, in.mY) - body->pos;
+	if (newDir != Geo::Vector(0,0))	
+		body->dir = newDir;
+	#ifdef DEBUG
+		assert(body->dir != Geo::Vector(0,0));
+	#endif
+	
 	body->visible = body->state->getEnvironment()->calcVisible(body->pos);
 
 	if (in.pUp || in.pDown)
@@ -48,5 +53,4 @@ void BrainPlayerInput::decide(IBody* body) {
 		body->moveState=IBody::STATE_WALK;
 	else
 		body->moveState=IBody::STATE_IDLE;
-	//std::cerr << body->velocity << "\n";
 }

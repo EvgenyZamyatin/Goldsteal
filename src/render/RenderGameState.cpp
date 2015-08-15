@@ -129,6 +129,7 @@ void GameState::render(HGE* hge, Camera* cam) {
 		rendWhitePolygon(hge, cam, hero->pos, hero->visible);		
 		
 		q.blend=BLEND_DARKEN;
+		//q.blend = BLEND_DEFAULT;
 		col = ARGB(255,255,255,255);
 		q.tex = hge->Target_GetTexture(rData.target2);
 		fillQuad(q, {

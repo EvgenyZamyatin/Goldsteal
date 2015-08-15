@@ -10,7 +10,7 @@
 struct GameState;
 struct IObject : IRenderable {
 	IObject(Tmx::Object const* obj, hgeResourceManager* res);
-
+	IObject() {}
 	virtual ~IObject(){}
 	virtual void activate() {}
 	Geo::Vector getPosition() const {return pos;}

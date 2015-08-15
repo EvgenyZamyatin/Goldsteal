@@ -67,6 +67,8 @@ Environment::Environment(Tmx::Map const* map, hgeResourceManager* res) {
    		if (ob->GetName() != "ObjectLayer")
    			continue;
    		for (Tmx::Object* o : ob->GetObjects()) {
+   			if (!o->IsVisible())
+   				continue;
    			if (o->GetType() == "SimpleObject") {
    				addObject(new SimpleObject(o, textureLayer, res));
    			} else if (o->GetType() == "LightSource") {
@@ -86,8 +88,8 @@ Geo::Polygon Environment::calcVisible(Geo::Vector const& o) {
 }
 
 void Environment::frame() {
-	for (LightSource* ls : lightSources)
-		ls->frame();
+	/*for (LightSource* ls : lightSources)
+		ls->frame();*/
 }
 
 
