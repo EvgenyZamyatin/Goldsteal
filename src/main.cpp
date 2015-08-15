@@ -41,15 +41,6 @@ bool FrameFunc() {
 bool RenderFunc() {
 	double start = clock();
 	std::cerr << hge->Timer_GetFPS() << "\n";
-	/*hge->Gfx_BeginScene();
-	hge->Gfx_Clear(0);
-	state->getEnvironment()->render(hge, cam);
-	for (IObject* o : state->getEnvironment()->getObjects())
-		o->render(hge, cam);
-	for (IBody* b : state->getBodies())
-		b->render(hge, cam);
-	state->getHero()->render(hge, cam);
-	hge->Gfx_EndScene();*/
 	state->render(hge, cam);
 	std::cerr << "TOTAL REND: " << (clock()-start)/CLOCKS_PER_SEC << "\n";
 	return false;

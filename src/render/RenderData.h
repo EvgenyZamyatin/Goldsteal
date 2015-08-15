@@ -11,6 +11,7 @@ namespace Render {
 		static const int MAX_KERNEL_SIZE = 16;
 		HTARGET target1;
 		HTARGET target2;
+		HTARGET target3;
 
 		HSHADER blurShader;
 		int kSize;

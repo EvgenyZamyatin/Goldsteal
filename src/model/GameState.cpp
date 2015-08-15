@@ -25,6 +25,12 @@ GameState::GameState(Tmx::Map const* map, hgeResourceManager* res) {
 		exit(0);
 	}
 
+	rData.target3 = res->GetTarget("GameStateTarget3");
+	if (rData.target3 == 0) {
+		std::cerr << "Can't find GameStateTarget3\n";
+		exit(0);
+	}
+
 	rData.blurShader = res->GetShader("BlurShader");
 	if (rData.blurShader == NULL) {
 		std::cerr << "Can't find BlurShader\n";

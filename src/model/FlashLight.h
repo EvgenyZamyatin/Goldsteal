@@ -16,7 +16,9 @@ struct FlashLight : LightSource {
 	};
 	virtual void frame();
 	virtual void setEnvironment(Environment* env);
-	virtual void render(HGE* hge, Camera* cam) {};
+	virtual void render(HGE* hge, Camera* cam) {LightSource::renderLight(hge, cam);}
+	virtual void renderLamp(HGE* hge, Camera* cam) {}
+
 private:
 	IBody* owner;
 	Geo::Vector shift;

@@ -129,7 +129,6 @@ void GameState::render(HGE* hge, Camera* cam) {
 		rendWhitePolygon(hge, cam, hero->pos, hero->visible);		
 		
 		q.blend=BLEND_DARKEN;
-		//q.blend = BLEND_DEFAULT;
 		col = ARGB(255,255,255,255);
 		q.tex = hge->Target_GetTexture(rData.target2);
 		fillQuad(q, {
@@ -153,7 +152,16 @@ void GameState::render(HGE* hge, Camera* cam) {
     	hge->Gfx_EndScene();
     	rData.blur(hge, cam, rData.target1, rData.target2);
 	}
-
+	{
+		
+		hge->Gfx_BeginScene(rData.target2);
+		hge->Gfx_Clear(0);
+		for (LightSource* ls : env->getLightSources())
+    		ls->render(hge, cam);
+    	hge->Gfx_EndScene();
+    	
+    	rData.blur(hge, cam, rData.target2, rData.target3);
+	}
     {
     	hge->Gfx_BeginScene();
     	hge->Gfx_Clear(0);
@@ -161,21 +169,25 @@ void GameState::render(HGE* hge, Camera* cam) {
     	for (IObject* obj : env->getObjects()) {
     		obj->render(hge, cam);
     	}
+    	
     	hero->render(hge, cam);
+    	
     	for (IBody * b : bodies)
     		b->render(hge, cam);
-    	for (LightSource* ls : env->getLightSources())
-    		ls->render(hge, cam);
+    	    	
     	q.blend=BLEND_DEFAULT;
-		col = ARGB(50, 255, 238, 173);
-		q.tex = 0;
+		col = ARGB(70, 255, 255, 255);
+		q.tex = hge->Target_GetTexture(rData.target2);
 		fillQuad(q, {
-    	            	{0, 0, 0.5f, col, 1.f, 1.f},
-    	            	{(float)cam->SCREEN_WIDTH, 0, 0.5f, col, 1.f, 1.f},
-    					{(float)cam->SCREEN_WIDTH, (float)cam->SCREEN_HIGHT, 0.5f, col, 1.f, 1.f},
-    					{0, (float)cam->SCREEN_HIGHT, 0.5f, col, 1.f, 1.f},
-    				});
+    	            	{0, 0, 0.5f, col, 0.f, 0.f},
+    	            	{(float)cam->SCREEN_WIDTH, 0, 0.5f, col,(float)cam->SCREEN_WIDTH/1024, 0.f},
+    					{(float)cam->SCREEN_WIDTH, (float)cam->SCREEN_HIGHT, 0.5f, col, (float)cam->SCREEN_WIDTH/1024, (float)cam->SCREEN_HIGHT/1024},
+    					{0, (float)cam->SCREEN_HIGHT, 0.5f, col,  0.f, (float)cam->SCREEN_HIGHT/1024},
+    				});    	
     	hge->Gfx_RenderQuad(&q);
+    	for (LightSource* ls : env->getLightSources())
+    		ls->renderLamp(hge, cam);
+    	
 		q.blend=BLEND_DARKEN;
 		col = ARGB(255, 255, 255, 255);
 		q.tex = hge->Target_GetTexture(rData.target1);

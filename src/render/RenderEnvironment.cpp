@@ -48,16 +48,8 @@ void Environment::render(HGE* hge, Camera const* cam) {
 			}
 		}
 	}
-	//std::cerr << "ELAPSED: " << (clock() - start)/CLOCKS_PER_SEC << "\n";
 }
  
-/*int firstcolumn = int( floor(c.x / envData.envTileWidth) );
-  int firstrow = int( floor(c.y / envData.envTileHight) );
-  int lastcolumn = int( ceil((c.x + cam->cameraWidth) / envData.envTileWidth) );
-  int lastrow = int( ceil((c.y + cam->cameraHight) / envData.envTileHight) );*/
-
-
-
 
 
 
