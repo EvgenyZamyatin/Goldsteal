@@ -1,6 +1,6 @@
 #include "IBody.h"
 
-const int IBody::MAX_SPEED = 4;
+const int IBody::MAX_SPEED = 8;
 const int IBody::ACCELERATION = 1;
 
 IBody::IBody(Tmx::Object const* o, hgeResourceManager* res) : dir(0,-1), velocity(0,0) {

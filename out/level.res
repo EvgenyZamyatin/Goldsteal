@@ -68,7 +68,7 @@ Animation HeroIdle {
 Animation HeroWalk {
 	texture=HeroSpriteSheet
 	rect=0,0,128,128
-	fps=8.0
+	fps=10.0
 	frames=8
 	hotspot=64,64
 }

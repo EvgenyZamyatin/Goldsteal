@@ -26,6 +26,7 @@ void rendWhitePolygon(HGE* hge, Camera* cam, Geo::Vector const& pos, Geo::Polygo
 }
 
 void Render::GameStateData::blur(HGE* hge, Camera* cam, HTARGET a, HTARGET b) {
+	int shift = (kSize/2)+1;
 	{//make temp resized
         hge->Gfx_BeginScene(b);
     	hge->Gfx_Clear(0);
@@ -33,10 +34,10 @@ void Render::GameStateData::blur(HGE* hge, Camera* cam, HTARGET a, HTARGET b) {
     	col = ARGB(255,255,255,255);
     	q.tex = hge->Target_GetTexture(a);
     	fillQuad(q, {
-        	            {(float)(kSize/2),                     (float)(kSize/2),                     0.5f, col, 0.f,                           0.f},
-        	            {(float)cam->SCREEN_WIDTH + (kSize/2), (float)(kSize/2),                     0.5f, col, (float)cam->SCREEN_WIDTH/1024, 0.f},
-        				{(float)cam->SCREEN_WIDTH + (kSize/2), (float)cam->SCREEN_HIGHT + (kSize/2), 0.5f, col, (float)cam->SCREEN_WIDTH/1024, (float)cam->SCREEN_HIGHT/1024},
-        				{(float)(kSize/2),                     (float)cam->SCREEN_HIGHT + (kSize/2), 0.5f, col, 0.f,                           (float)cam->SCREEN_HIGHT/1024},
+        	            {(float)shift,                     (float)shift,                     0.5f, col, 0.f,                           0.f},
+        	            {(float)cam->SCREEN_WIDTH + shift, (float)shift,                     0.5f, col, (float)cam->SCREEN_WIDTH/1024, 0.f},
+        				{(float)cam->SCREEN_WIDTH + shift, (float)cam->SCREEN_HIGHT + shift, 0.5f, col, (float)cam->SCREEN_WIDTH/1024, (float)cam->SCREEN_HIGHT/1024},
+        				{(float)shift,                     (float)cam->SCREEN_HIGHT + shift, 0.5f, col, 0.f,                           (float)cam->SCREEN_HIGHT/1024},
         			});
         hge->Gfx_RenderQuad(&q);
         hge->Gfx_EndScene();
@@ -49,6 +50,7 @@ void Render::GameStateData::blur(HGE* hge, Camera* cam, HTARGET a, HTARGET b) {
     	int kSize = kSize;
     	
     	hge->Gfx_BeginScene(a);
+    	hge->Gfx_Clear(0);
     	hge->Gfx_SetShader(blurShader, SHADER_PIXEL);
     	hge->Shader_SetValue(blurShader, "direction", (void*)(dirX), 2*sizeof(float));
 		
@@ -56,10 +58,10 @@ void Render::GameStateData::blur(HGE* hge, Camera* cam, HTARGET a, HTARGET b) {
     	col = ARGB(255,255,255,255);
     	q.tex = hge->Target_GetTexture(b);
     	fillQuad(q, {
-        	            {0,                                      0,                                      0.5f, col, 0.f,                                         0.f},
-        	            {(float)cam->SCREEN_WIDTH + (kSize/2)*2, 0,                                      0.5f, col, (float)(cam->SCREEN_WIDTH+(kSize/2)*2)/1024, 0.f},
-        				{(float)cam->SCREEN_WIDTH + (kSize/2)*2, (float)cam->SCREEN_HIGHT + (kSize/2)*2, 0.5f, col, (float)(cam->SCREEN_WIDTH+(kSize/2)*2)/1024, (float)(cam->SCREEN_HIGHT+(kSize/2)*2)/1024},
-        				{0,                                      (float)cam->SCREEN_HIGHT + (kSize/2)*2, 0.5f, col, 0.f,                                         (float)(cam->SCREEN_HIGHT+(kSize/2)*2)/1024},
+        	            {(float)shift,                     (float)shift,                     0.5f, col, (float)shift/1024,                     (float)shift/1024},
+        	            {(float)cam->SCREEN_WIDTH + shift, (float)shift,                     0.5f, col, (float)(cam->SCREEN_WIDTH+shift)/1024, (float)shift/1024},
+        				{(float)cam->SCREEN_WIDTH + shift, (float)cam->SCREEN_HIGHT + shift, 0.5f, col, (float)(cam->SCREEN_WIDTH+shift)/1024, (float)(cam->SCREEN_HIGHT+shift)/1024},
+        				{(float)shift,                     (float)cam->SCREEN_HIGHT + shift, 0.5f, col, (float)shift/1024,                     (float)(cam->SCREEN_HIGHT+shift)/1024},
         			});
         hge->Gfx_RenderQuad(&q);
         hge->Gfx_EndScene();
@@ -75,10 +77,10 @@ void Render::GameStateData::blur(HGE* hge, Camera* cam, HTARGET a, HTARGET b) {
     	col = ARGB(255,255,255,255);
     	q.tex = hge->Target_GetTexture(a);
     	fillQuad(q, {
-        	            {0,                                      0,                                      0.5f, col, 0.f,                                         0.f},
-        	            {(float)cam->SCREEN_WIDTH + (kSize/2)*2, 0,                                      0.5f, col, (float)(cam->SCREEN_WIDTH+(kSize/2)*2)/1024, 0.f},
-        				{(float)cam->SCREEN_WIDTH + (kSize/2)*2, (float)cam->SCREEN_HIGHT + (kSize/2)*2, 0.5f, col, (float)(cam->SCREEN_WIDTH+(kSize/2)*2)/1024, (float)(cam->SCREEN_HIGHT+(kSize/2)*2)/1024},
-        				{0,                                      (float)cam->SCREEN_HIGHT + (kSize/2)*2, 0.5f, col, 0.f,                                         (float)(cam->SCREEN_HIGHT+(kSize/2)*2)/1024},
+        	            {(float)shift,                     (float)shift,                     0.5f, col, (float)shift/1024,                     (float)shift/1024},
+        	            {(float)cam->SCREEN_WIDTH + shift, (float)shift,                     0.5f, col, (float)(cam->SCREEN_WIDTH+shift)/1024, (float)shift/1024},
+        				{(float)cam->SCREEN_WIDTH + shift, (float)cam->SCREEN_HIGHT + shift, 0.5f, col, (float)(cam->SCREEN_WIDTH+shift)/1024, (float)(cam->SCREEN_HIGHT+shift)/1024},
+        				{(float)shift,                     (float)cam->SCREEN_HIGHT + shift, 0.5f, col, (float)shift/1024,                     (float)(cam->SCREEN_HIGHT+shift)/1024},
         			});
         hge->Gfx_RenderQuad(&q);
         hge->Gfx_EndScene();
@@ -91,10 +93,10 @@ void Render::GameStateData::blur(HGE* hge, Camera* cam, HTARGET a, HTARGET b) {
     	col = ARGB(255,255,255,255);
     	q.tex = hge->Target_GetTexture(b);
     	fillQuad(q, {
-        	            {0,                        0,                        0.5f, col, (float)(kSize/2)/1024,                     (float)(kSize/2)/1024},
-        	            {(float)cam->SCREEN_WIDTH, 0,                        0.5f, col, (float)(cam->SCREEN_WIDTH-(kSize/2))/1024, (float)(kSize/2)/1024},
-        				{(float)cam->SCREEN_WIDTH, (float)cam->SCREEN_HIGHT, 0.5f, col, (float)(cam->SCREEN_WIDTH-(kSize/2))/1024, (float)(cam->SCREEN_HIGHT-(kSize/2))/1024},
-        				{0,                        (float)cam->SCREEN_HIGHT, 0.5f, col, (float)(kSize/2)/1024,                     (float)(cam->SCREEN_HIGHT-(kSize/2))/1024},
+        	            {0,                        0,                        0.5f, col, (float)shift/1024,                     (float)shift/1024},
+        	            {(float)cam->SCREEN_WIDTH, 0,                        0.5f, col, (float)(cam->SCREEN_WIDTH+shift)/1024, (float)shift/1024},
+        				{(float)cam->SCREEN_WIDTH, (float)cam->SCREEN_HIGHT, 0.5f, col, (float)(cam->SCREEN_WIDTH+shift)/1024, (float)(cam->SCREEN_HIGHT+shift)/1024},
+        				{0,                        (float)cam->SCREEN_HIGHT, 0.5f, col, (float)shift/1024,                     (float)(cam->SCREEN_HIGHT+shift)/1024},
         			});
         hge->Gfx_RenderQuad(&q);
         hge->Gfx_EndScene();
