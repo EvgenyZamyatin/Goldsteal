@@ -86,6 +86,11 @@ Target GameStateTarget3 {
 }
 
 Shader BlurShader {
-	filename=ps
+	filename=blurShader
+	type=pixel
+}
+
+Shader LightShader {
+	filename=lightShader
 	type=pixel
 }

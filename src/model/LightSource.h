@@ -6,8 +6,12 @@
 #include <hgeresource.h>
 struct Environment;
 struct LightSource : IObject {
-	LightSource() {}
-	LightSource(Tmx::Object const* o, hgeResourceManager* res) : IObject(o, res) {}
+	LightSource(hgeResourceManager* res) {
+		lightShader=res->GetShader("LightShader");
+	}	
+	LightSource(Tmx::Object const* o, hgeResourceManager* res) : IObject(o, res) {
+		lightShader=res->GetShader("LightShader");
+	}
 	virtual void setEnvironment(Environment* env);
 	virtual void render(HGE* hge, Camera* cam);
 	virtual void renderLight(HGE* hge, Camera* cam);
@@ -16,6 +20,7 @@ struct LightSource : IObject {
 	friend struct Environment;
 protected:
 	Environment* env;
+	HSHADER lightShader;
 };
 
 #endif

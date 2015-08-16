@@ -6,10 +6,11 @@
 #include "Camera.h"
 #include "../geometry/Geometry.h"
 #include <cmath>
+#include <hgeresource.h>
 
 struct Environment;
 struct FlashLight : LightSource {	
-	FlashLight(IBody* body, Geo::Vector const& shift, float angle) : owner(body) {
+	FlashLight(hgeResourceManager* res, IBody* body, Geo::Vector const& shift, float angle) : LightSource(res), owner(body) {
 		this->shift = shift;
 		sn = sinf(angle);
 		cs = cosf(angle);

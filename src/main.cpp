@@ -73,8 +73,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	    cam = new Camera(state->getEnvironment()->getWidth(), state->getEnvironment()->getHight(), 
 					{400,300}, 80*10, 60*10, 800, 600, 150);
 		cam->bind(state->getHero());		
-		shader = hge->Shader_Create("ps", SHADER_PIXEL);
-		fl = new FlashLight(state->getHero(), {0,0}, M_PI/5);
+		
+		fl = new FlashLight(res, state->getHero(), {0,0}, M_PI/5);
 		state->getEnvironment()->addLightSource(fl);
 		hge->System_Start();
   	}	

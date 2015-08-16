@@ -24,6 +24,7 @@ namespace Render {
 			return exp(-(x*x)/(2*sigma*sigma))/sqrt(2*M_PI*sigma*sigma);
 		}
 		void blur(HGE* hge, Camera* cam, HTARGET a, HTARGET b);
+
 	};
 
 	struct BodyData {

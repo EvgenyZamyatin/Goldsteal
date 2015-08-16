@@ -6,3 +6,4 @@ out/*.jpg
 out/*.db
 lib/*
 dependencies/*
+src/tryFire/*
