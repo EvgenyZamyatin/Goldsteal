@@ -16,9 +16,12 @@ struct LightSource : IObject {
 	virtual void render(HGE* hge, Camera* cam);
 	virtual void renderLight(HGE* hge, Camera* cam);
 	virtual void renderLamp(HGE* hge, Camera* cam);
-	virtual void frame() {};
+	virtual void frame();
+	bool isEnable() const {return enabled;}
+
 	friend struct Environment;
 protected:
+	bool enabled=true;
 	Environment* env;
 	HSHADER lightShader;
 };

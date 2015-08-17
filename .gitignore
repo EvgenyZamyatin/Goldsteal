@@ -7,3 +7,4 @@ out/*.db
 lib/*
 dependencies/*
 src/tryFire/*
+build/*

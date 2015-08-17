@@ -119,7 +119,8 @@ void GameState::render(HGE* hge, Camera* cam) {
 		hge->Gfx_BeginScene(rData.target2);
 		hge->Gfx_Clear(0);
 		for (LightSource const* ls : env->getLightSources()) {
-			rendWhitePolygon(hge, cam, ls->pos, ls->getBounds());		
+			if (ls->isEnable())
+				rendWhitePolygon(hge, cam, ls->pos, ls->getBounds());		
 	   	}
 		hge->Gfx_EndScene();
 
@@ -157,7 +158,8 @@ void GameState::render(HGE* hge, Camera* cam) {
 		hge->Gfx_BeginScene(rData.target2);
 		hge->Gfx_Clear(0);
 		for (LightSource* ls : env->getLightSources())
-    		ls->render(hge, cam);
+    		if (ls->isEnable())
+    			ls->render(hge, cam);
     	hge->Gfx_EndScene();
     	
     	rData.blur(hge, cam, rData.target2, rData.target3);

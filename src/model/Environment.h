@@ -28,7 +28,6 @@ struct Environment : IRenderable {
 	void render(HGE* hge, Camera const* cam);
 	Geo::Polygon calcVisible(Geo::Vector const& o);
 	void frame();
-
 	friend struct GameState;
 private:
 	std::vector<IObject*> objs;
