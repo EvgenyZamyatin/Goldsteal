@@ -12,12 +12,15 @@ set(CMAKE_CXX_FLAGS "-O3 -std=c++11 -Wall")
 
 set(RENDER src/render/RenderBody.cpp src/render/RenderEnvironment.cpp src/render/RenderGameState.cpp src/render/RenderLightSource.cpp src/render/RenderSimpleObject.cpp)
 set(GEOMETRY src/geometry/Geometry.cpp src/geometry/VisibilityPolygon.cpp)
-set(MODEL src/model/GameState.cpp src/model/Environment.cpp src/model/IBody.cpp 
+set(MODEL src/model/Environment.cpp src/model/GameState.cpp src/model/IBody.cpp 
 			src/model/IObject.cpp src/model/FlashLight.cpp 
-				src/model/LightSource.cpp src/model/SimpleObject.cpp src/model/Camera.cpp)
+				src/model/LightSource.cpp src/model/SimpleObject.cpp src/model/Camera.cpp )
+
 set(BRAINS src/model/brains/IBrain.cpp src/model/brains/BrainPlayerInput.cpp)
-  
-set(SOURCE ${RENDER} ${GEOMETRY} ${MODEL} ${BRAINS})
+
+set(MICROPATHER src/micropather.cpp)  
+
+set(SOURCE ${BRAINS} ${MODEL} ${RENDER} ${GEOMETRY} ${MICROPATHER})
 
 add_executable(main src/InputData.cpp src/main.cpp ${SOURCE})
 #add_executable(geo_test ${GEOMETRY} src/geometry/tests.cpp)
