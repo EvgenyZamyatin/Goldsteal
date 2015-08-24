@@ -3,9 +3,9 @@
 #include "help.h"
 
 void LightSource::renderLamp(HGE* hge, Camera* cam) {
-	Geo::Box r(bounds);
-	Geo::Box c(cam->getPos().x-cam->CAMERA_WIDTH/2, cam->getPos().y-cam->CAMERA_HIGHT/2, cam->CAMERA_WIDTH, cam->CAMERA_HIGHT);
-	if (!intersects(r, c))
+	Box r(bounds);
+	Box c(cam->getPos().x-cam->CAMERA_WIDTH/2, cam->getPos().y-cam->CAMERA_HIGHT/2, cam->CAMERA_WIDTH, cam->CAMERA_HIGHT);
+	if (!geo::intersects(r, c))
 		return;
 
 	hgeQuad q;
@@ -29,9 +29,9 @@ void LightSource::renderLamp(HGE* hge, Camera* cam) {
 }
 
 void LightSource::renderLight(HGE* hge, Camera* cam) {
-	Geo::Box r(bounds);
-	Geo::Box c(cam->getPos().x-cam->CAMERA_WIDTH/2, cam->getPos().y-cam->CAMERA_HIGHT/2, cam->CAMERA_WIDTH, cam->CAMERA_HIGHT);
-	if (!intersects(r, c))
+	Box r(bounds);
+	Box c(cam->getPos().x-cam->CAMERA_WIDTH/2, cam->getPos().y-cam->CAMERA_HIGHT/2, cam->CAMERA_WIDTH, cam->CAMERA_HIGHT);
+	if (!geo::intersects(r, c))
 		return;
     hge->Gfx_SetShader(lightShader, SHADER_PIXEL);
 	float tmp[2];
@@ -41,8 +41,8 @@ void LightSource::renderLight(HGE* hge, Camera* cam) {
 	tmp[0]/=800, tmp[1]/=600;
 	hge->Shader_SetValue(lightShader, "lightLocation", (void*)tmp, 2*sizeof(float));
 	
-	for (int i = 0; i < bounds.size(); ++i) {
-		Geo::Vector a = bounds[i], b = bounds[i+1];
+	for (int i = 0; i < bounds.size() - 1; ++i) {
+		Vector a = bounds[i], b = bounds[i+1];
 		hgeTriple trip;
 		hgeU32 col1 = 0;//ARGB(70, 255, 238, 173);
 		float x1=pos.x,y1=pos.y,x2=a.x,y2=a.y,x3=b.x,y3=b.y;

@@ -48,7 +48,8 @@ GameState::GameState(Tmx::Map const* map, hgeResourceManager* res) {
 }
 
 void GameState::process(IBody* body) {
-	Geo::Vector& vel = body->velocity; 
+	body->pos += body->velocity;
+	/*Geo::Vector& vel = body->velocity; 
 	if (vel.len2() == 0)
 		return; 
 	
@@ -93,12 +94,12 @@ void GameState::process(IBody* body) {
 			vel = nvel;
 			break;
 		}
-	}                                                 
-	body->pos.x = std::max(body->radius, body->pos.x);
-	body->pos.x = std::min(env->getWidth() - body->radius, body->pos.x);
+	}           */                                      
+	body->pos.x = std::max((long long)body->radius, body->pos.x);
+	body->pos.x = std::min((long long)env->getWidth() - body->radius, body->pos.x);
 
-	body->pos.y = std::max(body->radius, body->pos.y);
-	body->pos.y = std::min(env->getHight() - body->radius, body->pos.y);
+	body->pos.y = std::max((long long)body->radius, body->pos.y);
+	body->pos.y = std::min((long long)env->getHight() - body->radius, body->pos.y);
 }
 
 void GameState::frame() {

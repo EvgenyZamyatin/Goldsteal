@@ -1,4 +1,3 @@
-#include "newGeometry.h"
 #include <set>
 #include <functional>
 #include <algorithm>

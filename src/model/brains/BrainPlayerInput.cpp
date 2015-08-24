@@ -9,11 +9,11 @@ BrainPlayerInput::BrainPlayerInput(InputData const* input) {
 void BrainPlayerInput::decide(IBody* body) {
 	InputData in = *input;
 
-	Geo::Vector newDir = Geo::Vector(in.mX, in.mY) - body->pos;
-	if (newDir != Geo::Vector(0,0))	
+	Vector newDir = Vector(in.mX, in.mY) - body->pos;
+	if (newDir != Vector(0,0))	
 		body->dir = newDir;
 	#ifdef DEBUG
-		assert(body->dir != Geo::Vector(0,0));
+		assert(body->dir != Vector(0,0));
 	#endif
 	
 	body->visible = body->state->getEnvironment()->calcVisible(body->pos);
@@ -23,10 +23,10 @@ void BrainPlayerInput::decide(IBody* body) {
 	else {
 		if (body->velocity.y > 0) {
 			body->velocity.y -= IBody::ACCELERATION;
-			body->velocity.y = std::max(0, body->velocity.y);
+			body->velocity.y = std::max(0LL, body->velocity.y);
 		} else {
 			body->velocity.y += IBody::ACCELERATION;
-			body->velocity.y = std::min(0, body->velocity.y);
+			body->velocity.y = std::min(0LL, body->velocity.y);
 		}
 	}
 
@@ -35,21 +35,21 @@ void BrainPlayerInput::decide(IBody* body) {
 	else {
 		if (body->velocity.x > 0) {
 			body->velocity.x -= IBody::ACCELERATION;
-			body->velocity.x = std::max(0, body->velocity.x);
+			body->velocity.x = std::max(0LL, body->velocity.x);
 		} else {
 			body->velocity.x += IBody::ACCELERATION;
-			body->velocity.x = std::min(0, body->velocity.x);
+			body->velocity.x = std::min(0LL, body->velocity.x);
 		}
 	}
 
 		
-	body->velocity.x = std::min(body->velocity.x, IBody::MAX_SPEED);
-	body->velocity.x = std::max(body->velocity.x, -IBody::MAX_SPEED);
+	body->velocity.x = std::min(body->velocity.x, (long long)IBody::MAX_SPEED);
+	body->velocity.x = std::max(body->velocity.x, (long long)-IBody::MAX_SPEED);
 		
-	body->velocity.y = std::min(body->velocity.y, IBody::MAX_SPEED);
-	body->velocity.y = std::max(body->velocity.y, -IBody::MAX_SPEED);
+	body->velocity.y = std::min(body->velocity.y, (long long)IBody::MAX_SPEED);
+	body->velocity.y = std::max(body->velocity.y, (long long)-IBody::MAX_SPEED);
 		
-	if ((body->velocity.len2() > 0))
+	if (geo::distance2(body->velocity) > 0)
 		body->moveState=IBody::STATE_WALK;
 	else
 		body->moveState=IBody::STATE_IDLE;

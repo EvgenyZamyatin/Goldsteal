@@ -7,7 +7,7 @@
 
 #include "IObject.h"
 #include "Environment.h"
-#include "../geometry/Geometry.h"
+#include "../Geometry.h"
 #include "../render/RenderData.h"
 #include "brains/IBrain.h"
 #include "Camera.h"
@@ -29,8 +29,8 @@ struct IBody : IRenderable {
     
 	void setGameState(GameState* state) {this->state=state;}
 	
-	Geo::Vector getDir() const {return dir;}
-	Geo::Vector getPosition() const {return pos;}
+	Vector getDir() const {return dir;}
+	Vector getPosition() const {return pos;}
 
 	void frame();
     int getRadius() {return radius;}
@@ -47,10 +47,11 @@ private:
 
 	IBrain* brain;
 	int moveState=0;
-	Geo::Vector pos;
-	Geo::Vector velocity;
-	Geo::Polygon visible;
-	Geo::Vector dir;	
+	
+	Vector pos;
+	Vector velocity;
+	Ring visible;
+	Vector dir;	
 	
 	GameState* state;
 	int radius;

@@ -59,11 +59,11 @@ namespace Render {
     };
 
     struct SimpleObjectTex {
-		SimpleObjectTex(hgeSprite const& s, Geo::Vector const& v, 
+		SimpleObjectTex(hgeSprite const& s, Vector const& v, 
 			float rot, int width, int hight) : spr(s), pos(v), rot(rot), width(width), hight(hight) {}
 
 		hgeSprite spr;
-		Geo::Vector pos;//relative
+		Vector pos;//relative
 		float rot;
 		int width;
 		int hight;

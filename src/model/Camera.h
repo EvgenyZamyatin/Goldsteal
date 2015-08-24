@@ -2,7 +2,7 @@
 #define CAMERA_H
 
 #include <hge.h>
-#include "../geometry/Geometry.h"
+#include "../Geometry.h"
 #include "../InputData.h"
 
 struct IBody;
@@ -22,22 +22,22 @@ struct Camera {
 	const int FIELD_HIGHT;
 
 
-	Camera(int fieldWidth, int fieldHight, Geo::Vector pos, 
+	Camera(int fieldWidth, int fieldHight, Vector pos, 
 			int cameraWidth, int cameraHight, int screenWidth, int screenHight,
 			int radius);
 
 	void frame(InputData* input, bool freeMode);
 	
-	Geo::Vector getPos() const {return pos;}
+	Vector getPos() const {return pos;}
 	
 	void bind(IBody* body) {this->body=body;}
-	void move(Geo::Vector const& v) {pos += v;}
+	void move(Vector const& v) {pos += v;}
 
 	void convertSG(float& x, float& y) const;
 	void convertGS(float& x, float& y) const;
 
 private:
 	IBody* body=NULL;
-	Geo::Vector pos;
+	Vector pos;
 };
 #endif

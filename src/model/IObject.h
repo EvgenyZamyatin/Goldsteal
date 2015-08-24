@@ -1,7 +1,7 @@
 #ifndef IStaticObject_H
 #define IStaticObject_H
 
-#include "../geometry/Geometry.h"
+#include "../Geometry.h"
 #include "IRenderable.h"
 
 #include <tmx/Tmx.h.in>
@@ -13,22 +13,22 @@ struct IObject : IRenderable {
 	IObject() {}
 	virtual ~IObject(){}
 	virtual void activate() {}
-	Geo::Vector getPosition() const {return pos;}
-	Geo::Polygon getBounds() const {return bounds;}
+	
+	Vector getPosition() const {return pos;}
+	Ring getBounds() const {return bounds;}
+	
 	bool isObstruct() {return obstruct;}
 	bool isObstacle() {return obstacle;}
-	//void setPos(Geo::Vector const& p) {this->pos=p;}
-	//void setBounds(Geo::Polygon const& p) {this->bounds=p;}
-
+	
 	friend struct GameState;
 protected:
 	bool obstruct;
 	bool obstacle;
-	Geo::Polygon bounds;
-	Geo::Vector pos;
+	Ring bounds;
+	Vector pos;
 	bool havePoly;
-	int radius2;
-	Geo::Vector center;
+	
+	
 };
 
 #endif

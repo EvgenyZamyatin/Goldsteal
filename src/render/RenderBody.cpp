@@ -4,14 +4,16 @@
 #include <hge.h>
 #include "help.h"
 #include "../model/GameState.h"
-
+#include "../Geometry.h"
 
 void IBody::render(HGE *hge, Camera const* cam) {
 	
-	Geo::Box r(pos, radius);
-	Geo::Box c(cam->getPos().x-cam->CAMERA_WIDTH/2, cam->getPos().y-cam->CAMERA_HIGHT/2, cam->CAMERA_WIDTH, cam->CAMERA_HIGHT);
-	if (!intersects(r, c))
-		return; 	                        
+	Box r(pos, radius);
+	Box c(cam->getPos().x-cam->CAMERA_WIDTH/2, cam->getPos().y-cam->CAMERA_HIGHT/2, cam->CAMERA_WIDTH, cam->CAMERA_HIGHT);
+	
+	if (!geo::intersects(r, c))
+		return;
+	                        
 	hgeAnimation& a = rData.get(moveState);
 	
 	double dt = hge->Timer_GetDelta();
@@ -23,8 +25,8 @@ void IBody::render(HGE *hge, Camera const* cam) {
 	
 	float x = pos.x;
 	float y = pos.y;
-	float sn = dir.x/sqrt((float)dir.len2());
-	float cs = -dir.y/sqrt((float)dir.len2());
+	float sn = dir.x/sqrt((float)geo::distance2({0,0}, dir));
+	float cs = -dir.y/sqrt((float)geo::distance2({0,0}, dir));
 	cam->convertGS(x, y);
 	
 	a.RenderEx1(x, y, sn, cs, cam->KX*rData.width/a.GetWidth(), cam->KY*rData.hight/a.GetHeight());

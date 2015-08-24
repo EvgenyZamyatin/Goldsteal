@@ -5,7 +5,7 @@
 
 const int Camera::SHIFT_MULTIPLY = 10;
 
-Camera::Camera(int fieldWidth, int fieldHight, Geo::Vector pos, 
+Camera::Camera(int fieldWidth, int fieldHight, Vector pos, 
 				int cameraWidth, int cameraHight, int screenWidth, int screenHight,
 				int radius) : KX(screenWidth*1.f/cameraWidth), KY(screenHight*1.f/cameraHight), FIELD_WIDTH(fieldWidth), FIELD_HIGHT(fieldHight),
 									CAMERA_WIDTH(cameraWidth), CAMERA_HIGHT(cameraHight), SCREEN_WIDTH(screenWidth), SCREEN_HIGHT(screenHight),
@@ -16,17 +16,18 @@ Camera::Camera(int fieldWidth, int fieldHight, Geo::Vector pos,
 
 
 void Camera::frame(InputData* input, bool freeMode) {
-	Geo::Vector mouseDir(input->mX-pos.x, input->mY-pos.y);
+	
+	Vector mouseDir(input->mX-pos.x, input->mY-pos.y);
 	mouseDir *= -1;//(RADIUS/mouseDir.len());
 	if (input->pShift) {
-		if (mouseDir.len2() > RADIUS2*SHIFT_MULTIPLY) 
-			mouseDir *= RADIUS2*SHIFT_MULTIPLY*1.0/mouseDir.len2();
+		if (geo::distance2(mouseDir) > RADIUS2*SHIFT_MULTIPLY) 
+			mouseDir *= RADIUS2*SHIFT_MULTIPLY*1.0/geo::distance2(mouseDir);
 	} else {
-		if (mouseDir.len2() > RADIUS2) 
-			mouseDir *= sqrt(RADIUS2*1.0/mouseDir.len2());	
+		if (geo::distance2(mouseDir) > RADIUS2) 
+			mouseDir *= sqrt(RADIUS2*1.0/geo::distance2(mouseDir));	
 	}
 
-	Geo::Vector moveDir(pos+mouseDir);
+	Vector moveDir(pos+mouseDir);
 	move((body->getPosition() - moveDir)/4);
 	
 	/*pos.x=std::max(pos.x, CAMERA_WIDTH/2);

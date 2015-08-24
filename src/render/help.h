@@ -1,6 +1,5 @@
 #include <hge.h>
 #include <vector>
-#include "../geometry/Geometry.h"
 #include "../model/Camera.h"
 
 const int dx[] = {0, 1, 1, 0};

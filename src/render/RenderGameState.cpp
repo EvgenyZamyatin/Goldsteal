@@ -6,11 +6,11 @@ hgeQuad q;
 hgeTriple trip;    		
 hgeU32 col;
     
-void rendWhitePolygon(HGE* hge, Camera* cam, Geo::Vector const& pos, Geo::Polygon const& poly) {
+void rendWhitePolygon(HGE* hge, Camera* cam, Vector const& pos, Ring const& poly) {
 	trip.tex = 0;
 	trip.blend = BLEND_DEFAULT;
-	for (int i = 0; i < poly.size(); ++i) {
-		Geo::Vector a = poly[i], b = poly[i+1];
+	for (int i = 0; i < poly.size() - 1; ++i) {
+		Vector a = poly[i], b = poly[i+1];
 		col = ARGB(255,255,255,255);                      	
 		float x1=pos.x,y1=pos.y,x2=a.x,y2=a.y,x3=b.x,y3=b.y;
 		cam->convertGS(x1,y1);

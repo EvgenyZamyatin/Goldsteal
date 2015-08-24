@@ -22,7 +22,7 @@ SimpleObject::SimpleObject(Tmx::Object const* o, Tmx::ObjectGroup const* texture
 			if (texture->GetId() == id) {
 				float rot = texture->GetRot();
 				rot *= M_PI/180;
-				Geo::Vector spos(texture->GetX(), texture->GetY());
+				Vector spos(texture->GetX(), texture->GetY());
 				spos -= pos;
 				int width = texture->GetWidth();
 				int hight = texture->GetHeight();

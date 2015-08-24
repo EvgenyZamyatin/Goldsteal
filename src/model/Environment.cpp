@@ -78,13 +78,17 @@ Environment::Environment(Tmx::Map const* map, hgeResourceManager* res) {
    	}
 }
 
-Geo::Polygon Environment::calcVisible(Geo::Vector const& o) {
-	std::vector<Geo::Polygon> polys;
+Ring Environment::calcVisible(Vector const& o) {
+	std::vector<Ring> irings;
 	for (IObject* obj : objs) {
 		if (obj->isObstruct())
-			polys.push_back(obj->getBounds());
+			irings.push_back(obj->getBounds());
 	}
-	return Geo::visibilityPolygon(o, polys, width, hight);
+	Poly poly({ {0,0}, {0, hight}, {width,hight}, {width, 0} }, irings);
+	Ring ans;
+	correct(poly);
+	visibilityPolygon(o, poly, ans);
+	return ans;
 }
 
 void Environment::frame() {

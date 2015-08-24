@@ -1,6 +1,6 @@
 #include "hge.h"
 #include "hgefont.h"
-#include "geometry/Geometry.h"
+#include "Geometry.h"
 #include <iostream>
 #include <fstream>
 #include <vector>
@@ -12,6 +12,8 @@
 #include "InputData.h"
 #include "model/brains/IBrain.h"
 #include "model/FlashLight.h"
+#include <cstdio>
+#include <ctime>
 
 #define WIDTH 800
 
@@ -71,7 +73,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		map.ParseFile("level2.tmx");
 	    state = new GameState(&map, res);
 	    cam = new Camera(state->getEnvironment()->getWidth(), state->getEnvironment()->getHight(), 
-					{400,300}, 80*10, 60*10, 800, 600, 150);
+					{400,300}, 80*10, 60*10, 800, 600, 200);
 		cam->bind(state->getHero());		
 		
 		fl = new FlashLight(res, state->getHero(), {0,0}, M_PI/5);

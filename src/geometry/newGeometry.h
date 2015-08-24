@@ -1,5 +1,5 @@
-#ifndef GEOMETRY_H
-#define GEOMETRY_H
+#ifndef NEWGEOMETRY_H
+#define NEWGEOMETRY_H
 
 #include <vector>
 #include <iostream>
@@ -85,14 +85,6 @@ namespace geo {
 
     
     template<typename VECTOR_TYPE>
-    struct Box {
-        Box();
-        Box(VECTOR_TYPE const& minCor, VECTOR_TYPE const& maxCor);
-        VECTOR_TYPE minCor;
-        VECTOR_TYPE maxCor;
-    };
-
-    template<typename VECTOR_TYPE>
     struct Ring : std::vector<VECTOR_TYPE> {
     	using std::vector<VECTOR_TYPE>::vector;
    		typedef VECTOR_TYPE vector_type;   		    
@@ -106,7 +98,20 @@ namespace geo {
     	std::vector<Ring<VECTOR_TYPE>> irings;
     	typedef Ring<VECTOR_TYPE> ring_type;
     };
-
+    
+    template<typename VECTOR_TYPE>
+    struct Box {
+        Box();
+        Box(VECTOR_TYPE const& minCor, VECTOR_TYPE const& maxCor);
+        Box(VECTOR_TYPE const& center, typename VECTOR_TYPE::coordinate_type const& radius);
+    	Box(Ring<VECTOR_TYPE> const& ring);
+    	Box(typename VECTOR_TYPE::coordinate_type const& x, typename VECTOR_TYPE::coordinate_type const& y, 
+    				typename VECTOR_TYPE::coordinate_type const& width, typename VECTOR_TYPE::coordinate_type const& hight);
+    
+    
+        VECTOR_TYPE minCor;
+        VECTOR_TYPE maxCor;
+    };
 
     template<typename VECTOR_TYPE>
     Orientation orientation (VECTOR_TYPE const& a, VECTOR_TYPE const& b, VECTOR_TYPE const& c);// orientation b of a and c.
@@ -125,11 +130,11 @@ namespace geo {
     template<typename GEOMETRY1, typename GEOMETRY2>
     bool intersects (GEOMETRY1 const& a, GEOMETRY2 const& b);
     
-    template<typename GEOMETRY1, typename GEOMETRY2, typename OUT>
-    OUT distance2 (GEOMETRY1 const& a, GEOMETRY2 const& b);
+    /*template<typename GEOMETRY1, typename GEOMETRY2, typename OUT>
+    OUT distance2 (GEOMETRY1 const& a, GEOMETRY2 const& b);*/
     
-    template<typename LINEAR_TYPE1, typename LINEAR_TYPE2, typename OUT>
-    bool intersection (LINEAR_TYPE1 const& a, LINEAR_TYPE2 const& b, OUT& res, bool consider_touch);
+    /*template<typename LINEAR_TYPE1, typename LINEAR_TYPE2, typename OUT>
+    bool intersection (LINEAR_TYPE1 const& a, LINEAR_TYPE2 const& b, OUT& res, bool consider_touch);*/
     
     template<typename VECTOR_TYPE>
     void visibilityPolygon(VECTOR_TYPE const& o, Polygon<VECTOR_TYPE> const& polygon, Ring<VECTOR_TYPE>& res);
@@ -179,6 +184,33 @@ namespace geo {
         this->minCor = a;
         this->maxCor = b;
     }
+    
+    template <typename T>
+    Box<T>::Box(typename T::coordinate_type const& x, typename T::coordinate_type const& y, 
+    				typename T::coordinate_type const& width, typename T::coordinate_type const& hight) {
+        this->minCor = T(x, y);
+        this->maxCor = minCor + T(width, hight);
+    }
+    
+    template <typename T>
+    Box<T>::Box(Ring<T> const& ring) {
+        minCor = ring[0];
+        maxCor = ring[0];
+        for (T const& v : ring) {              
+        	minCor.x = std::min(minCor.x, v.x);
+        	minCor.y = std::min(minCor.y, v.y);
+
+        	maxCor.x = std::max(maxCor.x, v.x);
+        	maxCor.y = std::max(maxCor.y, v.y);
+        }
+        	
+    }
+
+    template <typename T>
+    Box<T>::Box(T const& center, typename T::coordinate_type const& radius) {
+        this->minCor = T(center.x - radius, center.y - radius);
+        this->maxCor = T(center.x + radius, center.y + radius);
+    }
 
     template <typename T>
     Vector<T> Vector<T>::operator+(Vector<T> const& other) const {
@@ -218,14 +250,14 @@ namespace geo {
     template <typename T>
     template <typename E>
     Vector<T> Vector<T>::operator*(E const& k) const {
-        return Vector<T>(x*k, y*k);
+        return Vector<T>(k*x, k*y);
     }
 
     template <typename T>
     template <typename E>
     Vector<T>& Vector<T>::operator*=(E const& k) {
-        x*=k;
-        y*=k;
+        x=k*x;
+        y=k*y;
         return *this;
     }
 
@@ -242,6 +274,43 @@ namespace geo {
         y/=k;
         return *this;
     }
+
+    
+    template<typename T, typename E>
+	T divRoundClosest(T const& n, E const& d) {
+		return ((n < 0) ^ (d < 0)) ? ((n - (d/2))/d) : ((n + (d/2))/d);
+	}
+
+    template<>
+    template<>
+    inline Vector<long long> Vector<long long>::operator/(int const& k) const {
+    	return Vector<long long>(divRoundClosest(x, k), divRoundClosest(y, k));
+    }
+
+    template<>
+    template<>
+    inline Vector<long long>& Vector<long long>::operator/=(int const& k) {
+    	x = divRoundClosest(x, k);
+    	y = divRoundClosest(y, k);
+    	return *this;
+    }
+	
+
+	template<>
+	template<>
+	inline Vector<long long> Vector<long long>::operator/(long long const& k) const {
+    	return Vector<long long>(divRoundClosest(x, k), divRoundClosest(y, k));
+    }
+    
+    template<>
+    template<>
+    inline Vector<long long>& Vector<long long>::operator/=(long long const& k) {
+    	x = divRoundClosest(x, k);
+    	y = divRoundClosest(y, k);
+    	return *this;
+    }
+    
+
 
     template <typename T>
     bool Vector<T>::operator==(Vector<T> const& other) const {
@@ -289,6 +358,11 @@ namespace geo {
     }
     
     template<typename T>
+    T distance2(Vector<T> const& a) {
+    	return a.x*a.x + a.y*a.y;
+    }
+    
+    template<typename T>
     bool parallel (Line<Vector<T>> const& m, Line<Vector<T>> const& n) {
         T zn = det(m.a, m.b, n.a, n.b);
         if (zn == 0)
@@ -299,7 +373,7 @@ namespace geo {
     template<typename T>
     bool intersects (Box<Vector<T>> const& a, Box<Vector<T>> const& b) {
     	if (a.minCor.x > b.maxCor.x || a.minCor.y > b.maxCor.y 
-    		|| a.maxCor.x < b.minCor.x || a.maxCor.y < b.maxCor.y)
+    		|| a.maxCor.x < b.minCor.x || a.maxCor.y < b.minCor.y)
     		return false;
     	return true; 
     }
@@ -370,6 +444,20 @@ namespace geo {
   		for (Ring<T>& iring : poly.irings)
   			correct(iring);
   	}
+
+  	template<typename T>
+  	void rotate(Vector<T>& v, float sn, float cs) {
+  		int nx = (cs*v.x-sn*v.y);
+		int ny = (sn*v.x+cs*v.y);
+		v.x = nx;
+		v.y = ny;
+  	}
+
+  	template<typename T>
+  	bool contains(Line<T> const& l, T const& v) {
+  		return l.a*v.x + l.b*v.y + l.c == 0;
+  	}
+
 }
 
 #include "newVisibilityPolygon.cpp"

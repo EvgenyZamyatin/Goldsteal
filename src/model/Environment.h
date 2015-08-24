@@ -26,7 +26,7 @@ struct Environment : IRenderable {
 	int getWidth() const {return width;}
 	int getHight() const {return hight;}
 	void render(HGE* hge, Camera const* cam);
-	Geo::Polygon calcVisible(Geo::Vector const& o);
+	Ring calcVisible(Vector const& o);
 	void frame();
 	friend struct GameState;
 private:
