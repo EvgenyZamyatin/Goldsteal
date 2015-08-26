@@ -10,21 +10,19 @@
 
 struct Environment;
 struct FlashLight : LightSource {	
-	FlashLight(hgeResourceManager* res, IBody* body, float angle) : LightSource(res), owner(body) {
+	FlashLight(hgeResourceManager* res, IBody* body, Vector const& shift, float angle) : LightSource(res), owner(body) {
+		this->shift = shift;
 		sn = sinf(angle);
 		cs = cosf(angle);
 	};
-	
 	virtual void frame();
-	
-	virtual void setEnvironment(Environment const* env);
-	
+	virtual void setEnvironment(Environment* env);
 	virtual void render(HGE* hge, Camera* cam) {LightSource::renderLight(hge, cam);}
-	
 	virtual void renderLamp(HGE* hge, Camera* cam) {}
 
 private:
 	IBody* owner;
+	Vector shift;
 	float sn;
 	float cs;
 };

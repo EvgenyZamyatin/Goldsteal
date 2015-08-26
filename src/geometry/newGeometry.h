@@ -90,25 +90,26 @@ namespace geo {
    		typedef VECTOR_TYPE vector_type;   		    
     };
 
-    template<typename VECTOR_TYPE>
+    template<typename RING_TYPE>
     struct Polygon {
-    	Polygon(Ring<VECTOR_TYPE> ering, std::vector<Ring<VECTOR_TYPE>> irings) : ering(ering), irings(irings) {}
-    	Polygon(Ring<VECTOR_TYPE> ring) : ering(ring) {}
-    	Ring<VECTOR_TYPE> ering;
-    	std::vector<Ring<VECTOR_TYPE>> irings;
-    	typedef Ring<VECTOR_TYPE> ring_type;
+    	Polygon() {}
+    	Polygon(RING_TYPE ering, std::vector<RING_TYPE> irings) : ering(ering), irings(irings) {}
+    	Polygon(RING_TYPE ring) : ering(ring) {}
+    	RING_TYPE ering;
+    	std::vector<RING_TYPE> irings;
+    	typedef RING_TYPE ring_type;
     };
     
     template<typename VECTOR_TYPE>
     struct Box {
         Box();
         Box(VECTOR_TYPE const& minCor, VECTOR_TYPE const& maxCor);
-        Box(VECTOR_TYPE const& center, typename VECTOR_TYPE::coordinate_type const& radius);
+        Box(VECTOR_TYPE const& center, typename VECTOR_TYPE::coordinate_type const& radius);        
     	Box(Ring<VECTOR_TYPE> const& ring);
+    	
     	Box(typename VECTOR_TYPE::coordinate_type const& x, typename VECTOR_TYPE::coordinate_type const& y, 
     				typename VECTOR_TYPE::coordinate_type const& width, typename VECTOR_TYPE::coordinate_type const& hight);
-    
-    
+        
         VECTOR_TYPE minCor;
         VECTOR_TYPE maxCor;
     };
@@ -116,19 +117,17 @@ namespace geo {
     template<typename VECTOR_TYPE>
     Orientation orientation (VECTOR_TYPE const& a, VECTOR_TYPE const& b, VECTOR_TYPE const& c);// orientation b of a and c.
     
-    template<typename VECTOR_TYPE>
-    Orientation orientation (Ring<VECTOR_TYPE> const& ring);// orientation b of a and c.
+    template<typename RING_TYPE>
+    Orientation orientation (RING_TYPE const& ring);// orientation b of a and c.
     
     template<typename EXACT_PREDICATE_TYPE>
     EXACT_PREDICATE_TYPE det (EXACT_PREDICATE_TYPE a, EXACT_PREDICATE_TYPE b, EXACT_PREDICATE_TYPE c, EXACT_PREDICATE_TYPE d);
 
-
-
-    template<typename LINEAR_TYPE1, typename LINEAR_TYPE2>
+    /*template<typename LINEAR_TYPE1, typename LINEAR_TYPE2>
     bool parallel (LINEAR_TYPE1 const& a, LINEAR_TYPE2 const& b);
     
     template<typename GEOMETRY1, typename GEOMETRY2>
-    bool intersects (GEOMETRY1 const& a, GEOMETRY2 const& b);
+    bool intersects (GEOMETRY1 const& a, GEOMETRY2 const& b);*/
     
     /*template<typename GEOMETRY1, typename GEOMETRY2, typename OUT>
     OUT distance2 (GEOMETRY1 const& a, GEOMETRY2 const& b);*/
@@ -137,7 +136,7 @@ namespace geo {
     bool intersection (LINEAR_TYPE1 const& a, LINEAR_TYPE2 const& b, OUT& res, bool consider_touch);*/
     
     template<typename VECTOR_TYPE>
-    void visibilityPolygon(VECTOR_TYPE const& o, Polygon<VECTOR_TYPE> const& polygon, Ring<VECTOR_TYPE>& res);
+    void visibilityPolygon(VECTOR_TYPE const& o, Polygon<Ring<VECTOR_TYPE>> const& polygon, Ring<VECTOR_TYPE>& res);
                                                                     
 //======Implementation=======    
     template <typename T>
@@ -335,11 +334,11 @@ namespace geo {
     }
 
     template<typename T> 
-    Orientation orientation(Ring<T> const& ring) {
-    	typename T::coordinate_type sum = 0;
+    Orientation orientation(T const& ring) {
+    	typename T::vector_type::coordinate_type sum = 0;
     	for (int i = 0; i < ring.size() - 1; ++i) {
-        	T const& a = ring[i];
-        	T const& b = ring[i+1];
+        	typename T::vector_type const& a = ring[i];
+        	typename T::vector_type const& b = ring[i+1];
         	sum += (b.x-a.x)*(b.y+a.y);
     	}
     	if (sum < 0)    
@@ -353,25 +352,25 @@ namespace geo {
     }
 
     template<typename T>
-    T distance2(Vector<T> const& a, Vector<T> const& b) {
+    typename T::coordinate_type distance2(T const& a, T const& b) {
     	return (a.x-b.x)*(a.x-b.x) + (a.y-b.y)*(a.y-b.y);
     }
     
     template<typename T>
-    T distance2(Vector<T> const& a) {
+    typename T::coordinate_type distance2(T const& a) {
     	return a.x*a.x + a.y*a.y;
     }
     
     template<typename T>
-    bool parallel (Line<Vector<T>> const& m, Line<Vector<T>> const& n) {
-        T zn = det(m.a, m.b, n.a, n.b);
+    bool parallel (T const& m, T const& n) {
+        typename T::vector_type::coordinate_type zn = det(m.a, m.b, n.a, n.b);
         if (zn == 0)
             return true;
         return false;
     }
     
     template<typename T>
-    bool intersects (Box<Vector<T>> const& a, Box<Vector<T>> const& b) {
+    bool intersects (T const& a, T const& b) {
     	if (a.minCor.x > b.maxCor.x || a.minCor.y > b.maxCor.y 
     		|| a.maxCor.x < b.minCor.x || a.maxCor.y < b.minCor.y)
     		return false;
@@ -379,8 +378,8 @@ namespace geo {
     }
 
     template<typename T>
-    bool intersection (Line<Vector<T>> const& m, Line<Vector<T>> const& n, Vector<T>& res, bool consider_touch=true) {
-        T zn = det(m.a, m.b, n.a, n.b);
+    bool intersection (Line<T> const& m, Line<T> const& n, T& res, bool consider_touch=true) {
+        typename T::coordinate_type zn = det(m.a, m.b, n.a, n.b);
         if (zn == 0)
             return false;
         res.x = -det(m.c, m.b, n.c, n.b) / zn;
@@ -389,12 +388,12 @@ namespace geo {
     }
     
     template<typename T>
-    bool intersection (Line<Vector<T>> const& l, Segment<Vector<T>> const& s, Vector<T>& res, bool consider_touch=true) {
-        if (!intersection(l, Line<Vector<T>>(s.a, s.b), res, true))
+    bool intersection (Line<T> const& l, Segment<T> const& s, T& res, bool consider_touch=true) {
+        if (!intersection(l, Line<T>(s.a, s.b), res, true))
             return false;
-        T a = (l.c+l.a*s.a.x) + s.a.y*l.b;
+        typename T::coordinate_type a = (l.c+l.a*s.a.x) + s.a.y*l.b;
         a = (a > 0) ? 1 : (a == 0 ? 0 : -1);
-        T b = (l.c+l.a*s.b.x) + s.b.y*l.b;
+        typename T::coordinate_type b = (l.c+l.a*s.b.x) + s.b.y*l.b;
         b = (b > 0) ? 1 : (b == 0 ? 0 : -1);
         if (a*b > 0 || (a*b == 0 && !consider_touch))
             return false;
@@ -402,8 +401,8 @@ namespace geo {
     }
     
     template<typename T>
-    bool intersection (Ray<Vector<T>> const& l, Segment<Vector<T>> const& s, Vector<T>& res, bool consider_touch=true) {
-        if (!intersection((Line<Vector<T>>)l, s, res, consider_touch))
+    bool intersection (Ray<T> const& l, Segment<T> const& s, T& res, bool consider_touch=true) {
+        if (!intersection((Line<T>)l, s, res, consider_touch))
             return false;
         if ((l.dir^(res - l.start)) > 0)
         	return true;
@@ -423,14 +422,14 @@ namespace geo {
     template<typename T>
     std::ostream& operator<<(std::ostream& str, Ring<T> const& ring) {
     	str << "{ ";
-    	for (Vector<T> const& v : ring)
+    	for (T const& v : ring)
     		str << v << ", ";
     	str << "}";    	
     	return str;
     }
 
     template<typename T>
-    void correct(Ring<T>& ring) {
+    void correct(T& ring) {
     	if (ring[0] != ring.back())
     		ring.push_back(ring[0]);
     	if (orientation(ring) == Orientation::CLOCKWISE) {
@@ -441,12 +440,12 @@ namespace geo {
     template<typename T>
     void correct(Polygon<T>& poly) {
   		correct(poly.ering);
-  		for (Ring<T>& iring : poly.irings)
+  		for (T& iring : poly.irings)
   			correct(iring);
   	}
 
   	template<typename T>
-  	void rotate(Vector<T>& v, float sn, float cs) {
+  	void rotate(T& v, float sn, float cs) {
   		int nx = (cs*v.x-sn*v.y);
 		int ny = (sn*v.x+cs*v.y);
 		v.x = nx;

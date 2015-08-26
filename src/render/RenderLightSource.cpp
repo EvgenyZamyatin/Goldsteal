@@ -3,8 +3,8 @@
 #include "help.h"
 
 void LightSource::renderLamp(HGE* hge, Camera* cam) {
-	Box r(bounds);
-	Box c(cam->getPos().x-cam->CAMERA_WIDTH/2, cam->getPos().y-cam->CAMERA_HIGHT/2, cam->CAMERA_WIDTH, cam->CAMERA_HIGHT);
+	geo::Box<Vertex> r(bounds);
+	geo::Box<Vertex> c(cam->getPos().x-cam->CAMERA_WIDTH/2, cam->getPos().y-cam->CAMERA_HIGHT/2, cam->CAMERA_WIDTH, cam->CAMERA_HIGHT);
 	if (!geo::intersects(r, c))
 		return;
 
@@ -29,8 +29,8 @@ void LightSource::renderLamp(HGE* hge, Camera* cam) {
 }
 
 void LightSource::renderLight(HGE* hge, Camera* cam) {
-	Box r(bounds);
-	Box c(cam->getPos().x-cam->CAMERA_WIDTH/2, cam->getPos().y-cam->CAMERA_HIGHT/2, cam->CAMERA_WIDTH, cam->CAMERA_HIGHT);
+	geo::Box<Vertex> r(bounds);
+	geo::Box<Vertex> c(cam->getPos().x-cam->CAMERA_WIDTH/2, cam->getPos().y-cam->CAMERA_HIGHT/2, cam->CAMERA_WIDTH, cam->CAMERA_HIGHT);
 	if (!geo::intersects(r, c))
 		return;
     hge->Gfx_SetShader(lightShader, SHADER_PIXEL);

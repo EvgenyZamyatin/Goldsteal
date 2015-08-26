@@ -1,33 +1,26 @@
-#ifndef IStaticObject_H
-#define IStaticObject_H
-
+#ifndef IOBJECT_H
+#define IOBJECT_H
+#include <hgeresource.h>
+#include <Tmx/Tmx.h.in>
 #include "../Geometry.h"
+#include "Vertex.h"
 #include "IRenderable.h"
 
-#include <tmx/Tmx.h.in>
-#include <hgeresource.h>
-
-struct GameState;
 struct IObject : IRenderable {
+	IObject() {};
 	IObject(Tmx::Object const* obj, hgeResourceManager* res);
-	IObject() {}
-	virtual ~IObject(){}
-	virtual void activate() {}
-	
-	Vector getPosition() const {return pos;}
-	Ring getBounds() const {return bounds;}
+	virtual ~IObject() {};
 	
 	bool isObstruct() {return obstruct;}
 	bool isObstacle() {return obstacle;}
 	
-	friend struct GameState;
+	geo::Ring<Vertex> getBounds() const {return bounds;}
+	
 protected:
 	bool obstruct;
 	bool obstacle;
-	Ring bounds;
-	Vector pos;
+	geo::Ring<Vertex> bounds;
 	bool havePoly;
-	
 	
 };
 

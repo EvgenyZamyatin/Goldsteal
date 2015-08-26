@@ -3,13 +3,17 @@
 
 #include <tmx/Tmx.h.in>
 #include <hgeresource.h>
+#include <functional>
+
+#include "IObject.h"
+#include "Environment.h"
 #include "../Geometry.h"
-#include "Vertex.h"
 #include "../render/RenderData.h"
-#include "IRenderable.h"
+#include "brains/IBrain.h"
+#include "Camera.h"
+
 
 struct GameState;
-struct IBrain;
 struct BrainPlayerInput;
 
 struct IBody : IRenderable {                
@@ -20,42 +24,38 @@ struct IBody : IRenderable {
 	static const int ACCELERATION;
 
 	IBody(Tmx::Object const* obj, hgeResourceManager* res);
-	
 	virtual ~IBody(){};                      
-	
 	virtual void render(HGE* hge, Camera const* cam);
     
 	void setGameState(GameState* state) {this->state=state;}
 	
-	Vertex getDir() const {return dir;}
-	
-	Vertex getPosition() const {return pos;}
+	Vector getDir() const {return dir;}
+	Vector getPosition() const {return pos;}
 
 	void frame();
-    
-    friend struct GameState;
-    friend struct BrainPlayerInput;
+    int getRadius() {return radius;}
+    int getRadius2() {return radius2;}
+
+    //virtual void onCollision(IObject* obj) {}
+	//virtual void onCollision(IBody* body) {}
+
+	friend struct GameState;
+	friend struct BrainPlayerInput;
 
 private:
 	Render::BodyData rData;
 
 	IBrain* brain;
-	
 	int moveState=0;
 	
-	int radius;
-
-	int radius2;
-
-	Vertex pos;
-	
+	Vector pos;
 	Vector velocity;
-	
-	geo::Ring<Vertex> visible;
-	
+	Ring visible;
 	Vector dir;	
 	
 	GameState* state;
+	int radius;
+	int radius2;
 };
 
 #endif

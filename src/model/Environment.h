@@ -1,39 +1,52 @@
 #ifndef ENVIRONMENT_H
 #define ENVIRONMENT_H
-
-#include <vector>
-#include <tmx/TmxMap.h>
 #include <hgeresource.h>
-#include <tmx/Tmx.h.in>
-                        
-#include "IRenderable.h"
-#include "IObject.h"
-#include "../render/RenderData.h"
+#include <Tmx/Tmx.h.in>
+#include "Graph.h"
+#include "Vertex.h"
+#include "../Geometry.h"
 #include "LightSource.h"
+#include "../render/RenderData.h"
 
+struct Environment {
+    Environment(Tmx::Map const* map, hgeResourceManager* res);
 
-struct GameState;
-struct Environment : IRenderable {
-	Environment() {};
-	Environment(Tmx::Map const* map, hgeResourceManager* res);
+    virtual ~Environment() {
+    	delete graph;
+    }
 	
-	std::vector<IObject*> getObjects() const {return objs;}
+	bool findPath(Vertex const& a, Vertex const& b, std::vector<Vertex>& out) const;
+	void findVisibility(Vertex const& o, geo::Ring<Vertex>& out) const;
 
-	std::vector<LightSource*> getLightSources() const {return lightSources;}
-
-	void addObject(IObject* obj) {objs.push_back(obj);}
-	void addLightSource(LightSource* ls) {lightSources.push_back(ls); ls->setEnvironment(this);}
+    
+    void addObject(IObject* obj);
+    void addLightSource(LightSource* ls);
+	
 	int getWidth() const {return width;}
 	int getHight() const {return hight;}
-	void render(HGE* hge, Camera const* cam);
-	Ring calcVisible(Vector const& o);
+
+	std::vector<IObject*> getObjects() const {return objects;}
+	std::vector<LightSource*> getLightSources() const {return lightSources;}
+
 	void frame();
-	friend struct GameState;
+	
+	void render(HGE* hge, Camera const* cam);
+	
 private:
-	std::vector<IObject*> objs;
+	Graph<Vertex>* graph;
+	
+	std::vector<Vertex> helpVertices;
+
+	geo::Polygon<geo::Ring<Vertex>> obstructPolygon;
+	//geo::Polygon<IObject::Bounds> obstaclePolygon;//inflated
+
+	std::vector<IObject*> objects;
 	std::vector<LightSource*> lightSources;
+	
 	int width;
 	int hight;
+	
 	Render::EnvironmentData rData;
 };
+
 #endif

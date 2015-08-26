@@ -10,7 +10,7 @@
 #include "model/IBody.h"
 #include <hgeresource.h>
 #include "InputData.h"
-#include "model/brains/IBrain.h"
+#include "model/IBrain.h"
 #include "model/FlashLight.h"
 #include <cstdio>
 #include <ctime>
@@ -72,12 +72,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	    Tmx::Map map;
 		map.ParseFile("level2.tmx");
 	    state = new GameState(&map, res);
+	    
 	    cam = new Camera(state->getEnvironment()->getWidth(), state->getEnvironment()->getHight(), 
-					{400,300}, 80*10, 60*10, 800, 600, 200);
+					{400,300}, 80*10, 60*10, 800, 600, 150);
 		cam->bind(state->getHero());		
 		
-		fl = new FlashLight(res, state->getHero(), {0,0}, M_PI/5);
+		fl = new FlashLight(res, state->getHero(), M_PI/5);
 		state->getEnvironment()->addLightSource(fl);
+		
 		hge->System_Start();
   	}	
 

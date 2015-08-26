@@ -39,7 +39,7 @@ void check(T const& o, std::vector<Segment1<T>> const& v) {
 
 
 template<typename T>
-void visibilityPolygon (T const& o, Polygon<T> const& polygon, Ring<T>& out) {
+void visibilityPolygon (T const& o, Polygon<Ring<T>> const& polygon, Ring<T>& out) {
 	#ifdef DEBUG
 		assert(orientation(polygon.ering) == Orientation::COUNTERCLOCKWISE);
 		assert(polygon.ering[0] == polygon.ering.back());

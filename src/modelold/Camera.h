@@ -30,14 +30,14 @@ struct Camera {
 	
 	Vector getPos() const {return pos;}
 	
-	void bind(IBody const* body) {this->body=body;}
+	void bind(IBody* body) {this->body=body;}
 	void move(Vector const& v) {pos += v;}
 
 	void convertSG(float& x, float& y) const;
 	void convertGS(float& x, float& y) const;
 
 private:
-	IBody const* body=NULL;
+	IBody* body=NULL;
 	Vector pos;
 };
 #endif

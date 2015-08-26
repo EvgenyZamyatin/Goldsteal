@@ -4,7 +4,7 @@
 
 typedef geo::Vector<long long> Vector;
 typedef geo::Ring<Vector> Ring;
-typedef geo::Polygon<Vector> Poly;
+typedef geo::Polygon<Ring> Poly;
 typedef geo::Segment<Vector> Segment;
 typedef geo::Line<Vector> Line;
 typedef geo::Ray<Vector> Ray;

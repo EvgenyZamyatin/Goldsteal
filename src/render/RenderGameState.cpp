@@ -6,7 +6,8 @@ hgeQuad q;
 hgeTriple trip;    		
 hgeU32 col;
     
-void rendWhitePolygon(HGE* hge, Camera* cam, Vector const& pos, Ring const& poly) {
+template<typename RING_TYPE>
+void rendWhitePolygon(HGE* hge, Camera* cam, Vector const& pos, RING_TYPE const& poly) {
 	trip.tex = 0;
 	trip.blend = BLEND_DEFAULT;
 	for (int i = 0; i < poly.size() - 1; ++i) {
