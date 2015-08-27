@@ -62,6 +62,17 @@ void Environment::render(HGE* hge, Camera const* cam) {
 		hge->Gfx_RenderQuad(&quad);		                           
 	}
 
+	for (Vertex const& v : graph->getNodes()) {
+		for (Vertex const& v1 : graph->getAdjacent(v)) {
+			float x1 = v.x, y1 = v.y;
+			float x2 = v1.x, y2 = v1.y;
+			
+			cam->convertGS(x1, y1);
+			cam->convertGS(x2, y2);
+			hge->Gfx_RenderLine(x1, y1, x2, y2, 0xFFFF0000);
+		}
+	}
+
 }
  
 

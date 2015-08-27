@@ -208,4 +208,255 @@ void visibilityPolygon (T const& o, Polygon<Ring<T>> const& polygon, Ring<T>& ou
     out.push_back(out[0]);
 }
 
+
+
+template<typename T>
+void visibleVertices (T const& inA, T const& o, T const& inC, Polygon<Ring<T>> const& polygon, std::vector<T>& out) {
+	#ifdef DEBUG
+		assert(orientation(polygon.ering) == Orientation::COUNTERCLOCKWISE);
+		assert(polygon.ering[0] == polygon.ering.back());
+		for (auto ring : polygon.irings) {
+			assert(orientation(ring) == Orientation::COUNTERCLOCKWISE);
+			assert(ring[0] == ring.back());
+		}
+	#endif
+		
+    std::vector<Segment1<T>> vertices;
+    
+    std::function<bool(T const&)> predicate;
+    if (orientation(o, inA, inC) == Orientation::CLOCKWISE) {
+	    predicate = [inA, o, inC] (T const& pt) {
+    		return orientation(o, inA, pt) != Orientation::COUNTERCLOCKWISE && orientation(inC, o, pt) != Orientation::COUNTERCLOCKWISE && pt != o;	
+    	};
+   	} else {
+   		predicate = [inA, o, inC] (T const& pt) {
+    		return (orientation(o, inA, pt) != Orientation::COUNTERCLOCKWISE || orientation(inC, o, pt) != Orientation::COUNTERCLOCKWISE) && pt != o;
+    	};
+    }         
+
+    for (Ring<T> const& ring : polygon.irings) {
+        for (int i = 0; i < ring.size() - 1; ++i) {
+            T const& a = ring[i]; 
+            T const& b = ring[i+1]; 
+            T const& d = (i == 0) ? ring[ring.size() - 2] : ring[i-1];
+           	vertices.push_back(Segment1<T>(a, b, d));
+        }
+    }    
+    
+   	{
+		Ring<T> const& ring = polygon.ering;
+		for (int i = 0; i < ring.size() - 1; ++i) {
+            T const& a = ring[i]; 
+            T const& d = ring[i+1]; 
+            T const& b = (i == 0) ? ring[ring.size() - 2] : ring[i-1];
+            vertices.push_back(Segment1<T>(a, b, d));
+        }
+    }    
+    
+    int cnt = 0;
+    for (int i = 0; i < vertices.size(); ++i) { 
+        if (vertices[i].a.y < o.y || (vertices[i].a.y == o.y && vertices[i].a.x < o.x))
+            std::swap(vertices[i], vertices[cnt++]);
+    }
+    std::sort(vertices.begin(), vertices.begin() + cnt, 
+            [o](Segment1<T> const& a, Segment1<T> const& b) {
+                return orientation(a.a, o, b.a) == Orientation::CLOCKWISE || 
+                    (orientation(a.a, o, b.a) == Orientation::COLLINEAR && distance2(a.a, o) < distance2(b.a, o));    
+            });
+    std::sort(vertices.begin() + cnt, vertices.end(), 
+            [o](Segment1<T> const& a, Segment1<T> const& b) {
+                return orientation(a.a, o, b.a) == Orientation::CLOCKWISE || 
+                    (orientation(a.a, o, b.a) == Orientation::COLLINEAR && distance2(a.a, o) < distance2(b.a, o));    
+            });
+
+    #ifdef DEBUG
+        check(o, vertices);
+    #endif
+
+    T dirV;
+    std::set<Segment1<T>, std::function<bool(Segment1<T> const&, Segment1<T> const&)>> set([o, &dirV](Segment1<T> const& s1, Segment1<T> const& s2) {
+                                T pt;
+                                Ray<T> l(o, dirV);
+                                #ifdef DEBUG
+                                    assert(intersection(l, (Segment<T>)s1, pt));
+                                #else                                   
+                                    intersection(l, (Segment<T>)s1, pt);
+                                #endif
+                                typename T::coordinate_type a = distance2(o, pt);
+                                #ifdef DEBUG
+                                    assert(intersection(l, (Segment<T>)s2, pt));
+                                #else 
+                                    intersection(l, (Segment<T>)s2, pt);
+                                #endif
+                                typename T::coordinate_type b = distance2(o, pt);
+                                #ifdef DEBUG
+                                    assert((Segment<T>)s1 == (Segment<T>)s2 || a != b);
+                                #endif
+                                return a < b;
+                            });
+    
+    {//init st.
+        T const& st = vertices[0].a;
+        dirV = st;//!!Important for comparator!!
+        Ray<T> l(o, st);
+        T pt;
+        for (Segment1<T> const& s : vertices) {
+        	if (!intersection(l, (Segment<T>)s, pt, false)) 
+            	continue;
+            add(set, o, s);
+        }
+    }
+    
+    for (int i = 0; i < (int)vertices.size(); ++i) {
+        
+        Segment1<T> const& v = vertices[i];
+        dirV = v.a;//!!Important for comparator!!
+
+        remove(set, o, v);
+        if (predicate(v.a)) {
+            bool visible = true;
+            /*std::cerr << v.a << "\n";
+            for (Segment1<T> const& s : set)
+            	std::cerr << s.a << " " << s.b << "\n";
+            std::cerr << "===\n";*/
+            if (set.size() > 0) {
+            	Segment<T> const& s = *(set.begin());
+                Ray<T> l(o, v.a);                                      
+                T pt;
+                #ifdef DEBUG
+                    assert(intersection(l, s, pt));
+                #else
+                    intersection(l, s, pt);
+                #endif      
+                if (distance2(o, v.a) > distance2(o, pt))
+                	visible = false;
+            }
+            if (visible)
+            	out.push_back(v.a);
+        }
+        add(set, o, v);
+    }
+}
+
+
+template<typename T>
+void visibleVertices (T const& o, Polygon<Ring<T>> const& polygon, std::vector<T>& out) {
+	#ifdef DEBUG
+		assert(orientation(polygon.ering) == Orientation::COUNTERCLOCKWISE);
+		assert(polygon.ering[0] == polygon.ering.back());
+		for (auto ring : polygon.irings) {
+			assert(orientation(ring) == Orientation::COUNTERCLOCKWISE);
+			assert(ring[0] == ring.back());
+		}
+	#endif
+		
+    std::vector<Segment1<T>> vertices;
+    
+    std::function<bool(T const&)> predicate;
+    
+    for (Ring<T> const& ring : polygon.irings) {
+        for (int i = 0; i < ring.size() - 1; ++i) {
+            T const& a = ring[i]; 
+            T const& b = ring[i+1]; 
+            T const& d = (i == 0) ? ring[ring.size() - 2] : ring[i-1];
+           	vertices.push_back(Segment1<T>(a, b, d));
+        }
+    }    
+    
+   	{
+		Ring<T> const& ring = polygon.ering;
+		for (int i = 0; i < ring.size() - 1; ++i) {
+            T const& a = ring[i]; 
+            T const& d = ring[i+1]; 
+            T const& b = (i == 0) ? ring[ring.size() - 2] : ring[i-1];
+            vertices.push_back(Segment1<T>(a, b, d));
+        }
+    }    
+    
+    int cnt = 0;
+    for (int i = 0; i < vertices.size(); ++i) { 
+        if (vertices[i].a.y < o.y || (vertices[i].a.y == o.y && vertices[i].a.x < o.x))
+            std::swap(vertices[i], vertices[cnt++]);
+    }
+    std::sort(vertices.begin(), vertices.begin() + cnt, 
+            [o](Segment1<T> const& a, Segment1<T> const& b) {
+                return orientation(a.a, o, b.a) == Orientation::CLOCKWISE || 
+                    (orientation(a.a, o, b.a) == Orientation::COLLINEAR && distance2(a.a, o) < distance2(b.a, o));    
+            });
+    std::sort(vertices.begin() + cnt, vertices.end(), 
+            [o](Segment1<T> const& a, Segment1<T> const& b) {
+                return orientation(a.a, o, b.a) == Orientation::CLOCKWISE || 
+                    (orientation(a.a, o, b.a) == Orientation::COLLINEAR && distance2(a.a, o) < distance2(b.a, o));    
+            });
+
+    #ifdef DEBUG
+        check(o, vertices);
+    #endif
+
+    T dirV;
+    std::set<Segment1<T>, std::function<bool(Segment1<T> const&, Segment1<T> const&)>> set([o, &dirV](Segment1<T> const& s1, Segment1<T> const& s2) {
+                                T pt;
+                                Ray<T> l(o, dirV);
+                                #ifdef DEBUG
+                                    assert(intersection(l, (Segment<T>)s1, pt));
+                                #else                                   
+                                    intersection(l, (Segment<T>)s1, pt);
+                                #endif
+                                typename T::coordinate_type a = distance2(o, pt);
+                                #ifdef DEBUG
+                                    assert(intersection(l, (Segment<T>)s2, pt));
+                                #else 
+                                    intersection(l, (Segment<T>)s2, pt);
+                                #endif
+                                typename T::coordinate_type b = distance2(o, pt);
+                                #ifdef DEBUG
+                                    assert((Segment<T>)s1 == (Segment<T>)s2 || a != b);
+                                #endif
+                                return a < b;
+                            });
+    
+    {//init st.
+        T const& st = vertices[0].a;
+        dirV = st;//!!Important for comparator!!
+        Ray<T> l(o, st);
+        T pt;
+        for (Segment1<T> const& s : vertices) {
+        	if (!intersection(l, (Segment<T>)s, pt, false)) 
+            	continue;
+            add(set, o, s);
+        }
+    }
+    
+    for (int i = 0; i < (int)vertices.size(); ++i) {
+        
+        Segment1<T> const& v = vertices[i];
+        dirV = v.a;//!!Important for comparator!!
+
+        remove(set, o, v);
+        bool visible = true;
+        /*std::cerr << v.a << "\n";
+        for (Segment1<T> const& s : set)
+        	std::cerr << s.a << " " << s.b << "\n";
+        std::cerr << "===\n";*/
+        if (set.size() > 0) {
+        	Segment<T> const& s = *(set.begin());
+            Ray<T> l(o, v.a);                                      
+            T pt;
+            #ifdef DEBUG
+                assert(intersection(l, s, pt));
+            #else
+                intersection(l, s, pt);
+            #endif      
+            if (distance2(o, v.a) > distance2(o, pt))
+            	visible = false;
+        }
+        if (visible)
+        	out.push_back(v.a);
+    	add(set, o, v);
+    }
+	
+}
+
+
+
 }

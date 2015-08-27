@@ -150,6 +150,13 @@ namespace geo {
     
     template<typename VECTOR_TYPE>
     void visibilityPolygon(VECTOR_TYPE const& o, Polygon<Ring<VECTOR_TYPE>> const& polygon, Ring<VECTOR_TYPE>& res);
+    
+    template<typename VECTOR_TYPE>
+	void visibleVertices (VECTOR_TYPE const& inA, VECTOR_TYPE const& o, VECTOR_TYPE const& inC, Polygon<Ring<VECTOR_TYPE>> const& polygon, std::vector<VECTOR_TYPE>& out);
+
+	template<typename VECTOR_TYPE>
+	void visibleVertices (VECTOR_TYPE const& o, Polygon<Ring<VECTOR_TYPE>> const& polygon, std::vector<VECTOR_TYPE>& out);
+
                                                                     
 //======Implementation=======    
     template <typename T>

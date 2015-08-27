@@ -9,13 +9,37 @@ inline int norm(int a) {
 }
 
 void Environment::initGraph() {
-	for (Vertex& v : helpVertices)
-		graph->addNode(v);
+	/*for (Vertex& v : helpVertices)
+		graph->addNode(v);*/
 	for (Vertex& v : obstaclePolygon.ering)
 		graph->addNode(v);
 	for (geo::Ring<Vertex>& ring : obstaclePolygon.irings)
 		for (Vertex& v : ring)
 			graph->addNode(v);
+
+	for (int i = 0; i < obstaclePolygon.ering.size() - 1; ++i) {
+		Vertex const& c = (i == 0) ? obstaclePolygon.ering[obstaclePolygon.ering.size() - 2] : obstaclePolygon.ering[i-1];
+		Vertex const& o = obstaclePolygon.ering[i];
+		Vertex const& a = obstaclePolygon.ering[i+1];
+		std::vector<Vertex> out;
+		geo::visibleVertices(a, o, c, obstaclePolygon, out);
+		for (Vertex const& v : out)
+			graph->addEdge(o, v, sqrt(1.f*geo::distance2(o, v)));
+	}
+	
+	/*for (geo::Ring<Vertex> const& ring : obstaclePolygon.irings) {
+		for (int i = 0; i < ring.size() - 1; ++i) {
+			Vertex const& a = (i == 0) ? ring[ring.size() - 2] : ring[i-1];
+			Vertex const& o = ring[i];
+			Vertex const& c = ring[i+1];
+			std::vector<Vertex> out;
+			geo::visibleVertices(a, o, c, obstaclePolygon, out);
+			for (Vertex const& v : out)
+				graph->addEdge(o, v, sqrt(1.f*geo::distance2(o, v)));
+	
+		}
+	}*/
+	
 }
 
 Environment::Environment(Tmx::Map const* map, hgeResourceManager* res) {
