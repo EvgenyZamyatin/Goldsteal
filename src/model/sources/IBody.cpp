@@ -10,7 +10,8 @@ IBody::IBody(Tmx::Object const* o, hgeResourceManager* res) : dir(0,-1), velocit
 	
 	rData.width = (int)o->GetWidth();
 	rData.hight = (int)o->GetHeight();
-	brain = IBrain::getBrain(o->GetProperties().GetStringProperty("Brain"));
+	//brain = IBrain::getBrain(o->GetProperties().GetStringProperty("Brain"));
+	brain = new BrainFollow();
 	rData.lastState=-1;
 	
 	radius = o->GetProperties().GetFloatProperty("Radius");

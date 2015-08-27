@@ -13,7 +13,6 @@ IObject::IObject (Tmx::Object const* o, hgeResourceManager* res) {
     	geo::correct(bounds);
     	havePoly = true;
     } else {
-    	std::cerr << o->GetType() << "\n";      
     	bounds.push_back(pos);
     	bounds.push_back(pos);
     	havePoly = false;

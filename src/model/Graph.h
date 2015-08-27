@@ -30,6 +30,7 @@ struct Graph : micropather::Graph {
 	void addNode(NODE_TYPE& node) {	
 		node.nodeNumber = nodeCount++;
 		adjacencies.push_back({});
+		nodes.push_back(node);
 	}
 
 	void addEdge(NODE_TYPE const& a, NODE_TYPE const& b, float const& cost) {
@@ -46,6 +47,9 @@ struct Graph : micropather::Graph {
 	}
 
 	bool solve(NODE_TYPE const& a, NODE_TYPE const& b, std::vector<NODE_TYPE*>& out) {
+		#ifdef DEBUG
+			assert(a.nodeNumber != -1 && b.nodeNumber != -1);
+		#endif
 		float cost;
 		return (pather->Solve((void*)&a, (void*)&b, (std::vector<void*>*)&out, &cost)) == micropather::MicroPather::SOLVED;
 	}

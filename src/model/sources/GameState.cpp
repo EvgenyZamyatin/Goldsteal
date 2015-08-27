@@ -2,6 +2,7 @@
 
 GameState::GameState(Tmx::Map const* map, hgeResourceManager* res) {
 	env = new Environment(map, res);
+
 	for (Tmx::ObjectGroup const* ob : map->GetObjectGroups()) {
 		if (ob->GetName() != "BodyLayer")
 			continue;

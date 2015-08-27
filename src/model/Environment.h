@@ -35,7 +35,10 @@ struct Environment {
 	geo::Ring<Vector> inflate(geo::Ring<Vector> const& poly, int inflateRadius);
 
 	geo::Polygon<geo::Ring<Vector>> subtract(geo::Polygon<geo::Ring<Vector>> const& poly, geo::Ring<Vector> const& ring);
+	
+	void initGraph();
 
+	Graph<Vertex>* getGraph() {return graph;}
 
 private:
 	Graph<Vertex>* graph;

@@ -48,6 +48,20 @@ void Environment::render(HGE* hge, Camera const* cam) {
 			}
 		}
 	}
+
+	for (Vertex const& v : graph->getNodes()) {
+		float x = v.x, y = v.y;
+		cam->convertGS(x, y);
+		hgeU32 col = 0xFFFF0000;
+		fillQuad(quad, {                                                   
+						{x-5, y-5, 0.5f, col, 1.f, 1.f},
+						{x+5, y-5, 0.5f, col, 1.f, 1.f},
+						{x+5, y+5, 0.5f, col, 1.f, 1.f},
+						{x-5, y+5, 0.5f, col, 1.f, 1.f}
+					   });
+		hge->Gfx_RenderQuad(&quad);		                           
+	}
+
 }
  
 

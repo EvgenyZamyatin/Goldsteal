@@ -8,6 +8,16 @@ inline int norm(int a) {
 	return (1 << i);
 }
 
+void Environment::initGraph() {
+	for (Vertex& v : helpVertices)
+		graph->addNode(v);
+	for (Vertex& v : obstaclePolygon.ering)
+		graph->addNode(v);
+	for (geo::Ring<Vertex>& ring : obstaclePolygon.irings)
+		for (Vertex& v : ring)
+			graph->addNode(v);
+}
+
 Environment::Environment(Tmx::Map const* map, hgeResourceManager* res) {
 	rData.tilesInRow=map->GetWidth();
 	rData.tilesInColumn=map->GetHeight();   
@@ -92,7 +102,7 @@ Environment::Environment(Tmx::Map const* map, hgeResourceManager* res) {
    	}
 
    	for (Tmx::ObjectGroup* ob : map->GetObjectGroups()) {
-   		if (ob->GetName() != "GraphLayer")
+   		if (ob->GetName() != "GraphLayer" || !ob->IsVisible())
    			continue;
    		for (Tmx::Object* o : ob->GetObjects()) {
    			if (!o->IsVisible())
@@ -102,13 +112,23 @@ Environment::Environment(Tmx::Map const* map, hgeResourceManager* res) {
    			} 
    		}
    	}
-
+   	initGraph();
 }
 
 void Environment::findVisibility(Vertex const& o, geo::Ring<Vertex>& out) const {
 	out.clear();
 	geo::visibilityPolygon(o, obstructPolygon, out);
 }
+
+bool Environment::findPath(Vertex const& a, Vertex const& b, std::vector<Vertex>& out) const {
+	out.clear();
+	std::vector<Vertex*> out1;
+	bool ans = graph->solve(a, b, out1);
+	for (Vertex* v : out1)
+		out.push_back(*v);
+	return ans;
+}
+	
 
 void Environment::addObject(IObject* obj) {
 	objects.push_back(obj);

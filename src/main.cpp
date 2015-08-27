@@ -72,14 +72,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	    Tmx::Map map;
 		map.ParseFile("level2.tmx");
 	    state = new GameState(&map, res);
-	    
 	    cam = new Camera(state->getEnvironment()->getWidth(), state->getEnvironment()->getHight(), 
 					{400,300}, 80*10, 60*10, 800, 600, 150);
 		cam->bind(state->getHero());		
 		
 		fl = new FlashLight(res, state->getHero(), M_PI/5);
 		state->getEnvironment()->addLightSource(fl);
-		
 		hge->System_Start();
   	}	
 

@@ -11,6 +11,7 @@
 struct GameState;
 struct IBrain;
 struct BrainPlayerInput;
+struct BrainFollow;
 
 struct IBody : IRenderable {                
 	static const int STATE_IDLE = 0;
@@ -35,6 +36,8 @@ struct IBody : IRenderable {
     
     friend struct GameState;
     friend struct BrainPlayerInput;
+	friend struct BrainFollow;
+
 
 private:
 	Render::BodyData rData;
