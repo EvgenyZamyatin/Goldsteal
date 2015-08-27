@@ -32,19 +32,27 @@ struct Environment {
 	
 	void render(HGE* hge, Camera const* cam);
 	
+	geo::Ring<Vector> inflate(geo::Ring<Vector> const& poly, int inflateRadius);
+
+	geo::Polygon<geo::Ring<Vector>> subtract(geo::Polygon<geo::Ring<Vector>> const& poly, geo::Ring<Vector> const& ring);
+
+
 private:
 	Graph<Vertex>* graph;
 	
 	std::vector<Vertex> helpVertices;
 
 	geo::Polygon<geo::Ring<Vertex>> obstructPolygon;
-	//geo::Polygon<IObject::Bounds> obstaclePolygon;//inflated
+	
+	geo::Polygon<geo::Ring<Vertex>> obstaclePolygon;//inflated
 
 	std::vector<IObject*> objects;
 	std::vector<LightSource*> lightSources;
 	
 	int width;
 	int hight;
+
+	int inflateRadius;
 	
 	Render::EnvironmentData rData;
 };

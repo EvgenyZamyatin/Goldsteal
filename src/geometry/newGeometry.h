@@ -87,6 +87,12 @@ namespace geo {
     template<typename VECTOR_TYPE>
     struct Ring : std::vector<VECTOR_TYPE> {
     	using std::vector<VECTOR_TYPE>::vector;
+    	
+    	Ring() {}
+
+    	template<typename OTHER_VECTOR_TYPE>
+    	Ring(Ring<OTHER_VECTOR_TYPE> const& other);
+   		
    		typedef VECTOR_TYPE vector_type;   		    
     };
 
@@ -95,6 +101,13 @@ namespace geo {
     	Polygon() {}
     	Polygon(RING_TYPE ering, std::vector<RING_TYPE> irings) : ering(ering), irings(irings) {}
     	Polygon(RING_TYPE ring) : ering(ring) {}
+    	template<typename OTHER_RING_TYPE>
+    	Polygon(Polygon<OTHER_RING_TYPE> const& other) {
+    		ering = other.ering;
+    		for (OTHER_RING_TYPE const& ring : other.irings) {
+    			irings.push_back(ring);
+    		}
+  		}
     	RING_TYPE ering;
     	std::vector<RING_TYPE> irings;
     	typedef RING_TYPE ring_type;
@@ -174,6 +187,13 @@ namespace geo {
         dir = p2 - p1;
         start = p1;
     }
+
+    template<typename T>
+    template<typename E>
+   	Ring<T>::Ring(Ring<E> const& other) {
+   		for (E const& v : other)
+   			this->push_back(v);
+   	}
 
     template <typename T>
     Box<T>::Box() {}

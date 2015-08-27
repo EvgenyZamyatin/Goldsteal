@@ -58,6 +58,15 @@ Environment::Environment(Tmx::Map const* map, hgeResourceManager* res) {
    	
    	obstructPolygon.ering = {{0, 0}, {width, 0}, {width, hight}, {0, hight}, {0, 0}};
    	geo::correct(obstructPolygon.ering);
+   	
+
+   	this->inflateRadius = map->GetProperties().GetIntProperty("InflateRadius");
+   	
+   	obstaclePolygon.ering = {{0, 0}, {width, 0}, {width, hight}, {0, hight}, {0, 0}};
+   	geo::correct(obstaclePolygon.ering);
+
+   	obstaclePolygon.ering = inflate(obstaclePolygon.ering, -inflateRadius);
+   	
    	graph = new Graph<Vertex>([](Vertex const& a, Vertex const& b) {return sqrt(1.f*geo::distance2(a, b));});
    	
    	Tmx::ObjectGroup const* textureLayer = NULL;
@@ -82,17 +91,17 @@ Environment::Environment(Tmx::Map const* map, hgeResourceManager* res) {
    		}
    	}
 
-   	/*for (Tmx::ObjectGroup* ob : map->GetObjectGroups()) {
+   	for (Tmx::ObjectGroup* ob : map->GetObjectGroups()) {
    		if (ob->GetName() != "GraphLayer")
    			continue;
    		for (Tmx::Object* o : ob->GetObjects()) {
    			if (!o->IsVisible())
    				continue;
    			if (o->GetType() == "Vertex") {
-   				addObject(new SimpleObject(o, textureLayer, res));
+   				helpVertices.push_back(Vertex(o->GetX() + o->GetWidth()/2, o->GetY() + o->GetHeight()/2));
    			} 
    		}
-   	}*/
+   	}
 
 }
 
@@ -105,6 +114,10 @@ void Environment::addObject(IObject* obj) {
 	objects.push_back(obj);
 	if (obj->isObstruct())
 		obstructPolygon.irings.push_back(obj->getBounds());
+	if (obj->isObstacle()) {
+		geo::Ring<Vertex> ring = obj->getBounds();
+		obstaclePolygon = subtract(obstaclePolygon, inflate(ring, inflateRadius));
+	}
 }
 
 void Environment::addLightSource(LightSource* ls) {
@@ -116,3 +129,4 @@ void Environment::frame() {
 	for (LightSource* ls : lightSources)
 		ls->frame();
 }
+

@@ -30,6 +30,11 @@ struct Vertex : Vector {
 	
 	int nodeNumber;
 	IObject* owner;
+
+	/*union struct Data {
+		int nodeNumber;
+		IObject* owner;
+	};*/
 };
 
 #endif

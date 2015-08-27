@@ -19,15 +19,17 @@ set(MODEL src/model/Environment.cpp src/model/GameState.cpp src/model/IBody.cpp
 set(BRAINS src/model/brains/IBrain.cpp src/model/brains/BrainPlayerInput.cpp)
 
 
-set(NEWMODEL src/model/sources/Environment.cpp src/model/sources/GameState.cpp src/model/sources/IBody.cpp 
+set(NEWMODEL src/model/sources/Environment.cpp src/model/sources/EnvironmentPolygon.cpp 
+			src/model/sources/GameState.cpp src/model/sources/IBody.cpp 
 			src/model/sources/IObject.cpp src/model/sources/FlashLight.cpp 
 				src/model/sources/LightSource.cpp src/model/sources/SimpleObject.cpp src/model/sources/Camera.cpp )
 
 set(NEWBRAINS src/model/sources/IBrain.cpp src/model/sources/BrainPlayerInput.cpp)
 
-set(MICROPATHER src/micropather.cpp)  
+set(MICROPATHER src/micropather.cpp)
+set(CLIPPER src/clipper.cpp)
 
-set(SOURCE ${NEWBRAINS} ${NEWMODEL} ${RENDER} ${MICROPATHER})
+set(SOURCE ${NEWBRAINS} ${NEWMODEL} ${RENDER} ${MICROPATHER} ${CLIPPER})
 
 add_executable(main src/InputData.cpp src/main.cpp ${SOURCE})
 #add_executable(geo_test ${GEOMETRY} src/geometry/tests.cpp)
